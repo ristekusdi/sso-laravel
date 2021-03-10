@@ -2,39 +2,39 @@
 
 return [
     /**
-     * Keycloak Url
+     * SSO Url
      *
      * Generally https://your-server.com/auth
      */
-    'base_url' => env('KEYCLOAK_BASE_URL', ''),
+    'base_url' => env('SSO_BASE_URL', ''),
 
     /**
-     * Keycloak Realm
+     * SSO Realm
      *
      * Default is master
      */
-    'realm' => env('KEYCLOAK_REALM', 'master'),
+    'realm' => env('SSO_REALM', 'master'),
 
     /**
-     * The Keycloak Server realm public key (string).
+     * The SSO Server realm public key (string).
      *
-     * @see Keycloak >> Realm Settings >> Keys >> RS256 >> Public Key
+     * @see SSO >> Realm Settings >> Keys >> RS256 >> Public Key
      */
-    'realm_public_key' => env('KEYCLOAK_REALM_PUBLIC_KEY', null),
+    'realm_public_key' => env('SSO_REALM_PUBLIC_KEY', null),
 
     /**
-     * Keycloak Client ID
+     * SSO Client ID
      *
-     * @see Keycloak >> Clients >> Installation
+     * @see SSO >> Clients >> Installation
      */
-    'client_id' => env('KEYCLOAK_CLIENT_ID', null),
+    'client_id' => env('SSO_CLIENT_ID', null),
 
     /**
-     * Keycloak Client Secret
+     * SSO Client Secret
      *
-     * @see Keycloak >> Clients >> Installation
+     * @see SSO >> Clients >> Installation
      */
-    'client_secret' => env('KEYCLOAK_CLIENT_SECRET', null),
+    'client_secret' => env('SSO_CLIENT_SECRET', null),
 
     /**
      * We can cache the OpenId Configuration
@@ -42,12 +42,12 @@ return [
      *
      * @link https://www.keycloak.org/docs/3.2/securing_apps/topics/oidc/oidc-generic.html
      */
-    'cache_openid' => env('KEYCLOAK_CACHE_OPENID', false),
+    'cache_openid' => env('SSO_CACHE_OPENID', false),
 
     /**
      * Page to redirect after callback if there's no "intent"
      *
-     * @see Vizir\KeycloakWebGuard\Controllers\AuthController::callback()
+     * @see RistekUSDI\SSO\Controllers\AuthController::callback()
      */
     'redirect_url' => '/admin',
 
@@ -56,9 +56,9 @@ return [
      *
      * Accept a string as the first parameter of route() or false to disable the route.
      *
-     * The routes will receive the name "keycloak.{route}" and login/callback are required.
-     * So, if you make it false, you shoul register a named 'keycloak.login' route and extend
-     * the Vizir\KeycloakWebGuard\Controllers\AuthController controller.
+     * The routes will receive the name "sso.{route}" and login/callback are required.
+     * So, if you make it false, you shoul register a named 'sso.login' route and extend
+     * the RistekUSDI\SSO\Controllers\AuthController controller.
      */
     'routes' => [
         'login' => 'login',

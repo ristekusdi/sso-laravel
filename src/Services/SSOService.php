@@ -106,23 +106,23 @@ class SSOService
     public function __construct(ClientInterface $client)
     {
         if (is_null($this->baseUrl)) {
-            $this->baseUrl = trim(Config::get('keycloak-web.base_url'), '/');
+            $this->baseUrl = trim(Config::get('sso.base_url'), '/');
         }
 
         if (is_null($this->realm)) {
-            $this->realm = Config::get('keycloak-web.realm');
+            $this->realm = Config::get('sso.realm');
         }
 
         if (is_null($this->clientId)) {
-            $this->clientId = Config::get('keycloak-web.client_id');
+            $this->clientId = Config::get('sso.client_id');
         }
 
         if (is_null($this->clientSecret)) {
-            $this->clientSecret = Config::get('keycloak-web.client_secret');
+            $this->clientSecret = Config::get('sso.client_secret');
         }
 
         if (is_null($this->cacheOpenid)) {
-            $this->cacheOpenid = Config::get('keycloak-web.cache_openid', false);
+            $this->cacheOpenid = Config::get('sso.cache_openid', false);
         }
 
         if (is_null($this->callbackUrl)) {
@@ -130,7 +130,7 @@ class SSOService
         }
 
         if (is_null($this->redirectLogout)) {
-            $this->redirectLogout = Config::get('keycloak-web.redirect_logout');
+            $this->redirectLogout = Config::get('sso.redirect_logout');
         }
 
         $this->state = $this->generateRandomState();
@@ -527,7 +527,7 @@ class SSOService
         } catch (GuzzleException $e) {
             $this->logException($e);
 
-            throw new Exception('[Keycloak Error] It was not possible to load OpenId configuration: ' . $e->getMessage());
+            throw new Exception('[SSO Error] It was not possible to load OpenId configuration: ' . $e->getMessage());
         }
 
         // Save cache

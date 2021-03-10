@@ -26,10 +26,10 @@ class WebGuardServiceProvider extends ServiceProvider
     public function boot()
     {
         // Configuration
-        $config = __DIR__ . '/../config/keycloak-web.php';
+        $config = __DIR__ . '/../config/sso.php';
 
-        $this->publishes([$config => config_path('keycloak-web.php')], 'config');
-        $this->mergeConfigFrom($config, 'keycloak-web');
+        $this->publishes([$config => config_path('sso.php')], 'config');
+        $this->mergeConfigFrom($config, 'sso');
 
         // User Provider
         Auth::provider('keycloak-users', function($app, array $config) {
@@ -74,7 +74,7 @@ class WebGuardServiceProvider extends ServiceProvider
 
         // Bind for client data
         $this->app->when(SSOService::class)->needs(ClientInterface::class)->give(function() {
-            return new Client(Config::get('keycloak-web.guzzle_options', []));
+            return new Client(Config::get('sso.guzzle_options', []));
         });
     }
 
@@ -92,7 +92,7 @@ class WebGuardServiceProvider extends ServiceProvider
             'callback' => 'callback',
         ];
 
-        $routes = Config::get('keycloak-web.routes', []);
+        $routes = Config::get('sso.routes', []);
         $routes = array_merge($defaults, $routes);
 
         // Register Routes
