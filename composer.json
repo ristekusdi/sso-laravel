@@ -1,7 +1,7 @@
 {
     "name": "ristekusdi/sso",
-    "description": ":package_description",
-    "license": "license",
+    "description": "SSO for internal Udayana projects",
+    "license": "MIT",
     "authors": [
         {
             "name": "Riset dan Teknologi USDI",
@@ -10,8 +10,9 @@
         }
     ],
     "homepage": "https://github.com/ristekusdi/sso",
-    "keywords": ["Laravel", "SSO"],
+    "keywords": ["SSO", "authentication", "authorization"],
     "require": {
+        "php": ">=7.4",
         "illuminate/support": "~7|~8"
     },
     "require-dev": {
