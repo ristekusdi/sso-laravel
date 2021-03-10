@@ -4,7 +4,7 @@ namespace RistekUSDI\SSO\Auth;
 
 use Exception;
 
-class KeycloakAccessToken
+class AccessToken
 {
     /**
      * @var string

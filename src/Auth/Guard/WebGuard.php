@@ -12,7 +12,7 @@ use RistekUSDI\SSO\Models\KeycloakUser;
 use RistekUSDI\SSO\Facades\KeycloakWeb;
 use Illuminate\Contracts\Auth\UserProvider;
 
-class KeycloakWebGuard implements Guard
+class WebGuard implements Guard
 {
     /**
      * @var null|Authenticatable|KeycloakUser

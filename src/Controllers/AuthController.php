@@ -5,7 +5,7 @@ namespace RistekUSDI\SSO\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
-use RistekUSDI\SSO\Exceptions\KeycloakCallbackException;
+use RistekUSDI\SSO\Exceptions\SSOCallbackException;
 use RistekUSDI\SSO\Facades\KeycloakWeb;
 
 class AuthController extends Controller
@@ -50,7 +50,7 @@ class AuthController extends Controller
     /**
      * Keycloak callback page
      *
-     * @throws KeycloakCallbackException
+     * @throws SSOCallbackException
      *
      * @return view
      */
@@ -61,7 +61,7 @@ class AuthController extends Controller
             $error = $request->input('error_description');
             $error = ($error) ?: $request->input('error');
 
-            throw new KeycloakCallbackException($error);
+            throw new SSOCallbackException($error);
         }
 
         // Check given state to mitigate CSRF attack
@@ -69,7 +69,7 @@ class AuthController extends Controller
         if (empty($state) || ! KeycloakWeb::validateState($state)) {
             KeycloakWeb::forgetState();
 
-            throw new KeycloakCallbackException('Invalid state');
+            throw new SSOCallbackException('Invalid state');
         }
 
         // Change code for token

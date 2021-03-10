@@ -2,10 +2,10 @@
 
 namespace RistekUSDI\SSO\Exceptions;
 
-class KeycloakCallbackException extends \RuntimeException
+class SSOCallbackException extends \RuntimeException
 {
     /**
-     * Keycloak Callback Error
+     * SSO Callback Error
      *
      * @param string|null     $message  [description]
      * @param \Throwable|null $previous [description]
@@ -14,7 +14,7 @@ class KeycloakCallbackException extends \RuntimeException
      */
     public function __construct(string $error = '')
     {
-        $message = '[Keycloak Error] ' . $error;
+        $message = '[SSO Error] ' . $error;
 
         parent::__construct($message);
     }

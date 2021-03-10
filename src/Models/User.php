@@ -5,7 +5,7 @@ namespace RistekUSDI\SSO\Models;
 use Auth;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-class KeycloakUser implements Authenticatable
+class User implements Authenticatable
 {
     /**
      * Attributes we retrieve from Profile

@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use RistekUSDI\SSO\Auth\Guard\KeycloakWebGuard;
-use RistekUSDI\SSO\Auth\KeycloakWebUserProvider;
+use RistekUSDI\SSO\Auth\Guard\WebGuard;
+use RistekUSDI\SSO\Auth\WebUserProvider;
 use RistekUSDI\SSO\Middleware\KeycloakAuthenticated;
 use RistekUSDI\SSO\Middleware\KeycloakCan;
-use RistekUSDI\SSO\Models\KeycloakUser;
+use RistekUSDI\SSO\Models\User;
 use RistekUSDI\SSO\Services\KeycloakService;
 
 class KeycloakWebGuardServiceProvider extends ServiceProvider
@@ -33,7 +33,7 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
 
         // User Provider
         Auth::provider('keycloak-users', function($app, array $config) {
-            return new KeycloakWebUserProvider($config['model']);
+            return new WebUserProvider($config['model']);
         });
 
         // Gate
@@ -49,10 +49,10 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // Keycloak Web Guard
+        // SSO Web Guard
         Auth::extend('keycloak-web', function ($app, $name, array $config) {
             $provider = Auth::createUserProvider($config['provider']);
-            return new KeycloakWebGuard($provider, $app->request);
+            return new WebGuard($provider, $app->request);
         });
 
         // Facades

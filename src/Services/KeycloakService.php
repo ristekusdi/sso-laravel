@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
-use RistekUSDI\SSO\Auth\KeycloakAccessToken;
-use RistekUSDI\SSO\Auth\Guard\KeycloakWebGuard;
+use RistekUSDI\SSO\Auth\AccessToken;
+use RistekUSDI\SSO\Auth\Guard\WebGuard;
 
 class KeycloakService
 {
@@ -307,7 +307,7 @@ class KeycloakService
         $user = [];
         try {
             // Validate JWT Token
-            $token = new KeycloakAccessToken($credentials);
+            $token = new AccessToken($credentials);
 
             if (empty($token->getAccessToken())) {
                 throw new Exception('Access Token is invalid.');
@@ -550,7 +550,7 @@ class KeycloakService
             return $credentials;
         }
 
-        $token = new KeycloakAccessToken($credentials);
+        $token = new AccessToken($credentials);
         if (! $token->hasExpired()) {
             return $credentials;
         }

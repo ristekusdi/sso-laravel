@@ -4,9 +4,8 @@ namespace RistekUSDI\SSO\Auth;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
-use RistekUSDI\SSO\Models\KeycloakUser;
 
-class KeycloakWebUserProvider implements UserProvider
+class WebUserProvider implements UserProvider
 {
     /**
      * The user model.

@@ -4,10 +4,10 @@ namespace RistekUSDI\SSO\Exceptions;
 
 use Illuminate\Auth\AuthenticationException;
 
-class KeycloakCanException extends AuthenticationException
+class SSOCanException extends AuthenticationException
 {
     /**
-     * Keycloak Callback Error
+     * SSO Callback Error
      *
      * @param string|null     $message  [description]
      * @param \Throwable|null $previous [description]
