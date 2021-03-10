@@ -2,20 +2,20 @@
 
 namespace RistekUSDI\SSO\Exceptions;
 
-use Illuminate\Auth\AuthenticationException;
-
-class SSOCanException extends AuthenticationException
+class CallbackException extends \RuntimeException
 {
     /**
-     * SSO Callback Error
+     * Callback Error
      *
      * @param string|null     $message  [description]
      * @param \Throwable|null $previous [description]
      * @param array           $headers  [description]
      * @param int|integer     $code     [description]
      */
-    public function sss__construct(string $error = '')
+    public function __construct(string $error = '')
     {
+        $message = '[SSO Error] ' . $error;
 
+        parent::__construct($message);
     }
 }

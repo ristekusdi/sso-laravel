@@ -11,12 +11,12 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use RistekUSDI\SSO\Auth\Guard\WebGuard;
 use RistekUSDI\SSO\Auth\WebUserProvider;
-use RistekUSDI\SSO\Middleware\KeycloakAuthenticated;
-use RistekUSDI\SSO\Middleware\KeycloakCan;
+use RistekUSDI\SSO\Middleware\Authenticated;
+use RistekUSDI\SSO\Middleware\Can;
 use RistekUSDI\SSO\Models\User;
-use RistekUSDI\SSO\Services\KeycloakService;
+use RistekUSDI\SSO\Services\SSOService;
 
-class KeycloakWebGuardServiceProvider extends ServiceProvider
+class WebGuardServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
@@ -56,8 +56,8 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
         });
 
         // Facades
-        $this->app->bind('keycloak-web', function($app) {
-            return $app->make(KeycloakService::class);
+        $this->app->bind('sso-web', function($app) {
+            return $app->make(SSOService::class);
         });
 
         // Routes
@@ -66,14 +66,14 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
         // Middleware Group
         $this->app['router']->middlewareGroup('keycloak-web', [
             StartSession::class,
-            KeycloakAuthenticated::class,
+            Authenticated::class,
         ]);
 
         // Add Middleware "keycloak-web-can"
-        $this->app['router']->aliasMiddleware('keycloak-web-can', KeycloakCan::class);
+        $this->app['router']->aliasMiddleware('keycloak-web-can', Can::class);
 
         // Bind for client data
-        $this->app->when(KeycloakService::class)->needs(ClientInterface::class)->give(function() {
+        $this->app->when(SSOService::class)->needs(ClientInterface::class)->give(function() {
             return new Client(Config::get('keycloak-web.guzzle_options', []));
         });
     }

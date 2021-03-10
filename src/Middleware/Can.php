@@ -4,9 +4,9 @@ namespace RistekUSDI\SSO\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
-use RistekUSDI\SSO\Exceptions\KeycloakCanException;
+use RistekUSDI\SSO\Exceptions\CanException;
 
-class KeycloakCan extends KeycloakAuthenticated
+class Can extends Authenticated
 {
     /**
      * Handle an incoming request.
@@ -27,7 +27,7 @@ class KeycloakCan extends KeycloakAuthenticated
             return $next($request);
         }
 
-        throw new KeycloakCanException(
+        throw new CanException(
             'Unauthenticated.', $guards, $this->redirectTo($request)
         );
     }

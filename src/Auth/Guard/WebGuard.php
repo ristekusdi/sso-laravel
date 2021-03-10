@@ -6,16 +6,16 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
-use RistekUSDI\SSO\Auth\KeycloakAccessToken;
-use RistekUSDI\SSO\Exceptions\KeycloakCallbackException;
-use RistekUSDI\SSO\Models\KeycloakUser;
-use RistekUSDI\SSO\Facades\KeycloakWeb;
 use Illuminate\Contracts\Auth\UserProvider;
+use RistekUSDI\SSO\Auth\AccessToken;
+use RistekUSDI\SSO\Exceptions\CallbackException;
+use RistekUSDI\SSO\Models\User;
+use RistekUSDI\SSO\Facades\SSOWeb;
 
 class WebGuard implements Guard
 {
     /**
-     * @var null|Authenticatable|KeycloakUser
+     * @var null|Authenticatable|User
      */
     protected $user;
 
@@ -105,7 +105,7 @@ class WebGuard implements Guard
          * Store the section
          */
         $credentials['refresh_token'] = $credentials['refresh_token'] ?? '';
-        KeycloakWeb::saveToken($credentials);
+        SSOWeb::saveToken($credentials);
 
         return $this->authenticate();
     }
@@ -113,23 +113,23 @@ class WebGuard implements Guard
     /**
      * Try to authenticate the user
      *
-     * @throws KeycloakCallbackException
+     * @throws CallbackException
      * @return boolean
      */
     public function authenticate()
     {
         // Get Credentials
-        $credentials = KeycloakWeb::retrieveToken();
+        $credentials = SSOWeb::retrieveToken();
         if (empty($credentials)) {
             return false;
         }
 
-        $user = KeycloakWeb::getUserProfile($credentials);
+        $user = SSOWeb::getUserProfile($credentials);
         if (empty($user)) {
-            KeycloakWeb::forgetToken();
+            SSOWeb::forgetToken();
 
             if (Config::get('app.debug', false)) {
-                throw new KeycloakCallbackException('User cannot be authenticated.');
+                throw new CallbackException('User cannot be authenticated.');
             }
 
             return false;
@@ -160,13 +160,13 @@ class WebGuard implements Guard
             return false;
         }
 
-        $token = KeycloakWeb::retrieveToken();
+        $token = SSOWeb::retrieveToken();
 
         if (empty($token) || empty($token['access_token'])) {
             return false;
         }
 
-        $token = new KeycloakAccessToken($token);
+        $token = new AccessToken($token);
         $token = $token->parseAccessToken();
 
         $resourceRoles = $token['resource_access'] ?? [];

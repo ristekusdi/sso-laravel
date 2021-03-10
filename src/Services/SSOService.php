@@ -13,17 +13,17 @@ use Illuminate\Support\Facades\Route;
 use RistekUSDI\SSO\Auth\AccessToken;
 use RistekUSDI\SSO\Auth\Guard\WebGuard;
 
-class KeycloakService
+class SSOService
 {
     /**
      * The Session key for token
      */
-    const KEYCLOAK_SESSION = '_keycloak_token';
+    const SSO_SESSION = '_sso_token';
 
     /**
      * The Session key for state
      */
-    const KEYCLOAK_SESSION_STATE = '_keycloak_state';
+    const SSO_SESSION_STATE = '_sso_state';
 
     /**
      * Keycloak URL
@@ -354,7 +354,7 @@ class KeycloakService
      */
     public function retrieveToken()
     {
-        return session()->get(self::KEYCLOAK_SESSION);
+        return session()->get(self::SSO_SESSION);
     }
 
     /**
@@ -364,7 +364,7 @@ class KeycloakService
      */
     public function saveToken($credentials)
     {
-        session()->put(self::KEYCLOAK_SESSION, $credentials);
+        session()->put(self::SSO_SESSION, $credentials);
         session()->save();
     }
 
@@ -375,7 +375,7 @@ class KeycloakService
      */
     public function forgetToken()
     {
-        session()->forget(self::KEYCLOAK_SESSION);
+        session()->forget(self::SSO_SESSION);
         session()->save();
     }
 
@@ -386,7 +386,7 @@ class KeycloakService
      */
     public function validateState($state)
     {
-        $challenge = session()->get(self::KEYCLOAK_SESSION_STATE);
+        $challenge = session()->get(self::SSO_SESSION_STATE);
         return (! empty($state) && ! empty($challenge) && $challenge === $state);
     }
 
@@ -397,7 +397,7 @@ class KeycloakService
      */
     public function saveState()
     {
-        session()->put(self::KEYCLOAK_SESSION_STATE, $this->state);
+        session()->put(self::SSO_SESSION_STATE, $this->state);
         session()->save();
     }
 
@@ -408,7 +408,7 @@ class KeycloakService
      */
     public function forgetState()
     {
-        session()->forget(self::KEYCLOAK_SESSION_STATE);
+        session()->forget(self::SSO_SESSION_STATE);
         session()->save();
     }
 

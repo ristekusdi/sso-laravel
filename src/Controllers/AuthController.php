@@ -5,8 +5,8 @@ namespace RistekUSDI\SSO\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
-use RistekUSDI\SSO\Exceptions\SSOCallbackException;
-use RistekUSDI\SSO\Facades\KeycloakWeb;
+use RistekUSDI\SSO\Exceptions\CallbackException;
+use RistekUSDI\SSO\Facades\SSOWeb;
 
 class AuthController extends Controller
 {
@@ -17,8 +17,8 @@ class AuthController extends Controller
      */
     public function login()
     {
-        $url = KeycloakWeb::getLoginUrl();
-        KeycloakWeb::saveState();
+        $url = SSOWeb::getLoginUrl();
+        SSOWeb::saveState();
 
         return redirect($url);
     }
@@ -30,9 +30,9 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        KeycloakWeb::forgetToken();
+        SSOWeb::forgetToken();
 
-        $url = KeycloakWeb::getLogoutUrl();
+        $url = SSOWeb::getLogoutUrl();
         return redirect($url);
     }
 
@@ -43,14 +43,14 @@ class AuthController extends Controller
      */
     public function register()
     {
-        $url = KeycloakWeb::getRegisterUrl();
+        $url = SSOWeb::getRegisterUrl();
         return redirect($url);
     }
 
     /**
-     * Keycloak callback page
+     * SSO callback page
      *
-     * @throws SSOCallbackException
+     * @throws CallbackException
      *
      * @return view
      */
@@ -61,21 +61,21 @@ class AuthController extends Controller
             $error = $request->input('error_description');
             $error = ($error) ?: $request->input('error');
 
-            throw new SSOCallbackException($error);
+            throw new CallbackException($error);
         }
 
         // Check given state to mitigate CSRF attack
         $state = $request->input('state');
-        if (empty($state) || ! KeycloakWeb::validateState($state)) {
-            KeycloakWeb::forgetState();
+        if (empty($state) || ! SSOWeb::validateState($state)) {
+            SSOWeb::forgetState();
 
-            throw new SSOCallbackException('Invalid state');
+            throw new CallbackException('Invalid state');
         }
 
         // Change code for token
         $code = $request->input('code');
         if (! empty($code)) {
-            $token = KeycloakWeb::getAccessToken($code);
+            $token = SSOWeb::getAccessToken($code);
 
             if (Auth::validate($token)) {
                 $url = config('keycloak-web.redirect_url', '/admin');

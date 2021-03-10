@@ -31,10 +31,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "RistekUSDI\\SSO\\KeycloakWebGuardServiceProvider"
+                "RistekUSDI\\SSO\\WebGuardServiceProvider"
             ],
             "aliases": {
-                "KeycloakWeb": "RistekUSDI\\SSO\\Facades\\KeycloakWeb"
+                "SSOWeb": "RistekUSDI\\SSO\\Facades\\SSOWeb"
             }
         }
     }

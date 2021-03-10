@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static getUserProfile(array $credentials)
  * @method static forgetToken()
  */
-class KeycloakWeb extends Facade
+class SSOWeb extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -20,6 +20,6 @@ class KeycloakWeb extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'keycloak-web';
+        return 'sso-web';
     }
 }
