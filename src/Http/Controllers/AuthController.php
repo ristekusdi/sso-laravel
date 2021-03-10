@@ -1,6 +1,6 @@
 <?php
 
-namespace RistekUSDI\SSO\Controllers;
+namespace RistekUSDI\SSO\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

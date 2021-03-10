@@ -8,6 +8,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use RistekUSDI\SSO\Auth\Guard\WebGuard;
 use RistekUSDI\SSO\Auth\WebUserProvider;
@@ -30,6 +31,9 @@ class WebGuardServiceProvider extends ServiceProvider
 
         $this->publishes([$config => config_path('sso.php')], 'config');
         $this->mergeConfigFrom($config, 'sso');
+
+        // Routes
+        $this->registerRoutes();
 
         // User Provider
         Auth::provider('keycloak-users', function($app, array $config) {
@@ -60,9 +64,6 @@ class WebGuardServiceProvider extends ServiceProvider
             return $app->make(SSOService::class);
         });
 
-        // Routes
-        $this->registerRoutes();
-
         // Middleware Group
         $this->app['router']->middlewareGroup('keycloak-web', [
             StartSession::class,
@@ -85,33 +86,8 @@ class WebGuardServiceProvider extends ServiceProvider
      */
     private function registerRoutes()
     {
-        $defaults = [
-            'login' => 'login',
-            'logout' => 'logout',
-            'register' => 'register',
-            'callback' => 'callback',
-        ];
-
-        $routes = Config::get('sso.routes', []);
-        $routes = array_merge($defaults, $routes);
-
-        // Register Routes
-        $router = $this->app->make('router');
-
-        if (! empty($routes['login'])) {
-            $router->middleware('web')->get($routes['login'], 'RistekUSDI\SSO\Controllers\AuthController@login')->name('sso.login');
-        }
-
-        if (! empty($routes['logout'])) {
-            $router->middleware('web')->get($routes['logout'], 'RistekUSDI\SSO\Controllers\AuthController@logout')->name('sso.logout');
-        }
-
-        if (! empty($routes['register'])) {
-            $router->middleware('web')->get($routes['register'], 'RistekUSDI\SSO\Controllers\AuthController@register')->name('sso.register');
-        }
-
-        if (! empty($routes['callback'])) {
-            $router->middleware('web')->get($routes['callback'], 'RistekUSDI\SSO\Controllers\AuthController@callback')->name('sso.callback');
-        }
+        Route::group(['middleware' => 'web'], function () {
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        });
     }
 }
