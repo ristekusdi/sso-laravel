@@ -36,12 +36,12 @@ class WebGuardServiceProvider extends ServiceProvider
         $this->registerRoutes();
 
         // User Provider
-        Auth::provider('keycloak-users', function($app, array $config) {
+        Auth::provider('sso-users', function($app, array $config) {
             return new WebUserProvider($config['model']);
         });
 
         // Gate
-        Gate::define('keycloak-web', function ($user, $roles, $resource = '') {
+        Gate::define('sso-web', function ($user, $roles, $resource = '') {
             return $user->hasRole($roles, $resource) ?: null;
         });
     }
@@ -54,7 +54,7 @@ class WebGuardServiceProvider extends ServiceProvider
     public function register()
     {
         // SSO Web Guard
-        Auth::extend('keycloak-web', function ($app, $name, array $config) {
+        Auth::extend('sso-web', function ($app, $name, array $config) {
             $provider = Auth::createUserProvider($config['provider']);
             return new WebGuard($provider, $app->request);
         });
@@ -65,13 +65,13 @@ class WebGuardServiceProvider extends ServiceProvider
         });
 
         // Middleware Group
-        $this->app['router']->middlewareGroup('keycloak-web', [
+        $this->app['router']->middlewareGroup('sso-web', [
             StartSession::class,
             Authenticated::class,
         ]);
 
-        // Add Middleware "keycloak-web-can"
-        $this->app['router']->aliasMiddleware('keycloak-web-can', Can::class);
+        // Add Middleware "sso-web-can"
+        $this->app['router']->aliasMiddleware('sso-web-can', Can::class);
 
         // Bind for client data
         $this->app->when(SSOService::class)->needs(ClientInterface::class)->give(function() {
