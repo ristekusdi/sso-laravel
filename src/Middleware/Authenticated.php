@@ -14,6 +14,6 @@ class Authenticated extends Authenticate
      */
     protected function redirectTo($request)
     {
-        return route('keycloak.login');
+        return route('sso.login');
     }
 }

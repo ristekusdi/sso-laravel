@@ -99,19 +99,19 @@ class WebGuardServiceProvider extends ServiceProvider
         $router = $this->app->make('router');
 
         if (! empty($routes['login'])) {
-            $router->middleware('web')->get($routes['login'], 'RistekUSDI\SSO\Controllers\AuthController@login')->name('keycloak.login');
+            $router->middleware('web')->get($routes['login'], 'RistekUSDI\SSO\Controllers\AuthController@login')->name('sso.login');
         }
 
         if (! empty($routes['logout'])) {
-            $router->middleware('web')->get($routes['logout'], 'RistekUSDI\SSO\Controllers\AuthController@logout')->name('keycloak.logout');
+            $router->middleware('web')->get($routes['logout'], 'RistekUSDI\SSO\Controllers\AuthController@logout')->name('sso.logout');
         }
 
         if (! empty($routes['register'])) {
-            $router->middleware('web')->get($routes['register'], 'RistekUSDI\SSO\Controllers\AuthController@register')->name('keycloak.register');
+            $router->middleware('web')->get($routes['register'], 'RistekUSDI\SSO\Controllers\AuthController@register')->name('sso.register');
         }
 
         if (! empty($routes['callback'])) {
-            $router->middleware('web')->get($routes['callback'], 'RistekUSDI\SSO\Controllers\AuthController@callback')->name('keycloak.callback');
+            $router->middleware('web')->get($routes['callback'], 'RistekUSDI\SSO\Controllers\AuthController@callback')->name('sso.callback');
         }
     }
 }
