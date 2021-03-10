@@ -1,0 +1,41 @@
+{
+    "name": "ristekusdi/sso",
+    "description": ":package_description",
+    "license": "license",
+    "authors": [
+        {
+            "name": "Riset dan Teknologi USDI",
+            "email": "usdi@unud.ac.id",
+            "homepage": "https://usdi.unud.ac.id"
+        }
+    ],
+    "homepage": "https://github.com/ristekusdi/sso",
+    "keywords": ["Laravel", "SSO"],
+    "require": {
+        "illuminate/support": "~7|~8"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~9.0",
+        "orchestra/testbench": "~5|~6"
+    },
+    "autoload": {
+        "psr-4": {
+            "RistekUSDI\\SSO\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "RistekUSDI\\SSO\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "RistekUSDI\\SSO\\KeycloakWebGuardServiceProvider"
+            ],
+            "aliases": {
+                "KeycloakWeb": "RistekUSDI\\SSO\\Facades\\KeycloakWeb"
+            }
+        }
+    }
+}
