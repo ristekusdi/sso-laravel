@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Contracts\Auth\UserProvider;
 use RistekUSDI\SSO\Auth\AccessToken;
 use RistekUSDI\SSO\Exceptions\CallbackException;
@@ -174,5 +175,63 @@ class WebGuard implements Guard
         $resourceRoles = $resourceRoles['roles'] ?? [];
 
         return empty(array_diff((array) $roles, $resourceRoles));
+    }
+
+    /**
+     * Check user is authenticated and has a permission(s)
+     *
+     * @param array|string $scopes
+     * @param string $resource Default is empty: point to client_id
+     *
+     * @return boolean
+     */
+    public function hasPermission($permissions)
+    {
+        if (! $this->check()) {
+            return false;
+        }
+
+        $token = SSOWeb::retrieveToken();
+
+        if (empty($token) || empty($token['access_token'])) {
+            return false;
+        }
+
+        $token = new AccessToken($token);
+
+        $response = Http::withToken($token->getAccessToken())->asForm()
+        ->post('https://sso.unud.ac.id/auth/realms/imissu/protocol/openid-connect/token', [
+            'grant_type' => 'urn:ietf:params:oauth:grant-type:uma-ticket',
+            'audience' => Config::get('sso.client_id')
+        ]);
+        
+        if ($response->failed()) {
+            return false;
+        }
+
+        $token = new AccessToken($response->json());
+
+        $response = Http::withBasicAuth(Config::get('sso.client_id'), Config::get('sso.client_secret'))
+        ->asForm()->post('https://sso.unud.ac.id/auth/realms/imissu/protocol/openid-connect/token/introspect', [
+            'token_type_hint' => 'requesting_party_token',
+            'token' => $token->getAccessToken()
+        ]);
+
+        if ($response->failed()) {
+            return false;
+        }
+
+        $result = $response->json();
+
+        $resourcePermissions = [];
+        foreach ($result['permissions'] as $permission) {
+            if (!empty($permission['resource_scopes'])) {
+                foreach ($permission['resource_scopes'] as $value) {
+                    $resourcePermissions[] = $value;
+                }
+            }
+        }
+
+        return empty(array_diff((array) $permissions, $resourcePermissions));
     }
 }

@@ -122,6 +122,19 @@ class User implements Authenticatable
     }
 
     /**
+     * Check user has permissions
+     *
+     * @see WebGuard::hasPermission()
+     *
+     * @param  string|array  $permissions
+     * @return boolean
+     */
+    public function hasPermission($permissions)
+    {
+        return Auth::hasPermission($permissions);
+    }
+
+    /**
      * Get the password for the user.
      *
      * @return string
