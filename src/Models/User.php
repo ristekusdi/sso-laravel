@@ -14,7 +14,13 @@ class User implements Authenticatable
      */
     protected $fillable = [
         'name',
-        'email'
+        'email',
+        'sub',
+        'preferred_username',
+        'given_name',
+        'family_name',
+        'unudIdentifierId',
+        'unudUserTypeId'
     ];
 
     /**
@@ -33,6 +39,26 @@ class User implements Authenticatable
     {
         foreach ($profile as $key => $value) {
             if (in_array($key, $this->fillable)) {
+                switch ($key) {
+                    case 'name':
+                        $key = 'full_identity';
+                        break;
+                    case 'unudIdentifierId':
+                        $key = 'unud_identifier_id';
+                        break;
+                    case 'unudUserTypeId':
+                        $key = 'unud_type_id';
+                        break;
+                    case 'family_name':
+                        $key = 'name';
+                        break;
+                    case 'given_name':
+                        $key = 'identifier';
+                        break;
+                    case 'preferred_username':
+                        $key = 'username';
+                        break;
+                }
                 $this->attributes[ $key ] = $value;
             }
         }
