@@ -110,7 +110,7 @@ class User implements Authenticatable
     /**
      * Check user has roles
      *
-     * @see KeycloakWebGuard::hasRole()
+     * @see WebGuard::hasRole()
      *
      * @param  string|array  $roles
      * @param  string  $resource
