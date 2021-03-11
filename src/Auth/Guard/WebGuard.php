@@ -153,7 +153,7 @@ class WebGuard implements Guard
     public function hasRole($roles, $resource = '')
     {
         if (empty($resource)) {
-            $resource = Config::get('keycloak-web.client_id');
+            $resource = Config::get('sso.client_id');
         }
 
         if (! $this->check()) {
