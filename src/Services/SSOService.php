@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use RistekUSDI\SSO\Auth\AccessToken;
 use RistekUSDI\SSO\Auth\Guard\WebGuard;
+use RistekUSDI\SSO\Support\OpenIDConfig;
 
 class SSOService
 {
@@ -146,7 +147,7 @@ class SSOService
      */
     public function getLoginUrl()
     {
-        $url = $this->getOpenIdValue('authorization_endpoint');
+        $url = (new OpenIDConfig)->get('authorization_endpoint');
         $params = [
             'scope' => 'openid',
             'response_type' => 'code',
@@ -165,7 +166,7 @@ class SSOService
      */
     public function getLogoutUrl()
     {
-        $url = $this->getOpenIdValue('end_session_endpoint');
+        $url = (new OpenIDConfig)->get('end_session_endpoint');
 
         if (empty($this->redirectLogout)) {
             $this->redirectLogout = url('/');
@@ -180,18 +181,6 @@ class SSOService
     }
 
     /**
-     * Return the register URL
-     *
-     * @link https://stackoverflow.com/questions/51514437/keycloak-direct-user-link-registration
-     *
-     * @return string
-     */
-    public function getRegisterUrl()
-    {
-        $url = $this->getLoginUrl();
-        return str_replace('/auth?', '/registrations?', $url);
-    }
-    /**
      * Get access token from Code
      *
      * @param  string $code
@@ -199,7 +188,7 @@ class SSOService
      */
     public function getAccessToken($code)
     {
-        $url = $this->getOpenIdValue('token_endpoint');
+        $url = (new OpenIDConfig)->get('token_endpoint');
         $params = [
             'code' => $code,
             'client_id' => $this->getClientId(),
@@ -239,7 +228,7 @@ class SSOService
             return [];
         }
 
-        $url = $this->getOpenIdValue('token_endpoint');
+        $url = (new OpenIDConfig)->get('token_endpoint');
         $params = [
             'client_id' => $this->getClientId(),
             'grant_type' => 'refresh_token',
@@ -275,7 +264,7 @@ class SSOService
      */
     public function invalidateRefreshToken($refreshToken)
     {
-        $url = $this->getOpenIdValue('end_session_endpoint');
+        $url = (new OpenIDConfig)->get('end_session_endpoint');
         $params = [
             'client_id' => $this->getClientId(),
             'refresh_token' => $refreshToken,
@@ -315,13 +304,13 @@ class SSOService
 
             $claims = array(
                 'aud' => $this->getClientId(),
-                'iss' => $this->getOpenIdValue('issuer'),
+                'iss' => $url = (new OpenIDConfig)->get('issuer'),
             );
 
             $token->validateIdToken($claims);
 
             // Get userinfo
-            $url = $this->getOpenIdValue('userinfo_endpoint');
+            $url = (new OpenIDConfig)->get('userinfo_endpoint');
             $headers = [
                 'Authorization' => 'Bearer ' . $token->getAccessToken(),
                 'Accept' => 'application/json',
@@ -476,66 +465,6 @@ class SSOService
     protected function getState()
     {
         return $this->state;
-    }
-
-    /**
-     * Return a value from the Open ID Configuration
-     *
-     * @param  string $key
-     * @return string
-     */
-    protected function getOpenIdValue($key)
-    {
-        if (! $this->openid) {
-            $this->openid = $this->getOpenIdConfiguration();
-        }
-
-        return Arr::get($this->openid, $key);
-    }
-
-    /**
-     * Retrieve OpenId Endpoints
-     *
-     * @return array
-     */
-    protected function getOpenIdConfiguration()
-    {
-        $cacheKey = 'keycloak_web_guard_openid-' . $this->realm . '-' . md5($this->baseUrl);
-
-        // From cache?
-        if ($this->cacheOpenid) {
-            $configuration = Cache::get($cacheKey, []);
-
-            if (! empty($configuration)) {
-                return $configuration;
-            }
-        }
-
-        // Request if cache empty or not using
-        $url = $this->baseUrl . '/realms/' . $this->realm;
-        $url = $url . '/.well-known/openid-configuration';
-
-        $configuration = [];
-
-        try {
-            $response = $this->httpClient->request('GET', $url);
-
-            if ($response->getStatusCode() === 200) {
-                $configuration = $response->getBody()->getContents();
-                $configuration = json_decode($configuration, true);
-            }
-        } catch (GuzzleException $e) {
-            $this->logException($e);
-
-            throw new Exception('[SSO Error] It was not possible to load OpenId configuration: ' . $e->getMessage());
-        }
-
-        // Save cache
-        if ($this->cacheOpenid) {
-            Cache::put($cacheKey, $configuration);
-        }
-
-        return $configuration;
     }
 
     /**
