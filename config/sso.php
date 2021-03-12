@@ -52,22 +52,6 @@ return [
     'redirect_url' => '/',
 
     /**
-     * The routes for authenticate
-     *
-     * Accept a string as the first parameter of route() or false to disable the route.
-     *
-     * The routes will receive the name "sso.{route}" and login/callback are required.
-     * So, if you make it false, you shoul register a named 'sso.login' route and extend
-     * the RistekUSDI\SSO\Controllers\AuthController controller.
-     */
-    'routes' => [
-        'login' => 'login',
-        'logout' => 'logout',
-        'register' => 'register',
-        'callback' => 'callback',
-    ],
-
-    /**
     * GuzzleHttp Client options
     *
     * @link http://docs.guzzlephp.org/en/stable/request-options.html
