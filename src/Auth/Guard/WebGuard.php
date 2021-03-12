@@ -182,7 +182,6 @@ class WebGuard implements Guard
      * Check user is authenticated and has a permission(s)
      *
      * @param array|string $scopes
-     * @param string $resource Default is empty: point to client_id
      *
      * @return boolean
      */
@@ -212,6 +211,7 @@ class WebGuard implements Guard
 
         $token = new AccessToken($response->json());
 
+        // Introspection permissions
         $response = Http::withBasicAuth(Config::get('sso.client_id'), Config::get('sso.client_secret'))
         ->asForm()->post((new OpenIDConfig)->get('token_introspection_endpoint'), [
             'token_type_hint' => 'requesting_party_token',
@@ -223,6 +223,11 @@ class WebGuard implements Guard
         }
 
         $result = $response->json();
+
+        // If permissions don't active then return false
+        if (!$result['active']) {
+            return false;
+        }
 
         $resourcePermissions = [];
         foreach ($result['permissions'] as $permission) {
