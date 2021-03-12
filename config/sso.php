@@ -49,7 +49,7 @@ return [
      *
      * @see RistekUSDI\SSO\Controllers\AuthController::callback()
      */
-    'redirect_url' => '/admin',
+    'redirect_url' => '/',
 
     /**
      * The routes for authenticate
