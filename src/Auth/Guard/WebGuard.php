@@ -179,13 +179,11 @@ class WebGuard implements Guard
     }
 
     /**
-     * Check user is authenticated and has a permission(s)
+     * Get list of permission authenticate user
      *
-     * @param array|string $scopes
-     *
-     * @return boolean
+     * @return array
      */
-    public function hasPermission($permissions)
+    public function permissions()
     {
         if (! $this->check()) {
             return false;
@@ -206,7 +204,7 @@ class WebGuard implements Guard
         ]);
         
         if ($response->failed()) {
-            return false;
+            return [];
         }
 
         $token = new AccessToken($response->json());
@@ -219,14 +217,14 @@ class WebGuard implements Guard
         ]);
 
         if ($response->failed()) {
-            return false;
+            return [];
         }
 
         $result = $response->json();
 
         // If permissions don't active then return false
         if (!$result['active']) {
-            return false;
+            return [];
         }
 
         $resourcePermissions = [];
@@ -238,6 +236,18 @@ class WebGuard implements Guard
             }
         }
 
-        return empty(array_diff((array) $permissions, $resourcePermissions));
+        return $resourcePermissions;
+    }
+
+    /**
+     * Check user is authenticated and has a permission(s)
+     *
+     * @param array|string $scopes
+     *
+     * @return boolean
+     */
+    public function hasPermission($permissions)
+    {
+        return empty(array_diff((array) $permissions, $this->permissions()));
     }
 }
