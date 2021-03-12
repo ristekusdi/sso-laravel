@@ -3,7 +3,7 @@
 namespace RistekUSDI\SSO\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use RistekUSDI\SSO\Exceptions\CanException;
 
 class Can extends Authenticated
@@ -13,22 +13,15 @@ class Can extends Authenticated
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
-     * @param  string|null  $guard
+     * @param  string|null  $permissions
      * @return mixed
      */
-    public function handle($request, Closure $next, ...$guards)
+    public function handle($request, Closure $next, ...$permissions)
     {
-        if (empty($guards) && Auth::check()) {
-            return $next($request);
+        if (! $request->user()->hasPermission($permissions)) {
+            return redirect('/')->with('error_message', 'Unauthorized.');
         }
 
-        $guards = explode('|', ($guards[0] ?? ''));
-        if (Auth::hasRole($guards)) {
-            return $next($request);
-        }
-
-        throw new CanException(
-            'Unauthenticated.', $guards, $this->redirectTo($request)
-        );
+        return $next($request);
     }
 }
