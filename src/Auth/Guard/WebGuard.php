@@ -12,6 +12,7 @@ use RistekUSDI\SSO\Auth\AccessToken;
 use RistekUSDI\SSO\Exceptions\CallbackException;
 use RistekUSDI\SSO\Models\User;
 use RistekUSDI\SSO\Facades\SSOWeb;
+use RistekUSDI\SSO\Support\OpenIDConfig;
 
 class WebGuard implements Guard
 {
@@ -200,7 +201,7 @@ class WebGuard implements Guard
         $token = new AccessToken($token);
 
         $response = Http::withToken($token->getAccessToken())->asForm()
-        ->post('https://sso.unud.ac.id/auth/realms/imissu/protocol/openid-connect/token', [
+        ->post((new OpenIDConfig)->get('token_endpoint'), [
             'grant_type' => 'urn:ietf:params:oauth:grant-type:uma-ticket',
             'audience' => Config::get('sso.client_id')
         ]);
@@ -212,7 +213,7 @@ class WebGuard implements Guard
         $token = new AccessToken($response->json());
 
         $response = Http::withBasicAuth(Config::get('sso.client_id'), Config::get('sso.client_secret'))
-        ->asForm()->post('https://sso.unud.ac.id/auth/realms/imissu/protocol/openid-connect/token/introspect', [
+        ->asForm()->post((new OpenIDConfig)->get('token_introspection_endpoint'), [
             'token_type_hint' => 'requesting_party_token',
             'token' => $token->getAccessToken()
         ]);
