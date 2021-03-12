@@ -78,7 +78,7 @@ class AuthController extends Controller
             $token = SSOWeb::getAccessToken($code);
 
             if (Auth::validate($token)) {
-                $url = config('keycloak-web.redirect_url', '/admin');
+                $url = config('sso.redirect_url', '/admin');
                 return redirect()->intended($url);
             }
         }
