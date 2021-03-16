@@ -96,6 +96,23 @@ Contoh:
 - `Auth::check()` untuk mengecek apakah pengguna sudah terotentikasi atau login.
 - `Auth::guest()` untuk mengecek apakah pengguna adalah "tamu" (belum login atau terotentikasi).
 
+Atribut pengguna yang tersedia antara lain:
+
+- `sub`
+- `unud_identifier_id`
+- `full_identity` 
+
+Format dari `full_identity` adalah `NIP Nama Pengguna` atau `NIM Nama Pengguna`.
+
+- `unud_type_id`
+- `username`
+- `identifier`
+
+`identifier` adalah NIP atau NIM.
+
+- `name`
+- `email`
+
 ### Data Otorisasi
 
 Gunakan perintah `Auth::user()->permissions()` atau `auth()->user()->permissions()`. Hasil yang di dapatkan adalah daftar otorisasi dalam bentuk array.
