@@ -2,6 +2,14 @@
 
 Laravel package untuk memudahkan otentikasi pengguna di aplikasi Universitas Udayana.
 
+## Motivasi
+
+Sejauh ini sudah ada package open source bernama [laravel-web-keycloak-guard dari Vizir Studio](https://github.com/Vizir/laravel-keycloak-web-guard). Tetapi, kami melihat bahwa fitur-fitur yang disediakan di package tersebut kurang memenuhi kebutuhan di internal aplikasi Universitas Udayana seperti tidak ada pengecekan permission.
+
+Meskipun kami bisa melakukan pull request berupa fitur tambahan ke package tersebut namun butuh waktu untuk review, perundingan dan persetujan dari Vizir Studio sebagai pemilik package tersebut. Vizir merancang package mereka untuk memenuhi kebutuhan mereka.
+
+Oleh karena itu, package SSO yang disediakan oleh Ristek USDI dengan tujuan untuk memenuhi kebutuhan internal aplikasi Universitas Udayana dan memudahkan kami untuk menambahkan fitur tambahan atau menyesuaikan fitur di package SSO.
+
 ## Prasyarat
 
 - PHP versi >= 7.4
@@ -19,7 +27,27 @@ composer require ristekusdi/sso
 
 ### Memasang nilai di Environment file
 
-TBA
+- `SSO_BASE_URL`
+
+SSO server Url. Contoh: `https://your-sso-domain.com/auth`
+
+- `SSO_REALM`
+
+SSO realm. Nilai bawaan adalah `master`.
+
+- `SSO_REALM_PUBLIC_KEY`
+
+SSO server realm public key. Dari dashboard menuju **Realm Settings** >> **Keys** >> **RS256** >> **Public key**
+
+- `SSO_CLIENT_ID`
+
+Dari dashboard **klik edit Client ID yang dipilih** >> **Settings** >> **salin nama Client ID di field Client ID**
+
+- `SSO_CLIENT_SECRET`
+
+> Pastikan pengaturan **Access Type** adalah **confidential** agar memperoleh nilai Secret
+
+Dari dashboard **klik edit Client ID yang dipilih** >> **Credentials** >> **salin isian Secret di field Secret**
 
 ### Otentikasi
 
