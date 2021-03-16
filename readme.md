@@ -25,6 +25,14 @@ composer require ristekusdi/sso
 
 ## Konfigurasi
 
+> Jika ingin mengubah nilai dari `redirect_url` jalankan perintah 
+
+```bash
+php artisan vendor:publish --provider="RistekUSDI\SSO\WebGuardServiceProvider"
+```
+
+Untuk mendapatkan file konfigurasi `sso.php` di direktori `config`.
+
 ### Memasang nilai di Environment file
 
 - `SSO_BASE_URL`
