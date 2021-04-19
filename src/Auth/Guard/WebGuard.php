@@ -129,11 +129,6 @@ class WebGuard implements Guard
         $user = SSOWeb::getUserProfile($credentials);
         if (empty($user)) {
             SSOWeb::forgetToken();
-
-            if (Config::get('app.debug', false)) {
-                throw new CallbackException('User cannot be authenticated.');
-            }
-
             return false;
         }
 
