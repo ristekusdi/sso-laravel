@@ -1,6 +1,6 @@
 {
-    "name": "ristekusdi/sso",
-    "description": "SSO for internal Udayana projects",
+    "name": "ristekusdi/sso-laravel",
+    "description": "SSO for internal Udayana projects based on Laravel",
     "license": "MIT",
     "authors": [
         {
@@ -9,7 +9,7 @@
             "homepage": "https://usdi.unud.ac.id"
         }
     ],
-    "homepage": "https://github.com/ristekusdi/sso",
+    "homepage": "https://github.com/ristekusdi/sso-laravel",
     "keywords": ["SSO", "authentication", "authorization"],
     "require": {
         "php": ">=7.4",
