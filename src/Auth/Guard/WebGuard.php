@@ -243,6 +243,6 @@ class WebGuard implements Guard
      */
     public function hasPermission($permissions)
     {
-        return empty(array_diff((array) $permissions, $this->permissions()));
+        return !empty(array_intersect((array) $permissions, $this->permissions()));
     }
 }
