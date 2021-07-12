@@ -20,7 +20,7 @@ Oleh karena itu, package SSO yang disediakan oleh Ristek USDI dengan tujuan untu
 Via Composer
 
 ```bash
-composer require ristekusdi/sso
+composer require ristekusdi/sso-laravel
 ```
 
 ## Konfigurasi
@@ -201,6 +201,10 @@ Kemudian ubah provider user model seperti di bawah ini:
 
 > SSOUser model mengextend class `Illuminate\Contracts\Auth\Authenticatable`.
 
-## Di mana access token dan refresh token disimpan?
+## Bagaimana cara mendapatkan access token dan refresh token?
 
-Di session. Panggil dengan perintah `session()->get('_sso_token.access_token')` untuk mendapatkan access token dan `session()->get('_sso_token.refresh_token')`.
+Ada dua cara untuk mendapatkan access token dan refresh token:
+
+1. Mengimpor facade `SSOWeb` dengan perintah `use RistekUSDI\SSO\Facades\SSOWeb;`, kemudian jalankan perintah `SSOWeb::retrieveToken()`.
+
+2. Menggunakan session. Panggil dengan perintah `session()->get('_sso_token.access_token')` untuk mendapatkan access token dan `session()->get('_sso_token.refresh_token')`.
