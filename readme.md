@@ -92,7 +92,11 @@ Pertama, kita akan mengubah konfigurasi yang ada di `config/auth.php`
 
 ## Penggunaan Dasar
 
-Jalankan `php artisan serve` dan masukkan URL http://localhost:8000/login untuk diarahkan ke halaman login SSO.
+Jalankan `php artisan serve` dan masukkan URL http://localhost:8000/sso/login untuk diarahkan ke halaman login SSO.
+
+- `/sso/login` untuk login.
+- `/sso/logout` untuk logout.
+- `/sso/callback` untuk callback.
 
 ### Data Pengguna
 
