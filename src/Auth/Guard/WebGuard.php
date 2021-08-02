@@ -206,7 +206,7 @@ class WebGuard implements Guard
 
         // Introspection permissions
         $response = Http::withBasicAuth(Config::get('sso.client_id'), Config::get('sso.client_secret'))
-        ->asForm()->post((new OpenIDConfig)->get('token_introspection_endpoint'), [
+        ->asForm()->post((new OpenIDConfig)->get('introspection_endpoint'), [
             'token_type_hint' => 'requesting_party_token',
             'token' => $token->getAccessToken()
         ]);
