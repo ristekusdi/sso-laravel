@@ -26,6 +26,11 @@ class WebGuardServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Load helpers file
+        if (file_exists(__DIR__ . '/helpers.php')) {
+            require __DIR__ . '/helpers.php';
+        }
+
         // Configuration
         $config = __DIR__ . '/../config/sso.php';
 
