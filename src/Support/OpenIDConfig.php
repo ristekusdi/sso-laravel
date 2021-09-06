@@ -74,7 +74,11 @@ class OpenIDConfig
         $response = Http::get($url);
 
         if ($response->failed()) {
-            throw new Exception('[SSO Error] It was not possible to load OpenId configuration: ' . $response->throw());
+            if ($response->serverError()) {
+                throw new \Exception($response->body());
+            } else {
+                throw new \Exception('[SSO Error] It was not possible to load OpenId configuration: ' . $response->throw());
+            }
         }
 
         $configuration = $response->json();
