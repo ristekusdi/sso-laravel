@@ -4,7 +4,6 @@ namespace RistekUSDI\SSO\Support;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Arr;
 
 class OpenIDConfig
@@ -71,24 +70,25 @@ class OpenIDConfig
 
         $configuration = [];
 
-        $response = Http::get($url);
-
-        if ($response->failed()) {
-            if ($response->serverError()) {
-                throw new \Exception($response->body());
-            } else {
-                throw new \Exception('[SSO Error] It was not possible to load OpenId configuration: ' . $response->throw());
+        try {
+            $response = (new \GuzzleHttp\Client())->request('GET', $url);
+            $configuration = json_decode($response->getBody()->getContents(), true);
+            
+            // Save cache
+            if ($this->cacheOpenid) {
+                Cache::put($cacheKey, $configuration);
             }
+
+            return $configuration;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            echo \GuzzleHttp\Psr7\Message::toString($e->getRequest());
+            if ($e->hasResponse()) {
+                echo \GuzzleHttp\Psr7\Message::toString($e->getResponse());
+            }
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            echo \GuzzleHttp\Psr7\Message::toString($e->getRequest());
+            echo \GuzzleHttp\Psr7\Message::toString($e->getResponse());
         }
-
-        $configuration = $response->json();
-
-        // Save cache
-        if ($this->cacheOpenid) {
-            Cache::put($cacheKey, $configuration);
-        }
-
-        return $configuration;
     }
 
     public function get($name)

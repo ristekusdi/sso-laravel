@@ -6,7 +6,6 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Contracts\Auth\UserProvider;
 use RistekUSDI\SSO\Auth\AccessToken;
 use RistekUSDI\SSO\Exceptions\CallbackException;
@@ -191,47 +190,59 @@ class WebGuard implements Guard
         }
 
         $token = new AccessToken($token);
+        try {
+            $response = (new \GuzzleHttp\Client)->request('POST', 
+            (new OpenIDConfig)->get('token_endpoint'), [
+                'headers' => [
+                    'Authorization' => "Bearer {$token->getAccessToken()}"
+                ],
+                'form_params' => [
+                    'grant_type' => 'urn:ietf:params:oauth:grant-type:uma-ticket',
+                    'audience' => Config::get('sso.client_id')
+                ]
+            ]);
+            
+            if ($response->getStatusCode() !== 200) {
+                return [];
+            }
+            
+            $token = new AccessToken(json_decode($response->getBody()->getContents(), true));
 
-        $response = Http::withToken($token->getAccessToken())->asForm()
-        ->post((new OpenIDConfig)->get('token_endpoint'), [
-            'grant_type' => 'urn:ietf:params:oauth:grant-type:uma-ticket',
-            'audience' => Config::get('sso.client_id')
-        ]);
-        
-        if ($response->failed()) {
-            return [];
-        }
+            // Introspection permissions
+            $response = (new \GuzzleHttp\Client)->request('POST', (new OpenIDConfig)->get('introspection_endpoint'), [
+                'auth' => [Config::get('sso.client_id'), Config::get('sso.client_secret')],
+                'form_params' => [
+                    'token_type_hint' => 'requesting_party_token',
+                    'token' => $token->getAccessToken()
+                ]
+            ]);
 
-        $token = new AccessToken($response->json());
+            if ($response->getStatusCode() !== 200) {
+                return [];
+            }
 
-        // Introspection permissions
-        $response = Http::withBasicAuth(Config::get('sso.client_id'), Config::get('sso.client_secret'))
-        ->asForm()->post((new OpenIDConfig)->get('introspection_endpoint'), [
-            'token_type_hint' => 'requesting_party_token',
-            'token' => $token->getAccessToken()
-        ]);
+            $result = json_decode($response->getBody()->getContents(), true);
 
-        if ($response->failed()) {
-            return [];
-        }
+            // If permissions don't active then return false
+            if (!$result['active']) {
+                return [];
+            }
 
-        $result = $response->json();
-
-        // If permissions don't active then return false
-        if (!$result['active']) {
-            return [];
-        }
-
-        $resourcePermissions = [];
-        foreach ($result['permissions'] as $permission) {
-            if (!empty($permission['resource_scopes'])) {
-                foreach ($permission['resource_scopes'] as $value) {
-                    $resourcePermissions[] = $value;
+            $resourcePermissions = [];
+            foreach ($result['permissions'] as $permission) {
+                if (!empty($permission['resource_scopes'])) {
+                    foreach ($permission['resource_scopes'] as $value) {
+                        $resourcePermissions[] = $value;
+                    }
                 }
             }
-        }
 
-        return $resourcePermissions;
+            return $resourcePermissions;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            return [];
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            return [];
+        }
     }
 
     /**
