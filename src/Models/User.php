@@ -84,7 +84,7 @@ class User implements Authenticatable
      */
     public function getKey()
     {
-        return $this->email;
+        return $this->username;
     }
 
     /**
@@ -94,7 +94,7 @@ class User implements Authenticatable
      */
     public function getAuthIdentifierName()
     {
-        return 'email';
+        return 'username';
     }
 
     /**
@@ -104,7 +104,7 @@ class User implements Authenticatable
      */
     public function getAuthIdentifier()
     {
-        return $this->email;
+        return $this->username;
     }
 
     /**
