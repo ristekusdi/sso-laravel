@@ -15,7 +15,7 @@ Laravel package untuk otentikasi pengguna pada aplikasi internal Universitas Uda
 
 1. Instal `ristekusdi/sso-laravel` dengan perintah
 ```bash 
-composer require ristekusdi/sso-laravel
+composer require ristekusdi/sso-laravel 0.1.*
 ```
 
 2. Taruh provider `WebGuardServiceProvider` (di baris akhir) pada file `config/app.php`
@@ -47,13 +47,15 @@ php artisan vendor:publish --provider="RistekUSDI\SSO\WebGuardServiceProvider"
 
 Contoh: 
 
-`Route::get('/home', 'HomeController@index')->middleware('sso-web');`
+```php
+Route::get('/home', 'HomeController@index')->middleware('sso-web');
+```
 
-## Laravel 6.x ke atas
+### Laravel 6.x ke atas
 
 1. Instal `ristekusdi/sso-laravel` dengan perintah
 ```bash 
-composer require ristekusdi/sso-laravel
+composer require ristekusdi/sso-laravel 1.*
 ```
 
 2. Untuk mengimpor file `sso.php` ke dalam folder `config` dan jika ingin mengubah nilai dari *redirect_url* jalankan perintah berikut
@@ -86,9 +88,21 @@ php artisan vendor:publish --provider="RistekUSDI\SSO\WebGuardServiceProvider"
 
 Contoh: 
 
-`Route::get('/home', 'HomeController@index')->middleware('sso-web');`
+```php
+Route::get('/home', 'HomeController@index')->middleware('sso-web');
+```
 
-### Memasang nilai di Environment file
+## Memasang nilai di Environment file
+
+Salin format di bawah ini ke dalam file `.env`
+
+```bash
+SSO_BASE_URL=
+SSO_REALM=
+SSO_REALM_PUBLIC_KEY=
+SSO_CLIENT_ID=
+SSO_CLIENT_SECRET=
+```
 
 - `SSO_BASE_URL`
 
@@ -120,7 +134,7 @@ Jalankan `php artisan serve` dan masukkan URL http://localhost:8000/sso/login un
 - `/sso/logout` untuk logout.
 - `/sso/callback` untuk callback.
 
-### Data Pengguna
+## Data Pengguna
 
 Package ini mengimplementasikan `Illuminate\Contracts\Auth\Guard`. Sehingga, semua method bawaan Laravel tersedia.
 
