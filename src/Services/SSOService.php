@@ -130,7 +130,7 @@ class SSOService
         }
 
         if (is_null($this->redirectLogout)) {
-            $this->redirectLogout = Config::get('sso.redirect_logout');
+            $this->redirectLogout = !empty(Config::get('sso.redirect_url')) ? url(Config::get('sso.redirect_url')) : url('/');
         }
 
         $this->state = generate_random_state();
@@ -166,10 +166,6 @@ class SSOService
     public function getLogoutUrl()
     {
         $url = (new OpenIDConfig)->get('end_session_endpoint');
-
-        if (empty($this->redirectLogout)) {
-            $this->redirectLogout = url('/');
-        }
 
         $params = [
             'client_id' => $this->getClientId(),
