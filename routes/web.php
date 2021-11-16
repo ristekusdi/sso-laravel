@@ -1,8 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use RistekUSDI\SSO\Http\Controllers\AuthController;
 
-Route::get('/sso/login', [AuthController::class, 'login'])->name('sso.login');
-Route::get('/sso/logout', [AuthController::class, 'logout'])->name('sso.logout');
-Route::get('/sso/callback', [AuthController::class, 'callback'])->name('sso.callback');
+Route::get('/sso/login', 'RistekUSDI\SSO\Http\Controllers\AuthController@login')->name('sso.login');
+Route::get('/sso/logout', 'RistekUSDI\SSO\Http\Controllers\AuthController@logout')->name('sso.logout');
+Route::get('/sso/callback', 'RistekUSDI\SSO\Http\Controllers\AuthController@callback')->name('sso.callback');
