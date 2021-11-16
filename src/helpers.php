@@ -4,13 +4,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Exception\GuzzleException;
 
-if (!function_exists('hello_world')) {
-    function hello_world()
-    {
-        return 'hello world';
-    }
-}
-
 /**
     * Return a random state parameter for authorization
     *
