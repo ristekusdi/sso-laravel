@@ -1,37 +1,92 @@
-# SSO
+# RistekUSDI SSO Laravel
 
-Laravel package untuk memudahkan otentikasi pengguna di aplikasi Universitas Udayana.
+Laravel package untuk otentikasi pengguna pada aplikasi internal Universitas Udayana berbasis Keycloak.
 
-## Motivasi
+## Kompatibilitas Versi
 
-Sejauh ini sudah ada package open source bernama [laravel-web-keycloak-guard dari Vizir Studio](https://github.com/Vizir/laravel-keycloak-web-guard). Tetapi, kami melihat bahwa fitur-fitur yang disediakan di package tersebut kurang memenuhi kebutuhan di internal aplikasi Universitas Udayana seperti tidak ada pengecekan permission.
+| PHP      | Laravel       | sso-laravel |
+|----------|---------------|-------------|
+| >= 5.5.9 | 5.1           | 0.1.x       |
+| >= 7.4   | 6.x, 7.x, 8.x | 1.x         |
 
-Meskipun kami bisa melakukan pull request berupa fitur tambahan ke package tersebut namun butuh waktu untuk review, perundingan dan persetujan dari Vizir Studio sebagai pemilik package tersebut. Vizir merancang package mereka untuk memenuhi kebutuhan mereka.
+## Langkah Instalasi dan Konfigurasi
 
-Oleh karena itu, package SSO yang disediakan oleh Ristek USDI dengan tujuan untuk memenuhi kebutuhan internal aplikasi Universitas Udayana dan memudahkan kami untuk menambahkan fitur tambahan atau menyesuaikan fitur di package SSO.
+### Laravel 5.1
 
-## Prasyarat
-
-- PHP versi >= 7.4
-- Laravel versi 7 ke atas
-
-## Instalasi
-
-Via Composer
-
-```bash
+1. Instal `ristekusdi/sso-laravel` dengan perintah
+```bash 
 composer require ristekusdi/sso-laravel
 ```
 
-## Konfigurasi
+2. Taruh provider `WebGuardServiceProvider` (di baris akhir) pada file `config/app.php`
+```php
+RistekUSDI\SSO\WebGuardServiceProvider::class
+```
 
-> Jika ingin mengubah nilai dari `redirect_url` jalankan perintah 
-
+3. Untuk mengimpor file `sso.php` ke dalam folder `config` dan jika ingin mengubah nilai dari *redirect_url* jalankan perintah berikut
 ```bash
 php artisan vendor:publish --provider="RistekUSDI\SSO\WebGuardServiceProvider"
 ```
 
-Untuk mendapatkan file konfigurasi `sso.php` di direktori `config`.
+4. Ubah nilai `driver` dan `model` di file `config/auth.php`
+
+```php
+'driver' => 'sso-users',
+'model' => RistekUSDI\SSO\Models\User::class
+```
+
+5. Tambahkan middleware `sso-web` pada variable array `$routeMiddleware` di dalam file `app/Http/Kernel.php`
+
+```php
+'sso-web' => \RistekUSDI\SSO\Middleware\Authenticated::class, 
+```
+
+6. Jalankan perintah `php artisan cache:clear` untuk membersihkan cache (bila perlu).
+
+7. Untuk melindungi halaman atau URL tertentu (misal /home) dengan otentikasi SSO maka tambahkan middleware `sso-web` pada route tersebut. 
+
+Contoh: 
+
+`Route::get('/home', 'HomeController@index')->middleware('sso-web');`
+
+## Laravel 6.x ke atas
+
+1. Instal `ristekusdi/sso-laravel` dengan perintah
+```bash 
+composer require ristekusdi/sso-laravel
+```
+
+2. Untuk mengimpor file `sso.php` ke dalam folder `config` dan jika ingin mengubah nilai dari *redirect_url* jalankan perintah berikut
+```bash
+php artisan vendor:publish --provider="RistekUSDI\SSO\WebGuardServiceProvider"
+```
+
+3. Ubah nilai `driver` dan `model` di file `config/auth.php`
+
+```php
+'guards' => [
+    'web' => [
+        'driver' => 'sso-web', // bagian ini yang berubah
+        'provider' => 'users',
+    ],
+]
+```
+
+
+```php
+'providers' => [
+    'users' => [
+        'driver' => 'sso-users',
+        'model' => RistekUSDI\SSO\Models\User::class,
+    ],
+],
+```
+
+4. Untuk melindungi halaman atau URL tertentu (misal /home) dengan otentikasi SSO maka tambahkan middleware `sso-web` pada route tersebut. 
+
+Contoh: 
+
+`Route::get('/home', 'HomeController@index')->middleware('sso-web');`
 
 ### Memasang nilai di Environment file
 
@@ -57,39 +112,6 @@ Dari dashboard **klik edit Client ID yang dipilih** >> **Settings** >> **salin n
 
 Dari dashboard **klik edit Client ID yang dipilih** >> **Credentials** >> **salin isian Secret di field Secret**
 
-### Otentikasi
-
-Pertama, kita akan mengubah konfigurasi yang ada di `config/auth.php`
-
-- Ubah konfigurasi web guard driver seperti di bawah ini.
-
-```php
-'guards' => [
-    'web' => [
-        'driver' => 'sso-web', // bagian ini yang berubah
-        'provider' => 'users',
-    ],
-]
-```
-
-- Ubah konfigurasi provider "users" seperti di bawah ini.
-
-```php
-'providers' => [
-    'users' => [
-        'driver' => 'sso-users',
-        'model' => RistekUSDI\SSO\Models\User::class,
-    ],
-
-    // 'users' => [
-    //     'driver' => 'database',
-    //     'table' => 'users',
-    // ],
-],
-```
-
-**Catatan**: Jika Anda ingin menggunakan User Model yang lain, silakan cek sesi Tanya Jawab *Bagaimana cara mengimplementasi User Model saya?*
-
 ## Penggunaan Dasar
 
 Jalankan `php artisan serve` dan masukkan URL http://localhost:8000/sso/login untuk diarahkan ke halaman login SSO.
@@ -112,98 +134,12 @@ Atribut pengguna yang tersedia antara lain:
 
 - `sub`
 - `unud_identifier_id`
-- `full_identity` 
-
-Format dari `full_identity` adalah `NIP Nama Pengguna` atau `NIM Nama Pengguna`.
-
+- `full_identity`. `full_identity` adalah `NIP Nama Pengguna` atau `NIM Nama`
 - `unud_type_id`
 - `username`
-- `identifier`
-
-`identifier` adalah NIP atau NIM.
-
+- `identifier`. `identifier` adalah NIP atau NIM.
 - `name`
 - `email`
-
-### Data Otorisasi
-
-Gunakan perintah `Auth::user()->permissions()` atau `auth()->user()->permissions()`. Hasil yang di dapatkan adalah daftar otorisasi dalam bentuk array.
-
-### Mengecek Otorisasi Pengguna
-
-Gunakan perintah `Auth::user()->hasPermission($permissions)` atau `auth()->user()->hasPermission($permissions)` dengan `$permissions` sebagai parameter. Tipe data parameter yang diterima adalah `string` dan `array`. Hasil yang diterima adalah `true` atau `false`.
-
-Contoh:
-
-- `auth()->user()->hasPermission('view-mahasiswa')`
-- `auth()->user()->hasPermission(['view-mahasiswa', 'store-mahasiswa'])`
-
-### Middleware
-
-Anda bisa menggunakan middleware yang disediakan oleh package ini di `routes/web.php` atau di Controller menggunakan SSO Can Middleware.
-
-Misal di `routes/web.php`
-
-```php
-
-// Contoh pertama
-Route::get('/', [HomeController::class, 'index'])->middleware('sso-web');
-
-// Contoh kedua dengan middleware parameter
-Route::group(['middleware' => 'sso-web'], function () {
-    // Middleware parameter
-    Route::get('/mahasiswa', [MahasiswaController::class, 'index'])->middleware('sso-web-can:view-mahasiswa');
-
-    // Middleware multiple parameter
-    Route::patch('/mahasiswa/1/update', [MahasiswaController::class, 'update'])->middleware('sso-web-can:view-mahasiswa,store-mahasiswa');
-});
-```
-
-Misal di Controller di method `__construct`
-
-```php
-
-// Middleware parameter
-$this->middleware('sso-web-can:view-mahasiswa');
-
-// Middleware parameter
-$this->middleware('sso-web-can:view-mahasiswa,store-mahasiswa');
-```
-
-## Tanya Jawab
-
-### Bagaimana cara mengimplementasi User Model saya?
-
-```php
-<?php
-
-namespace App\Models;
-
-use RistekUSDI\SSO\Models\User as SSOUser;
-
-class User extends SSOUser
-{
-    // Do something great!
-}
-```
-
-Kemudian ubah provider user model seperti di bawah ini:
-
-```php
-'providers' => [
-    'users' => [
-        'driver' => 'sso-users',
-        'model' => App\Models\User::class,
-    ],
-
-    // 'users' => [
-    //     'driver' => 'database',
-    //     'table' => 'users',
-    // ],
-],
-```
-
-> SSOUser model mengextend class `Illuminate\Contracts\Auth\Authenticatable`.
 
 ## Bagaimana cara mendapatkan access token dan refresh token?
 
@@ -211,4 +147,10 @@ Ada dua cara untuk mendapatkan access token dan refresh token:
 
 1. Mengimpor facade `SSOWeb` dengan perintah `use RistekUSDI\SSO\Facades\SSOWeb;`, kemudian jalankan perintah `SSOWeb::retrieveToken()`.
 
-2. Menggunakan session. Panggil dengan perintah `session()->get('_sso_token.access_token')` untuk mendapatkan access token dan `session()->get('_sso_token.refresh_token')`.
+2. Menggunakan session. Gunakan perintah `session()->get('_sso_token.access_token')` untuk mendapatkan access token dan `session()->get('_sso_token.refresh_token')`.
+
+## Catatan
+
+Package ini merupakan fork dari sumber kode [mariovalney/laravel-keycloak-web-guard](https://github.com/mariovalney/laravel-keycloak-web-guard).
+
+Kami menggunakan kode tersebut untuk dimodifikasi sesuai kebutuhan internal kami. Kami ucapkan terima kasih kepada pengembang dari package tersebut.
