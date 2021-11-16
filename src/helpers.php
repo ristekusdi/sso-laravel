@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -52,7 +51,7 @@ if (!function_exists('build_url')) {
     {
         $parsedUrl = parse_url($url);
         if (empty($parsedUrl['host'])) {
-            return trim($url, '?') . '?' . Arr::query($params);
+            return trim($url, '?') . '?' . http_build_query($params);
         }
 
         if (! empty($parsedUrl['port'])) {
@@ -84,6 +83,6 @@ if (!function_exists('build_url')) {
 
         $query = array_merge($query, $params);
 
-        return $url . '?' . Arr::query($query);
+        return $url . '?' . http_build_query($query);
     }
 }
