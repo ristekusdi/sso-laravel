@@ -12,9 +12,9 @@
     "homepage": "https://github.com/ristekusdi/sso-laravel",
     "keywords": ["SSO", "authentication", "authorization"],
     "require": {
-        "php": ">=7.4",
-        "illuminate/support": "~6|~7|~8",
-        "guzzlehttp/guzzle": "^7.4"
+        "php": ">=7.1.3",
+        "illuminate/support": "~5",
+        "guzzlehttp/guzzle": "^6.5"
     },
     "autoload": {
         "psr-4": {
