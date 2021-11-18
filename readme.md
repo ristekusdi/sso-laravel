@@ -6,7 +6,7 @@ Laravel package untuk otentikasi pengguna pada aplikasi internal Universitas Uda
 
 | PHP      | Laravel       | sso-laravel |
 |----------|---------------|-------------|
-| 7.1      | 5.5 - 5.8     | 0.2.x       |
+| 7.1      | 5.5 - 5.8     | 0.3.x       |
 
 ## Memasang nilai di Environment file
 
@@ -46,7 +46,7 @@ Dari dashboard **klik edit Client ID yang dipilih** >> **Credentials** >> **sali
 
 1. Instal `ristekusdi/sso-laravel` dengan perintah
 ```bash 
-composer require ristekusdi/sso-laravel 0.2.*
+composer require ristekusdi/sso-laravel 0.3.*
 ```
 
 2. Untuk mengimpor file `sso.php` ke dalam folder `config` dan jika ingin mengubah nilai dari *redirect_url* jalankan perintah berikut
