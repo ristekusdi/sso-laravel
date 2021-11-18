@@ -6,52 +6,43 @@ Laravel package untuk otentikasi pengguna pada aplikasi internal Universitas Uda
 
 | PHP      | Laravel       | sso-laravel |
 |----------|---------------|-------------|
-| >= 5.5.9 | 5.1           | 0.1.x       |
-| >= 7.4   | 6.x, 7.x, 8.x | 1.x         |
+| >= 7.4   | >= 6.x        | 1.x         |
+
+## Memasang nilai di Environment file
+
+Salin format di bawah ini ke dalam file `.env`
+
+```bash
+SSO_BASE_URL=
+SSO_REALM=
+SSO_REALM_PUBLIC_KEY=
+SSO_CLIENT_ID=
+SSO_CLIENT_SECRET=
+```
+
+- `SSO_BASE_URL`
+
+SSO server Url. Contoh: `https://your-sso-domain.com/auth`
+
+- `SSO_REALM`
+
+SSO realm. Nilai bawaan adalah `master`.
+
+- `SSO_REALM_PUBLIC_KEY`
+
+SSO server realm public key. Dari dashboard menuju **Realm Settings** >> **Keys** >> **RS256** >> **Public key**
+
+- `SSO_CLIENT_ID`
+
+Dari dashboard **klik edit Client ID yang dipilih** >> **Settings** >> **salin nama Client ID di field Client ID**
+
+- `SSO_CLIENT_SECRET`
+
+> Pastikan pengaturan **Access Type** adalah **confidential** agar memperoleh nilai Secret
+
+Dari dashboard **klik edit Client ID yang dipilih** >> **Credentials** >> **salin isian Secret di field Secret**
 
 ## Langkah Instalasi dan Konfigurasi
-
-### Laravel 5.1
-
-1. Instal `ristekusdi/sso-laravel` dengan perintah
-```bash 
-composer require ristekusdi/sso-laravel 0.1.*
-```
-
-2. Taruh provider `WebGuardServiceProvider` (di baris akhir) pada file `config/app.php`
-```php
-RistekUSDI\SSO\WebGuardServiceProvider::class
-```
-
-3. Untuk mengimpor file `sso.php` ke dalam folder `config` dan jika ingin mengubah nilai dari *redirect_url* jalankan perintah berikut
-```bash
-php artisan vendor:publish --provider="RistekUSDI\SSO\WebGuardServiceProvider"
-```
-
-4. Ubah nilai `driver` dan `model` di file `config/auth.php`
-
-```php
-'driver' => 'sso-users',
-'model' => RistekUSDI\SSO\Models\User::class
-```
-
-5. Tambahkan middleware `sso-web` pada variable array `$routeMiddleware` di dalam file `app/Http/Kernel.php`
-
-```php
-'sso-web' => \RistekUSDI\SSO\Middleware\Authenticated::class, 
-```
-
-6. Jalankan perintah `php artisan cache:clear` untuk membersihkan cache (bila perlu).
-
-7. Untuk melindungi halaman atau URL tertentu (misal /home) dengan otentikasi SSO maka tambahkan middleware `sso-web` pada route tersebut. 
-
-Contoh: 
-
-```php
-Route::get('/home', 'HomeController@index')->middleware('sso-web');
-```
-
-### Laravel 6.x ke atas
 
 1. Instal `ristekusdi/sso-laravel` dengan perintah
 ```bash 
@@ -91,40 +82,6 @@ Contoh:
 ```php
 Route::get('/home', 'HomeController@index')->middleware('sso-web');
 ```
-
-## Memasang nilai di Environment file
-
-Salin format di bawah ini ke dalam file `.env`
-
-```bash
-SSO_BASE_URL=
-SSO_REALM=
-SSO_REALM_PUBLIC_KEY=
-SSO_CLIENT_ID=
-SSO_CLIENT_SECRET=
-```
-
-- `SSO_BASE_URL`
-
-SSO server Url. Contoh: `https://your-sso-domain.com/auth`
-
-- `SSO_REALM`
-
-SSO realm. Nilai bawaan adalah `master`.
-
-- `SSO_REALM_PUBLIC_KEY`
-
-SSO server realm public key. Dari dashboard menuju **Realm Settings** >> **Keys** >> **RS256** >> **Public key**
-
-- `SSO_CLIENT_ID`
-
-Dari dashboard **klik edit Client ID yang dipilih** >> **Settings** >> **salin nama Client ID di field Client ID**
-
-- `SSO_CLIENT_SECRET`
-
-> Pastikan pengaturan **Access Type** adalah **confidential** agar memperoleh nilai Secret
-
-Dari dashboard **klik edit Client ID yang dipilih** >> **Credentials** >> **salin isian Secret di field Secret**
 
 ## Penggunaan Dasar
 
