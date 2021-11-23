@@ -103,6 +103,15 @@ class WebGuard implements Guard
         }
 
         /**
+         * If user doesn't have access to certain client app then return false
+         */
+        $token = new AccessToken($credentials);
+        $token = $token->parseAccessToken();
+        if (!in_array(Config::get('sso.client_id'), array_keys($token['resource_access']))) {
+            return false;
+        }
+
+        /**
          * Store the section
          */
         $credentials['refresh_token'] = $credentials['refresh_token'] ?? '';
