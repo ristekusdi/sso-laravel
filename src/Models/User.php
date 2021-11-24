@@ -108,6 +108,16 @@ class User implements Authenticatable
     }
 
     /**
+     * Get list of role authenticate user
+     *
+     * @return array
+     */
+    public function roles()
+    {
+        return Auth::roles();
+    }
+
+    /**
      * Check user has roles
      *
      * @see WebGuard::hasRole()
