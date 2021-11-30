@@ -49,10 +49,16 @@ Dari dashboard **klik edit Client ID yang dipilih** >> **Credentials** >> **sali
 composer require ristekusdi/sso-laravel 0.3.*
 ```
 
-2. Untuk mengimpor file `sso.php` ke dalam folder `config` dan jika ingin mengubah nilai dari *redirect_url* jalankan perintah berikut
+2. Untuk mengimpor aset yang ada di dalam library sso-laravel jalankan perintah berikut
 ```bash
 php artisan vendor:publish --provider="RistekUSDI\SSO\WebGuardServiceProvider"
 ```
+
+Perintah di atas akan mengimpor aset:
+
+- File konfigurasi `sso.php` ke dalam folder `config`.
+
+- Folder berisi halaman-halaman HTTP Error (401 dan 403) yang berkaitan dengan `Callback Exception`. Lokasi halaman-halaman HTTP Error setelah diimpor berada di folder `resources/views/sso-laravel/errors`. **Anda memiliki kebebasan untuk melakukan kustomisasi terhadap halaman error tersebut.**
 
 3. Ubah nilai `driver` dan `model` di file `config/auth.php`
 
