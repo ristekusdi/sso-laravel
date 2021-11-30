@@ -31,6 +31,13 @@ class WebGuardServiceProvider extends ServiceProvider
             require __DIR__ . '/helpers.php';
         }
 
+        // Views
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'sso-laravel');
+
+        $this->publishes([
+            __DIR__.'/../resources/views' => resource_path('views/vendor/sso-laravel')
+        ]);
+
         // Configuration
         $config = __DIR__ . '/../config/sso.php';
 
