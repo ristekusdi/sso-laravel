@@ -17,6 +17,6 @@ class CallbackException extends Exception
         if (!empty($this->getCode())) {
             $status = $this->getCode();
         }
-        return response()->view("vendor.sso-laravel.sso.errors.{$status}", ['e' => $this]);
+        return response()->view("vendor.sso-laravel.errors.{$status}", ['e' => $this], $status);
     }
 }
