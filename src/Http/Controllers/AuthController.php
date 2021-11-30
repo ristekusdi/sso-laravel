@@ -80,6 +80,10 @@ class AuthController extends Controller
             if (Auth::validate($token)) {
                 $url = config('sso.redirect_url', '/admin');
                 return redirect()->intended($url);
+            } else {
+                // For case like user doesn't have token
+                // or user doesn't have access to certain client app
+                abort(403, 'Unauthorized');
             }
         }
 
