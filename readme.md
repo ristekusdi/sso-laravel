@@ -58,7 +58,7 @@ Perintah di atas akan mengimpor aset:
 
 - File konfigurasi `sso.php` ke dalam folder `config`.
 
-- Folder berisi halaman-halaman HTTP Error (401 dan 403) yang berkaitan dengan `Callback Exception`. Lokasi halaman-halaman HTTP Error setelah diimpor berada di folder `resources/views/sso-laravel/errors`. **Anda memiliki kebebasan untuk melakukan kustomisasi terhadap halaman error tersebut.**
+- Folder berisi halaman-halaman HTTP Error (401 dan 403) yang berkaitan dengan `Callback Exception`. Lokasi halaman-halaman HTTP Error setelah diimpor berada di folder `resources/views/sso-laravel/errors`. **Anda memiliki kebebasan untuk melakukan kustomisasi terhadap halaman error tersebut.** Untuk menghubungkan halaman-halaman HTTP Error yang berkaitan dengan `Callback Exception` ke dalam proyek Laravel, silakan menuju bagian [Mengubungkan Callback Exception Ke Handler Exception](#menghubungkan-callback-exception-ke-handler-exception).
 
 3. Ubah nilai `driver` dan `model` di file `config/auth.php`
 
@@ -104,6 +104,7 @@ Package ini mengimplementasikan `Illuminate\Contracts\Auth\Guard`. Sehingga, sem
 Contoh: 
 
 - `Auth::user()` untuk mendapatkan data pengguna yang terotentikasi.
+- `Auth::user()->roles()` untuk mendapatkan daftar peran user pada aplikasi yang aktif.
 - `Auth::check()` untuk mengecek apakah pengguna sudah terotentikasi atau login.
 - `Auth::guest()` untuk mengecek apakah pengguna adalah "tamu" (belum login atau terotentikasi).
 
@@ -117,6 +118,31 @@ Atribut pengguna yang tersedia antara lain:
 - `identifier`. `identifier` adalah NIP atau NIM.
 - `name`
 - `email`
+
+## Menghubungkan Callback Exception Ke Handler Exception
+
+Pada file `Handler.php` di folder `app/Exceptions` impor class `CallbackException` dan gunakan class tersebut di method `render`.
+
+```php
+<?php
+
+// ....
+use RistekUSDI\SSO\Exceptions\CallbackException;
+
+class Handler extends ExceptionHandler
+{
+    // ...
+
+    public function render($request, Exception $e)
+    {
+        // Hubungkan CallbackException ke dalam method render
+        if ($e instanceof CallbackException) {
+            return $e->render($request);
+        }
+        return parent::render($request, $e);
+    }
+}
+```
 
 ## Bagaimana cara mendapatkan access token dan refresh token?
 
