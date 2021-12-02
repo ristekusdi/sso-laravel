@@ -2,20 +2,22 @@
 
 namespace RistekUSDI\SSO\Exceptions;
 
-class CallbackException extends \RuntimeException
-{
-    /**
-     * Callback Error
-     *
-     * @param string|null     $message  [description]
-     * @param \Throwable|null $previous [description]
-     * @param array           $headers  [description]
-     * @param int|integer     $code     [description]
-     */
-    public function __construct(string $error = '')
-    {
-        $message = '[SSO Error] ' . $error;
+use Exception;
 
-        parent::__construct($message);
+class CallbackException extends Exception
+{
+    public function report()
+    {
+        # code...
+    }
+
+    public function render($request)
+    {
+        $status = 401;
+        if (!empty($this->getCode())) {
+            $status = $this->getCode();
+        }
+        // dd($status);
+        return response()->view("vendor.sso-laravel.errors.{$status}", ['e' => $this], $status);
     }
 }

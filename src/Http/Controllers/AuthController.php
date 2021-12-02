@@ -83,7 +83,7 @@ class AuthController extends Controller
             } else {
                 // For case like user doesn't have token
                 // or user doesn't have access to certain client app
-                abort(401);
+                throw new CallbackException('Unauthorized', 403);
             }
         }
 
