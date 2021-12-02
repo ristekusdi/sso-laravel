@@ -148,6 +148,34 @@ class WebGuard implements Guard
     }
 
     /**
+     * Get list of role authenticate user
+     *
+     * @return array
+     */
+    public function roles()
+    {
+        if (! $this->check()) {
+            return false;
+        }
+
+        $token = SSOWeb::retrieveToken();
+
+        if (empty($token) || empty($token['access_token'])) {
+            return false;
+        }
+
+        $token = new AccessToken($token);
+        $token = $token->parseAccessToken();
+
+        $resourceRoles = $token['resource_access'] ?? [];
+        $resource = Config::get('sso.client_id');
+        $resourceRoles = $resourceRoles[ $resource ] ?? [];
+        $resourceRoles = $resourceRoles['roles'] ?? [];
+
+        return $resourceRoles;
+    }
+
+    /**
      * Check user is authenticated and has a role
      *
      * @param array|string $roles

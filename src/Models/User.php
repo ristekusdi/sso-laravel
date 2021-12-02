@@ -108,6 +108,18 @@ class User implements Authenticatable
     }
 
     /**
+     * Get user roles
+     *
+     * @see WebGuard::roles()
+     *
+     * @return boolean
+     */
+    public function roles()
+    {
+        return Auth::roles();  
+    }
+
+    /**
      * Check user has roles
      *
      * @see WebGuard::hasRole()
