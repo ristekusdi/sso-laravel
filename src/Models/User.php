@@ -19,8 +19,8 @@ class User implements Authenticatable
         'preferred_username',
         'given_name',
         'family_name',
-        'unudIdentifierId',
-        'unudUserTypeId'
+        'unud_user_type_id',
+        'unud_identifier_id'
     ];
 
     /**
@@ -42,12 +42,6 @@ class User implements Authenticatable
                 switch ($key) {
                     case 'name':
                         $key = 'full_identity';
-                        break;
-                    case 'unudIdentifierId':
-                        $key = 'unud_identifier_id';
-                        break;
-                    case 'unudUserTypeId':
-                        $key = 'unud_type_id';
                         break;
                     case 'family_name':
                         $key = 'name';
