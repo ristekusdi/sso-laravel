@@ -78,7 +78,7 @@ class WebGuardServiceProvider extends ServiceProvider
         // SSO Web Guard
         Auth::extend('sso-web', function ($app, $name, array $config) {
             $provider = Auth::createUserProvider($config['provider']);
-            $web_guard_class = Config::get('sso.web_guard_class');
+            $web_guard_class = Config::get('sso.guards.web');
             return new $web_guard_class($provider, $app->request);
         });
 

@@ -66,6 +66,13 @@ return [
     ],
 
     /**
+     * Load guard class.
+     */
+    'guards' => [
+        'web' => RistekUSDI\SSO\Auth\Guard\WebGuard::class,
+    ],
+
+    /**
     * GuzzleHttp Client options
     *
     * @link http://docs.guzzlephp.org/en/stable/request-options.html
