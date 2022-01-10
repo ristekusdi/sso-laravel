@@ -179,34 +179,16 @@ class WebGuard implements Guard
      * Check user is authenticated and has a role
      *
      * @param array|string $roles
-     * @param string $resource Default is empty: point to client_id
      *
      * @return boolean
      */
-    public function hasRole($roles, $resource = '')
+    public function hasRole($roles)
     {
-        if (empty($resource)) {
-            $resource = Config::get('sso.client_id');
-        }
-
         if (! $this->check()) {
             return false;
         }
 
-        $token = SSOWeb::retrieveToken();
-
-        if (empty($token) || empty($token['access_token'])) {
-            return false;
-        }
-
-        $token = new AccessToken($token);
-        $token = $token->parseAccessToken();
-
-        $resourceRoles = $token['resource_access'] ?? [];
-        $resourceRoles = $resourceRoles[ $resource ] ?? [];
-        $resourceRoles = $resourceRoles['roles'] ?? [];
-
-        return empty(array_diff((array) $roles, $resourceRoles));
+        return empty(array_diff((array) $roles, $this->roles()));
     }
 
     /**
