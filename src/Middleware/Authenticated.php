@@ -3,6 +3,7 @@
 namespace RistekUSDI\SSO\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Support\Facades\Config;
 
 class Authenticated extends Authenticate
 {
@@ -14,6 +15,6 @@ class Authenticated extends Authenticate
      */
     protected function redirectTo($request)
     {
-        return route('sso.login');
+        return route(Config::get('sso.routes.login'));
     }
 }
