@@ -37,17 +37,6 @@ class AuthController extends Controller
     }
 
     /**
-     * Redirect to register
-     *
-     * @return view
-     */
-    public function register()
-    {
-        $url = SSOWeb::getRegisterUrl();
-        return redirect($url);
-    }
-
-    /**
      * SSO callback page
      *
      * @throws CallbackException
