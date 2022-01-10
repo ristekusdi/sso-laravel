@@ -75,13 +75,6 @@ class SSOService
     protected $callbackUrl;
 
     /**
-     * RedirectLogout
-     *
-     * @var array
-     */
-    protected $redirectLogout;
-
-    /**
      * The state for authorization request
      *
      * @var string
@@ -129,10 +122,6 @@ class SSOService
             $this->callbackUrl = route(Config::get('sso.routes.callback'), 'sso.callback');
         }
 
-        if (is_null($this->redirectLogout)) {
-            $this->redirectLogout = url(Config::get('sso.redirect_logout'), '/');
-        }
-
         $this->state = generate_random_state();
         $this->httpClient = $client;
     }
@@ -169,7 +158,7 @@ class SSOService
 
         $params = [
             'client_id' => $this->getClientId(),
-            'redirect_uri' => $this->redirectLogout,
+            'redirect_uri' => url('/'),
         ];
 
         return build_url($url, $params);

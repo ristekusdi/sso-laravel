@@ -52,11 +52,6 @@ return [
     'redirect_url' => '/',
 
     /**
-     * Page to redirect after logout.
-     */
-    'redirect_logout' => '/',
-
-    /**
      * Routes name config.
      */
     'routes' => [
