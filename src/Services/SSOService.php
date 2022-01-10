@@ -126,11 +126,11 @@ class SSOService
         }
 
         if (is_null($this->callbackUrl)) {
-            $this->callbackUrl = route('sso.callback');
+            $this->callbackUrl = route(Config::get('sso.routes.callback'), 'sso.callback');
         }
 
         if (is_null($this->redirectLogout)) {
-            $this->redirectLogout = Config::get('sso.redirect_logout');
+            $this->redirectLogout = url(Config::get('sso.redirect_logout'), '/');
         }
 
         $this->state = generate_random_state();
@@ -166,10 +166,6 @@ class SSOService
     public function getLogoutUrl()
     {
         $url = (new OpenIDConfig)->get('end_session_endpoint');
-
-        if (empty($this->redirectLogout)) {
-            $this->redirectLogout = url('/');
-        }
 
         $params = [
             'client_id' => $this->getClientId(),
