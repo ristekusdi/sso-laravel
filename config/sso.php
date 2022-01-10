@@ -52,6 +52,20 @@ return [
     'redirect_url' => '/',
 
     /**
+     * Page to redirect after logout.
+     */
+    'redirect_logout' => '/',
+
+    /**
+     * Routes name config.
+     */
+    'routes' => [
+        'login' => 'sso.login',
+        'callback' => 'sso.callback',
+        'logout' => 'sso.logout',
+    ],
+
+    /**
     * GuzzleHttp Client options
     *
     * @link http://docs.guzzlephp.org/en/stable/request-options.html
