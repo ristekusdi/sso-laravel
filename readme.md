@@ -60,6 +60,10 @@ Perintah di atas akan mengimpor aset:
 
 - Folder berisi halaman-halaman HTTP Error (401 dan 403) yang berkaitan dengan `Callback Exception`. Lokasi halaman-halaman HTTP Error setelah diimpor berada di folder `resources/views/sso-laravel/errors`. **Anda memiliki kebebasan untuk melakukan kustomisasi terhadap halaman error tersebut.** Untuk menghubungkan halaman-halaman HTTP Error yang berkaitan dengan `Callback Exception` ke dalam proyek Laravel, silakan menuju bagian [Mengubungkan Callback Exception Ke Handler Exception](#menghubungkan-callback-exception-ke-handler-exception).
 
+- File route `sso.php` ke dalam folder `routes`.
+
+- File controller `AuthController.php` ke dalam folder `app/Http/Controllers/SSO`.
+
 3. Ubah nilai `driver` dan `model` di file `config/auth.php`
 
 ```php
@@ -81,7 +85,13 @@ Perintah di atas akan mengimpor aset:
 ],
 ```
 
-4. Untuk melindungi halaman atau URL tertentu (misal /home) dengan otentikasi SSO maka tambahkan middleware `sso-web` pada route tersebut. 
+4. Memuat route `sso.php` yang ada di dalam folder routes ke dalam file `web.php` yang ada di dalam folder routes dengan perintah berikut.
+
+```php
+require __DIR__.'/sso.php';
+```
+
+5. Untuk melindungi halaman atau URL tertentu (misal /home) dengan otentikasi SSO maka tambahkan middleware `sso-web` pada route tersebut. 
 
 Contoh: 
 
@@ -110,14 +120,13 @@ Contoh:
 
 Atribut pengguna yang tersedia antara lain:
 
-- `sub`
-- `unud_identifier_id`
-- `full_identity`. `full_identity` adalah `NIP Nama Pengguna` atau `NIM Nama`
-- `unud_type_id`
-- `username`
+- `sub`.
+- `full_identity`. Format: `NIP Nama Pengguna`.
+- `username`.
 - `identifier`. `identifier` adalah NIP atau NIM.
-- `name`
-- `email`
+- `name`.
+- `email`.
+- `roles`.
 
 ## Menghubungkan Callback Exception Ke Handler Exception
 
@@ -151,6 +160,72 @@ Ada dua cara untuk mendapatkan access token dan refresh token:
 1. Mengimpor facade `SSOWeb` dengan perintah `use RistekUSDI\SSO\Facades\SSOWeb;`, kemudian jalankan perintah `SSOWeb::retrieveToken()`.
 
 2. Menggunakan session. Gunakan perintah `session()->get('_sso_token.access_token')` untuk mendapatkan access token dan `session()->get('_sso_token.refresh_token')`.
+
+## Pertanyaan (Konfigurasi Tingkat Lanjut)
+
+### Bagaimana cara saya meng-extend User model dengan User model dari RistekUSDI?
+
+Pada User model extend class User model dari RistekUSDI dengan sintaks berikut.
+
+```php
+use RistekUSDI\SSO\Models\User as SSOUser;
+
+class User extends SSOUser
+{
+
+}
+```
+
+Berikutnya, pada file `auth.php` ubah User model seperti berikut.
+
+```php
+'providers' => [
+    'users' => [
+        'driver' => 'sso-users',
+        'model' => App\User::class, // sesuaikan dengan lokasi User model Anda.
+    ],
+],
+```
+
+### Saya ingin menyisipkan atribut lain ke dalam User model saat proses otentikasi berhasil. Bagaimana caranya?
+
+Agar Anda bisa menyisipkan atribut lain ke dalam User model maka Anda perlu melakukan proses extend class User model dari RistekUSDI yang ada pada langkah sebelumnya. Setelah itu, Anda bisa menambahkan atribut-atribut lain pada properti `$custom_fillable`.
+
+```php
+use RistekUSDI\SSO\Models\User as SSOUser;
+
+class User extends SSOUser
+{
+    public $custom_fillable = [
+        'unud_identifier_id',
+        'unud_user_type_id',
+        'role_active',
+        'role_permissions',
+        // dan lain-lain...
+    ]
+}
+```
+
+### Bagaimana cara saya meng-extend WebGuard?
+
+Anda bisa melakukan extend WebGuard dengan membuat file WebGuard baru dan mengubah nilai `guards.web` pada file `sso.php`.
+
+```php
+/**
+ * Load guard class.
+ */
+'guards' => [
+    'web' => RistekUSDI\SSO\Auth\Guard\WebGuard::class,
+],
+```
+
+**Catatan:** Extend WebGuard berguna jika Anda ingin menyisipkan session aplikasi Anda ke dalam property user saat berhasil melakukan otentikasi.
+
+## Bisakah Anda memberikan contoh implementasi untuk Pertanyaan (Konfigurasi Tingkat Lanjut)?
+
+Anda bisa melihat contoh implementasi tersebut di [github.com/ristekusdi/sso-simulation-laravel6](https://github.com/ristekusdi/sso-simulation-laravel6).
+
+**Catatan:** Repositori ini bersifat privat.
 
 ## Catatan
 
