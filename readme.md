@@ -206,6 +206,8 @@ class User extends SSOUser
 }
 ```
 
+Setelah Anda menambahkan atribut-atribut tersebut maka Anda bisa memanggilnya dengan perintah `auth()->user()`. Misal: `auth()->user()->unud_identifier_id`, `auth()->user()->unud_user_type_id`, dan seterusnya.
+
 ### Bagaimana cara saya meng-extend WebGuard?
 
 Anda bisa melakukan extend WebGuard dengan membuat file WebGuard baru dan mengubah nilai `guards.web` pada file `sso.php`.
