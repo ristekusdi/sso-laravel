@@ -188,66 +188,7 @@ class WebGuard implements Guard
             return false;
         }
 
-        $token = SSOWeb::retrieveToken();
-
-        if (empty($token) || empty($token['access_token'])) {
-            return false;
-        }
-
-        $token = new AccessToken($token);
-        try {
-            $response = (new \GuzzleHttp\Client)->request('POST', 
-            (new OpenIDConfig)->get('token_endpoint'), [
-                'headers' => [
-                    'Authorization' => "Bearer {$token->getAccessToken()}"
-                ],
-                'form_params' => [
-                    'grant_type' => 'urn:ietf:params:oauth:grant-type:uma-ticket',
-                    'audience' => Config::get('sso.client_id')
-                ]
-            ]);
-            
-            if ($response->getStatusCode() !== 200) {
-                return [];
-            }
-            
-            $token = new AccessToken(json_decode($response->getBody()->getContents(), true));
-
-            // Introspection permissions
-            $response = (new \GuzzleHttp\Client)->request('POST', (new OpenIDConfig)->get('introspection_endpoint'), [
-                'auth' => [Config::get('sso.client_id'), Config::get('sso.client_secret')],
-                'form_params' => [
-                    'token_type_hint' => 'requesting_party_token',
-                    'token' => $token->getAccessToken()
-                ]
-            ]);
-
-            if ($response->getStatusCode() !== 200) {
-                return [];
-            }
-
-            $result = json_decode($response->getBody()->getContents(), true);
-
-            // If permissions don't active then return false
-            if (!$result['active']) {
-                return [];
-            }
-
-            $resourcePermissions = [];
-            foreach ($result['permissions'] as $permission) {
-                if (!empty($permission['resource_scopes'])) {
-                    foreach ($permission['resource_scopes'] as $value) {
-                        $resourcePermissions[] = $value;
-                    }
-                }
-            }
-
-            return $resourcePermissions;
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
-            return [];
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            return [];
-        }
+        return [];
     }
 
     /**
