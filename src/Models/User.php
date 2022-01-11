@@ -19,7 +19,8 @@ class User extends Model implements Authenticatable
         'sub',
         'preferred_username',
         'given_name',
-        'family_name'
+        'family_name',
+        'roles'
     ];
 
     /**
