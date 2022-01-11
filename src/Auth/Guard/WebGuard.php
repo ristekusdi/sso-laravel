@@ -158,21 +158,7 @@ class WebGuard implements Guard
             return false;
         }
 
-        $token = SSOWeb::retrieveToken();
-
-        if (empty($token) || empty($token['access_token'])) {
-            return false;
-        }
-
-        $token = new AccessToken($token);
-        $token = $token->parseAccessToken();
-
-        $resourceRoles = $token['resource_access'] ?? [];
-        $resource = Config::get('sso.client_id');
-        $resourceRoles = $resourceRoles[ $resource ] ?? [];
-        $resourceRoles = $resourceRoles['roles'] ?? [];
-        
-        return $resourceRoles;
+        return $this->user()->roles;
     }
 
     /**
