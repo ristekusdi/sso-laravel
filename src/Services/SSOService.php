@@ -75,13 +75,6 @@ class SSOService
     protected $callbackUrl;
 
     /**
-     * RedirectLogout
-     *
-     * @var array
-     */
-    protected $redirectLogout;
-
-    /**
      * The state for authorization request
      *
      * @var string
@@ -126,11 +119,7 @@ class SSOService
         }
 
         if (is_null($this->callbackUrl)) {
-            $this->callbackUrl = route('sso.callback');
-        }
-
-        if (is_null($this->redirectLogout)) {
-            $this->redirectLogout = !empty(Config::get('sso.redirect_url')) ? url(Config::get('sso.redirect_url')) : url('/');
+            $this->callbackUrl = route(Config::get('sso.routes.callback'), 'sso.callback');
         }
 
         $this->state = generate_random_state();
@@ -169,7 +158,7 @@ class SSOService
 
         $params = [
             'client_id' => $this->getClientId(),
-            'redirect_uri' => $this->redirectLogout,
+            'redirect_uri' => url('/'),
         ];
 
         return build_url($url, $params);
@@ -319,6 +308,12 @@ class SSOService
 
             $user = $response->getBody()->getContents();
             $user = json_decode($user, true);
+            
+            // Get roles
+            $roles = ['roles' => []];
+            $roles = $token->parseAccessToken()['resource_access'][Config::get('sso.client_id')];
+
+            $user = array_merge($user, $roles);
 
             // Validate retrieved user is owner of token
             $token->validateSub($user['sub'] ?? '');

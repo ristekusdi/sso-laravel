@@ -3,9 +3,10 @@
 namespace RistekUSDI\SSO\Models;
 
 use Auth;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-class User implements Authenticatable
+class User extends Model implements Authenticatable
 {
     /**
      * Attributes we retrieve from Profile
@@ -19,9 +20,14 @@ class User implements Authenticatable
         'preferred_username',
         'given_name',
         'family_name',
-        'unudIdentifierId',
-        'unudUserTypeId'
+        'roles'
     ];
+
+    /**
+     * Attributes that developers can add as a custom attribute.
+     * Then, it will be merge with fillable property.
+     */
+    public $custom_fillable = [];
 
     /**
      * User attributes
@@ -37,17 +43,12 @@ class User implements Authenticatable
      */
     public function __construct(array $profile)
     {
+        $this->fillable = array_merge($this->fillable, $this->custom_fillable);
         foreach ($profile as $key => $value) {
             if (in_array($key, $this->fillable)) {
                 switch ($key) {
                     case 'name':
                         $key = 'full_identity';
-                        break;
-                    case 'unudIdentifierId':
-                        $key = 'unud_identifier_id';
-                        break;
-                    case 'unudUserTypeId':
-                        $key = 'unud_type_id';
                         break;
                     case 'family_name':
                         $key = 'name';
@@ -64,17 +65,6 @@ class User implements Authenticatable
         }
 
         $this->id = $this->getKey();
-    }
-
-    /**
-     * Magic method to get attributes
-     *
-     * @param  string $name
-     * @return mixed
-     */
-    public function __get(string $name)
-    {
-        return $this->attributes[ $name ] ?? null;
     }
 
     /**

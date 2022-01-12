@@ -4,6 +4,7 @@ namespace RistekUSDI\SSO\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Facades\Config;
 
 class Authenticated {
 
@@ -38,7 +39,7 @@ class Authenticated {
 			if ($request->ajax()) {
 				return response('Unauthorized.', 401);
 			} else {
-				return redirect()->guest('sso/login');
+				return redirect()->route(Config::get('sso.routes.login'));
 			}
 		}
 

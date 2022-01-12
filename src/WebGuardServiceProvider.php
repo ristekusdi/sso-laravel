@@ -38,6 +38,16 @@ class WebGuardServiceProvider extends ServiceProvider
             __DIR__.'/../resources/views' => resource_path('views/vendor/sso-laravel')
         ]);
 
+        // Routes
+        $this->publishes([
+            __DIR__.'/../stubs/routes/web.php' => base_path('routes/sso.php')
+        ]);
+
+        // Controllers
+        $this->publishes([
+            __DIR__.'/../stubs/App/Http/Controllers/SSO/AuthController.php' => app_path('Http/Controllers/SSO/AuthController.php')
+        ]);
+
         // Configuration
         $config = __DIR__ . '/../config/sso.php';
 
@@ -45,7 +55,7 @@ class WebGuardServiceProvider extends ServiceProvider
         $this->mergeConfigFrom($config, 'sso');
 
         // Routes
-        $this->registerRoutes();
+        // $this->registerRoutes();
 
         // User Provider
         Auth::provider('sso-users', function($app, array $config) {
@@ -68,7 +78,8 @@ class WebGuardServiceProvider extends ServiceProvider
         // SSO Web Guard
         Auth::extend('sso-web', function ($app, $name, array $config) {
             $provider = Auth::createUserProvider($config['provider']);
-            return new WebGuard($provider, $app->request);
+            $web_guard_class = Config::get('sso.guards.web');
+            return new $web_guard_class($provider, $app->request);
         });
 
         // Facades

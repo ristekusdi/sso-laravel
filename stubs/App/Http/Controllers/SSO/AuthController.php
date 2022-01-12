@@ -1,9 +1,9 @@
 <?php
 
-namespace RistekUSDI\SSO\Http\Controllers;
+namespace App\Http\Controllers\SSO;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use RistekUSDI\SSO\Exceptions\CallbackException;
 use RistekUSDI\SSO\Facades\SSOWeb;

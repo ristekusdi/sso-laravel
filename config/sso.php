@@ -52,6 +52,22 @@ return [
     'redirect_url' => '/',
 
     /**
+     * Routes name config.
+     */
+    'routes' => [
+        'login' => 'sso.login',
+        'callback' => 'sso.callback',
+        'logout' => 'sso.logout',
+    ],
+
+    /**
+     * Load guard class.
+     */
+    'guards' => [
+        'web' => RistekUSDI\SSO\Auth\Guard\WebGuard::class,
+    ],
+
+    /**
     * GuzzleHttp Client options
     *
     * @link http://docs.guzzlephp.org/en/stable/request-options.html

@@ -158,21 +158,7 @@ class WebGuard implements Guard
             return false;
         }
 
-        $token = SSOWeb::retrieveToken();
-
-        if (empty($token) || empty($token['access_token'])) {
-            return false;
-        }
-
-        $token = new AccessToken($token);
-        $token = $token->parseAccessToken();
-
-        $resourceRoles = $token['resource_access'] ?? [];
-        $resource = Config::get('sso.client_id');
-        $resourceRoles = $resourceRoles[ $resource ] ?? [];
-        $resourceRoles = $resourceRoles['roles'] ?? [];
-
-        return $resourceRoles;
+        return $this->user()->roles;
     }
 
     /**
@@ -183,30 +169,13 @@ class WebGuard implements Guard
      *
      * @return boolean
      */
-    public function hasRole($roles, $resource = '')
+    public function hasRole($roles)
     {
-        if (empty($resource)) {
-            $resource = Config::get('sso.client_id');
-        }
-
         if (! $this->check()) {
             return false;
         }
 
-        $token = SSOWeb::retrieveToken();
-
-        if (empty($token) || empty($token['access_token'])) {
-            return false;
-        }
-
-        $token = new AccessToken($token);
-        $token = $token->parseAccessToken();
-
-        $resourceRoles = $token['resource_access'] ?? [];
-        $resourceRoles = $resourceRoles[ $resource ] ?? [];
-        $resourceRoles = $resourceRoles['roles'] ?? [];
-
-        return empty(array_diff((array) $roles, $resourceRoles));
+        return empty(array_diff((array) $roles, $this->roles()));
     }
 
     /**
