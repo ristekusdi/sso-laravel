@@ -1,1 +1,7 @@
 vendor
+
+# Prevent conflicts with doc-site branch
+node_modules
+build_local
+build_production
+source
