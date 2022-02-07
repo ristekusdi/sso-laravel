@@ -1,10 +1,10 @@
 <?php
 
-namespace RistekUSDI\SSO\Models;
+namespace RistekUSDI\SSO\Models\Web;
 
 use Auth;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class User extends Model implements Authenticatable
 {
@@ -98,13 +98,15 @@ class User extends Model implements Authenticatable
     }
 
     /**
-     * Get list of role authenticate user
+     * Get user roles
      *
-     * @return array
+     * @see WebGuard::roles()
+     *
+     * @return boolean
      */
     public function roles()
     {
-        return Auth::roles();
+        return Auth::guard('imissu-web')->roles();  
     }
 
     /**
@@ -118,7 +120,7 @@ class User extends Model implements Authenticatable
      */
     public function hasRole($roles, $resource = '')
     {
-        return Auth::hasRole($roles, $resource);
+        return Auth::guard('imissu-web')->hasRole($roles, $resource);
     }
 
     /**
@@ -128,7 +130,7 @@ class User extends Model implements Authenticatable
      */
     public function permissions()
     {
-        return Auth::permissions();
+        return Auth::guard('imissu-web')->permissions();
     }
 
     /**
@@ -141,7 +143,7 @@ class User extends Model implements Authenticatable
      */
     public function hasPermission($permissions)
     {
-        return Auth::hasPermission($permissions);
+        return Auth::guard('imissu-web')->hasPermission($permissions);
     }
 
     /**
