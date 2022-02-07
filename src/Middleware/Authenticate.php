@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Facades\Config;
 
-class Authenticated {
+class Authenticate {
 
 	/**
 	 * The Guard implementation.
@@ -35,15 +35,12 @@ class Authenticated {
 	 */
 	public function handle($request, Closure $next)
 	{
-		if ($this->auth->guest()) {
-			if ($request->ajax()) {
-				return response('Unauthorized.', 401);
-			} else {
-				return redirect()->route(Config::get('sso.routes.login'));
-			}
-		}
+		$user = auth()->guard('imissu-web')->user();
+        if ($user !== null && $user instanceof \RistekUSDI\SSO\Models\Web\User) {
+            return $next($request);
+        }
 
-		return $next($request);
+		return redirect()->route(Config::get('sso.routes.login', 'sso.login'));
 	}
 
 }

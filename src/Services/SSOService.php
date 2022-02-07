@@ -320,7 +320,7 @@ class SSOService
         } catch (GuzzleException $e) {
             log_exception($e);
         } catch (Exception $e) {
-            Log::error('[Keycloak Service] ' . print_r($e->getMessage(), true));
+            Log::error('[SSO Service] ' . print_r($e->getMessage(), true));
         }
 
         return $user;

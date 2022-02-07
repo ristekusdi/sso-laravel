@@ -12,9 +12,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use RistekUSDI\SSO\Auth\Guard\WebGuard;
 use RistekUSDI\SSO\Auth\WebUserProvider;
-use RistekUSDI\SSO\Middleware\Authenticated;
-use RistekUSDI\SSO\Middleware\Can;
-use RistekUSDI\SSO\Models\User;
+use RistekUSDI\SSO\Middleware\Authenticate;
+use RistekUSDI\SSO\Models\Web\User;
 use RistekUSDI\SSO\Services\SSOService;
 
 class WebGuardServiceProvider extends ServiceProvider
@@ -58,13 +57,8 @@ class WebGuardServiceProvider extends ServiceProvider
         // $this->registerRoutes();
 
         // User Provider
-        Auth::provider('sso-users', function($app, array $config) {
+        Auth::provider('imissu-web', function($app, array $config) {
             return new WebUserProvider($config['model']);
-        });
-
-        // Gate
-        Gate::define('sso-web', function ($user, $roles, $resource = '') {
-            return $user->hasRole($roles, $resource) ?: null;
         });
     }
 
@@ -76,25 +70,22 @@ class WebGuardServiceProvider extends ServiceProvider
     public function register()
     {
         // SSO Web Guard
-        Auth::extend('sso-web', function ($app, $name, array $config) {
+        Auth::extend('imissu-web', function ($app, $name, array $config) {
             $provider = Auth::createUserProvider($config['provider']);
             $web_guard_class = Config::get('sso.guards.web');
             return new $web_guard_class($provider, $app->request);
         });
 
         // Facades
-        $this->app->bind('sso-web', function($app) {
+        $this->app->bind('imissu-web', function($app) {
             return $app->make(SSOService::class);
         });
 
         // Middleware Group
-        $this->app['router']->middlewareGroup('sso-web', [
+        $this->app['router']->middlewareGroup('imissu-web', [
             StartSession::class,
-            Authenticated::class,
+            Authenticate::class,
         ]);
-
-        // Add Middleware "sso-web-can"
-        $this->app['router']->aliasMiddleware('sso-web-can', Can::class);
 
         // Bind for client data
         $this->app->when(SSOService::class)->needs(ClientInterface::class)->give(function() {

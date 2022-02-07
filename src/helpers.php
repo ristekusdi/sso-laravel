@@ -26,7 +26,7 @@ if (!function_exists('log_exception')) {
     {
         // Guzzle 7
         if (! method_exists($e, 'getResponse') || empty($e->getResponse())) {
-            Log::error('[Keycloak Service] ' . $e->getMessage());
+            Log::error('[SSO Service] ' . $e->getMessage());
             return;
         }
 
@@ -35,7 +35,7 @@ if (!function_exists('log_exception')) {
             'response' => $e->getResponse()->getBody()->getContents(),
         ];
 
-        Log::error('[Keycloak Service] ' . print_r($error, true));
+        Log::error('[SSO Service] ' . print_r($error, true));
     }
 }
 

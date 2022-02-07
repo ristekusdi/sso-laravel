@@ -1,6 +1,6 @@
 {
     "name": "ristekusdi/sso-laravel",
-    "description": "SSO for internal Udayana projects based on Laravel",
+    "description": "SSO for internal Udayana projects based on Laravel Framework",
     "license": "MIT",
     "authors": [
         {
@@ -12,9 +12,8 @@
     "homepage": "https://github.com/ristekusdi/sso-laravel",
     "keywords": ["SSO", "authentication", "authorization"],
     "require": {
-        "php": ">=7.1.3",
-        "laravel/framework": "^5.5|^5.7|^5.7|^5.8",
-        "illuminate/support": "~5",
+        "php": ">=7.2",
+        "illuminate/support": "^5.6|^5.7|^5.8",
         "guzzlehttp/guzzle": "^6.5"
     },
     "autoload": {
@@ -33,7 +32,7 @@
                 "RistekUSDI\\SSO\\WebGuardServiceProvider"
             ],
             "aliases": {
-                "SSOWeb": "RistekUSDI\\SSO\\Facades\\SSOWeb"
+                "IMISSUWeb": "RistekUSDI\\SSO\\Facades\\IMISSUWeb"
             }
         }
     }
