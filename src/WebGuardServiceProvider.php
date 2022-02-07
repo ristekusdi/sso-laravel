@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use RistekUSDI\SSO\Auth\Guard\WebGuard;
 use RistekUSDI\SSO\Auth\WebUserProvider;
-use RistekUSDI\SSO\Middleware\Authenticate;
+use RistekUSDI\SSO\Middleware\Web\Authenticate;
 use RistekUSDI\SSO\Models\Web\User;
 use RistekUSDI\SSO\Services\SSOService;
 
