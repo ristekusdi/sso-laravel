@@ -3,10 +3,9 @@
 namespace RistekUSDI\SSO\Models\Web;
 
 use Auth;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Model implements Authenticatable
+class User extends Authenticatable
 {
     /**
      * Attributes we retrieve from Profile
