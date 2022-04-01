@@ -120,6 +120,11 @@ class WebGuard implements Guard
         return $this->authenticate();
     }
 
+    public function hasUser()
+    {
+        // ...
+    }
+
     /**
      * Try to authenticate the user
      *
