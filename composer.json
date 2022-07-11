@@ -12,9 +12,9 @@
     "homepage": "https://github.com/ristekusdi/sso-laravel",
     "keywords": ["SSO", "authentication", "authorization"],
     "require": {
-        "php": ">=7.4",
-        "illuminate/support": "~6|~7|~8",
-        "guzzlehttp/guzzle": "^7.3|^7.4"
+        "php": ">=8.0",
+        "illuminate/support": "^9.0",
+        "guzzlehttp/guzzle": "^7.4"
     },
     "autoload": {
         "psr-4": {
@@ -32,7 +32,7 @@
                 "RistekUSDI\\SSO\\WebGuardServiceProvider"
             ],
             "aliases": {
-                "SSOWeb": "RistekUSDI\\SSO\\Facades\\SSOWeb"
+                "IMISSUWeb": "RistekUSDI\\SSO\\Facades\\IMISSUWeb"
             }
         }
     }

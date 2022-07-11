@@ -119,7 +119,7 @@ class SSOService
         }
 
         if (is_null($this->callbackUrl)) {
-            $this->callbackUrl = route(Config::get('sso.routes.callback'), 'sso.callback');
+            $this->callbackUrl = route(Config::get('sso.routes.callback', 'sso.callback'));
         }
 
         $this->state = generate_random_state();

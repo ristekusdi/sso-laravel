@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use RistekUSDI\SSO\Exceptions\CallbackException;
-use RistekUSDI\SSO\Facades\SSOWeb;
+use RistekUSDI\SSO\Facades\IMISSUWeb;
 
 class AuthController extends Controller
 {
@@ -17,8 +17,8 @@ class AuthController extends Controller
      */
     public function login()
     {
-        $url = SSOWeb::getLoginUrl();
-        SSOWeb::saveState();
+        $url = IMISSUWeb::getLoginUrl();
+        IMISSUWeb::saveState();
 
         return redirect($url);
     }
@@ -30,9 +30,9 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        SSOWeb::forgetToken();
+        IMISSUWeb::forgetToken();
 
-        $url = SSOWeb::getLogoutUrl();
+        $url = IMISSUWeb::getLogoutUrl();
         return redirect($url);
     }
 
@@ -55,8 +55,8 @@ class AuthController extends Controller
 
         // Check given state to mitigate CSRF attack
         $state = $request->input('state');
-        if (empty($state) || ! SSOWeb::validateState($state)) {
-            SSOWeb::forgetState();
+        if (empty($state) || ! IMISSUWeb::validateState($state)) {
+            IMISSUWeb::forgetState();
 
             throw new CallbackException('Invalid state');
         }
@@ -64,9 +64,9 @@ class AuthController extends Controller
         // Change code for token
         $code = $request->input('code');
         if (! empty($code)) {
-            $token = SSOWeb::getAccessToken($code);
+            $token = IMISSUWeb::getAccessToken($code);
 
-            if (Auth::validate($token)) {
+            if (Auth::guard('imissu-web')->validate($token)) {
                 $url = config('sso.redirect_url', '/admin');
                 return redirect()->intended($url);
             } else {

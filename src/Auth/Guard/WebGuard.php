@@ -10,7 +10,7 @@ use Illuminate\Contracts\Auth\UserProvider;
 use RistekUSDI\SSO\Auth\AccessToken;
 use RistekUSDI\SSO\Exceptions\CallbackException;
 use RistekUSDI\SSO\Models\User;
-use RistekUSDI\SSO\Facades\SSOWeb;
+use RistekUSDI\SSO\Facades\IMISSUWeb;
 use RistekUSDI\SSO\Support\OpenIDConfig;
 
 class WebGuard implements Guard
@@ -115,9 +115,14 @@ class WebGuard implements Guard
          * Store the section
          */
         $credentials['refresh_token'] = $credentials['refresh_token'] ?? '';
-        SSOWeb::saveToken($credentials);
+        IMISSUWeb::saveToken($credentials);
 
         return $this->authenticate();
+    }
+
+    public function hasUser()
+    {
+        // ...
     }
 
     /**
@@ -129,14 +134,14 @@ class WebGuard implements Guard
     public function authenticate()
     {
         // Get Credentials
-        $credentials = SSOWeb::retrieveToken();
+        $credentials = IMISSUWeb::retrieveToken();
         if (empty($credentials)) {
             return false;
         }
 
-        $user = SSOWeb::getUserProfile($credentials);
+        $user = IMISSUWeb::getUserProfile($credentials);
         if (empty($user)) {
-            SSOWeb::forgetToken();
+            IMISSUWeb::forgetToken();
             return false;
         }
 

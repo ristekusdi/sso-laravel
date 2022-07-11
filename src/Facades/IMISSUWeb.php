@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static getUserProfile(array $credentials)
  * @method static forgetToken()
  */
-class SSOWeb extends Facade
+class IMISSUWeb extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -20,6 +20,6 @@ class SSOWeb extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'sso-web';
+        return 'imissu-web';
     }
 }
