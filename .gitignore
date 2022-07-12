@@ -1,3 +1,4 @@
+composer.lock
 vendor
 
 # Prevent conflicts with doc-site branch
