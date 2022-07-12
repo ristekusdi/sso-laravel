@@ -157,8 +157,7 @@ class SSOService
         $url = (new OpenIDConfig)->get('end_session_endpoint');
 
         $params = [
-            'client_id' => $this->getClientId(),
-            'redirect_uri' => url('/'),
+            'client_id' => $this->getClientId()
         ];
 
         return build_url($url, $params);
