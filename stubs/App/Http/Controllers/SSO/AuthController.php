@@ -30,7 +30,7 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        $token = IMISSUWeb::retriveToken();
+        $token = IMISSUWeb::retrieveToken();
 
         IMISSUWeb::forgetToken();
 
