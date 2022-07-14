@@ -30,9 +30,10 @@ class AuthController extends Controller
      */
     public function logout()
     {
+        $token = IMISSUWeb::retrieveToken();
         IMISSUWeb::forgetToken();
 
-        $url = IMISSUWeb::getLogoutUrl();
+        $url = IMISSUWeb::getLogoutUrl($token['id_token']);
         return redirect($url);
     }
 

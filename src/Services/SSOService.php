@@ -152,14 +152,18 @@ class SSOService
      *
      * @return string
      */
-    public function getLogoutUrl()
+    public function getLogoutUrl($id_token = null)
     {
         $url = (new OpenIDConfig)->get('end_session_endpoint');
 
         $params = [
             'client_id' => $this->getClientId(),
-            'redirect_uri' => url('/'),
         ];
+
+        if ($id_token !== null) {
+            $params['id_token_hint'] = $id_token;
+            $params['post_logout_redirect_uri'] = url('/');
+        }
 
         return build_url($url, $params);
     }
