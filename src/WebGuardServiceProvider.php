@@ -12,6 +12,7 @@ use Illuminate\Support\ServiceProvider;
 use RistekUSDI\SSO\Auth\Guard\WebGuard;
 use RistekUSDI\SSO\Auth\WebUserProvider;
 use RistekUSDI\SSO\Middleware\Web\Authenticate;
+use RistekUSDI\SSO\Middleware\Web\Role;
 use RistekUSDI\SSO\Models\Web\User;
 use RistekUSDI\SSO\Services\SSOService;
 
@@ -85,6 +86,9 @@ class WebGuardServiceProvider extends ServiceProvider
             StartSession::class,
             Authenticate::class,
         ]);
+
+        // Middleware IMISSU Web Role
+        $this->app['router']->aliasMiddleware('imissu-web-role', Role::class);
 
         // Bind for client data
         $this->app->when(SSOService::class)->needs(ClientInterface::class)->give(function() {
