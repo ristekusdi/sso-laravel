@@ -14,7 +14,8 @@
     "require": {
         "php": "^7.3|^8.0.2",
         "illuminate/support": "^8.0|^9.0",
-        "guzzlehttp/guzzle": "^7.4"
+        "guzzlehttp/guzzle": "^7.4",
+        "firebase/php-jwt": "^6.3"
     },
     "autoload": {
         "psr-4": {
@@ -29,7 +30,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "RistekUSDI\\SSO\\WebGuardServiceProvider"
+                "RistekUSDI\\SSO\\WebGuardServiceProvider",
+                "RistekUSDI\\SSO\\TokenGuardServiceProvider"
             ],
             "aliases": {
                 "IMISSUWeb": "RistekUSDI\\SSO\\Facades\\IMISSUWeb"
