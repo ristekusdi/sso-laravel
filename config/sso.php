@@ -44,14 +44,6 @@ return [
     'client_secret' => env('SSO_CLIENT_SECRET', null),
 
     /**
-     * We can cache the OpenId Configuration
-     * The result from /realms/{realm-name}/.well-known/openid-configuration
-     *
-     * @link https://www.keycloak.org/docs/3.2/securing_apps/topics/oidc/oidc-generic.html
-     */
-    'cache_openid' => env('SSO_CACHE_OPENID', false),
-
-    /**
      * Page to redirect after callback if there's no "intent"
      *
      * @see RistekUSDI\SSO\Controllers\AuthController::callback()
