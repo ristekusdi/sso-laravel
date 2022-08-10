@@ -2,9 +2,16 @@
 
 return [
     /**
-     * SSO Url
+     * SSO Admin URL
      *
-     * Generally https://your-server.com/auth
+     * Generally https://your-admin-server.com
+     */
+    'admin_url' => env('SSO_ADMIN_URL', ''),
+
+    /**
+     * SSO URL
+     *
+     * Generally https://your-server.com
      */
     'base_url' => env('SSO_BASE_URL', ''),
 
