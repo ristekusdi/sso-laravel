@@ -2,9 +2,16 @@
 
 return [
     /**
-     * SSO Url
+     * SSO Admin URL
      *
-     * Generally https://your-server.com/auth
+     * Generally https://your-admin-server.com
+     */
+    'admin_url' => env('SSO_ADMIN_URL', ''),
+
+    /**
+     * SSO URL
+     *
+     * Generally https://your-server.com
      */
     'base_url' => env('SSO_BASE_URL', ''),
 
@@ -35,14 +42,6 @@ return [
      * @see SSO >> Clients >> Installation
      */
     'client_secret' => env('SSO_CLIENT_SECRET', null),
-
-    /**
-     * We can cache the OpenId Configuration
-     * The result from /realms/{realm-name}/.well-known/openid-configuration
-     *
-     * @link https://www.keycloak.org/docs/3.2/securing_apps/topics/oidc/oidc-generic.html
-     */
-    'cache_openid' => env('SSO_CACHE_OPENID', false),
 
     /**
      * Page to redirect after callback if there's no "intent"
