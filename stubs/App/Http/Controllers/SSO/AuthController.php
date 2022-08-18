@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Auth;
 use RistekUSDI\SSO\Exceptions\CallbackException;
 use RistekUSDI\SSO\Facades\IMISSUWeb;
 
+// TODO: Uncomment line below if you want to set advance setup
+// use App\Facades\AppSession;
+
 class AuthController extends Controller
 {
     /**
@@ -30,6 +33,10 @@ class AuthController extends Controller
      */
     public function logout()
     {
+        // Forget session role_active
+        // TODO: Uncomment line below if you want to set advance setup
+        // AppSession::forgetRoleActive();
+
         $token = IMISSUWeb::retrieveToken();
         IMISSUWeb::forgetToken();
 
