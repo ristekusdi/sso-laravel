@@ -22,7 +22,13 @@ class Authenticate {
                 return $next($request);
             }
         } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], $th->getCode());
+			$code = $th->getCode();
+			// Suppressing error for error message
+			// InvalidArgumentException: The HTTP status code "0" is not valid.
+			if ($code === 0) {
+				$code = 404;
+			}
+            return response()->json(['message' => $th->getMessage()], $code);
         }
 	}
 

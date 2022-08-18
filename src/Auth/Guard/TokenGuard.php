@@ -20,7 +20,7 @@ class TokenGuard implements Guard
 
     public function __construct(UserProvider $provider, Request $request)
     {
-        $this->config = config('sso-token');
+        $this->config = config('sso');
         $this->user = null;
         $this->provider = $provider;
         $this->decodedToken = null;
@@ -87,8 +87,8 @@ class TokenGuard implements Guard
         if (is_null($this->user)) {
             return null;
         }
-
-        if ($this->config['append_decoded_token']) {
+        
+        if ($this->config['token']['append_decoded_token']) {
             $this->user->token = $this->decodedToken;
         }
         
@@ -134,8 +134,8 @@ class TokenGuard implements Guard
 
         $credentials = array_merge($credentials, $roles);
 
-        if ($this->config['load_user_from_database']) {
-            $methodOnProvider = $this->config['user_provider_custom_retrieve_method'] ?? null;
+        if ($this->config['token']['load_user_from_database']) {
+            $methodOnProvider = $this->config['token']['user_provider_custom_retrieve_method'] ?? null;
             if ($methodOnProvider) {
                 $user = $this->provider->{$methodOnProvider}($this->decodedToken, $credentials);
             } else {
@@ -173,7 +173,7 @@ class TokenGuard implements Guard
     private function validateResources()
     {
         $token_resource_access = array_keys((array)($this->decodedToken->resource_access ?? []));
-        $allowed_resources = explode(',', $this->config['allowed_resources']);
+        $allowed_resources = explode(',', $this->config['client_id']);
         if (count(array_intersect($token_resource_access, $allowed_resources)) == 0) {
             throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid `resource_access` allowed by API. Allowed resources by API: " . $this->config['allowed_resources'], 403);
         }

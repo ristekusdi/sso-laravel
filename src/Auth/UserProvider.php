@@ -3,9 +3,8 @@
 namespace RistekUSDI\SSO\Auth;
 
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\UserProvider;
 
-class TokenUserProvider implements UserProvider
+class UserProvider implements \Illuminate\Contracts\Auth\UserProvider
 {
     /**
      * The user model.
@@ -33,6 +32,7 @@ class TokenUserProvider implements UserProvider
     public function retrieveByCredentials(array $credentials)
     {
         $class = '\\'.ltrim($this->model, '\\');
+
         return new $class($credentials);
     }
 
