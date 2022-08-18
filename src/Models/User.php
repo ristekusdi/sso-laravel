@@ -18,7 +18,8 @@ class User extends Authenticatable
         'preferred_username',
         'given_name',
         'family_name',
-        'roles'
+        'roles',
+        'picture'
     ];
 
     /**
