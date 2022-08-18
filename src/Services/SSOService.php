@@ -61,13 +61,6 @@ class SSOService
     protected $openid;
 
     /**
-     * Keycloak OpenId Cache Configuration
-     *
-     * @var array
-     */
-    protected $cacheOpenid;
-
-    /**
      * CallbackUrl
      *
      * @var array
@@ -114,12 +107,8 @@ class SSOService
             $this->clientSecret = Config::get('sso.client_secret');
         }
 
-        if (is_null($this->cacheOpenid)) {
-            $this->cacheOpenid = Config::get('sso.cache_openid', false);
-        }
-
         if (is_null($this->callbackUrl)) {
-            $this->callbackUrl = route(Config::get('sso.routes.callback', 'sso.callback'));
+            $this->callbackUrl = route(Config::get('sso.web.routes.callback', 'sso.web.callback'));
         }
 
         $this->state = generate_random_state();

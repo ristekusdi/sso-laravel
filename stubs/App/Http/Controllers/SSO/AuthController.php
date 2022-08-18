@@ -68,7 +68,7 @@ class AuthController extends Controller
             $token = IMISSUWeb::getAccessToken($code);
 
             if (Auth::guard('imissu-web')->validate($token)) {
-                $url = config('sso.redirect_url', '/admin');
+                $url = config('sso.web.redirect_url', '/home');
                 return redirect()->intended($url);
             } else {
                 // For case like user doesn't have token

@@ -43,33 +43,46 @@ return [
      */
     'client_secret' => env('SSO_CLIENT_SECRET', null),
 
-    /**
-     * Page to redirect after callback if there's no "intent"
-     *
-     * @see RistekUSDI\SSO\Controllers\AuthController::callback()
-     */
-    'redirect_url' => '/',
+    'web' => [
+        /**
+         * Page to redirect after callback if there's no "intent"
+         *
+         * @see RistekUSDI\SSO\Controllers\AuthController::callback()
+         */
+        'redirect_url' => '/',
 
-    /**
-     * Routes name config.
-     */
-    'routes' => [
-        'login' => 'sso.login',
-        'callback' => 'sso.callback',
-        'logout' => 'sso.logout',
+        /**
+         * Routes name config.
+         */
+        'routes' => [
+            'login' => 'sso.web.login',
+            'callback' => 'sso.web.callback',
+            'logout' => 'sso.web.logout',
+        ],
+
+        /**
+         * Load web guard class.
+         */
+        'guard' => RistekUSDI\SSO\Auth\Guard\WebGuard::class,
+
+        /**
+        * GuzzleHttp Client options
+        *
+        * @link http://docs.guzzlephp.org/en/stable/request-options.html
+        */
+        'guzzle_options' => [],
     ],
+    'token' => [
+        'load_user_from_database' => false,
 
-    /**
-     * Load guard class.
-     */
-    'guards' => [
-        'web' => RistekUSDI\SSO\Auth\Guard\WebGuard::class,
-    ],
+        'user_provider_custom_retrieve_method' => null,
 
-    /**
-    * GuzzleHttp Client options
-    *
-    * @link http://docs.guzzlephp.org/en/stable/request-options.html
-    */
-   'guzzle_options' => [],
+        'user_provider_credential' => 'username',
+
+        'token_principal_attribute' => 'preferred_username',
+
+        'append_decoded_token' => false,
+
+        'allowed_resources' => null
+    ]
 ];
