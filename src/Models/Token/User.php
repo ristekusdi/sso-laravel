@@ -1,6 +1,6 @@
 <?php
 
-namespace RistekUSDI\SSO\Models\Web;
+namespace RistekUSDI\SSO\Models\Token;
 
 use Auth;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -62,7 +62,7 @@ class User extends Authenticatable
                 $this->attributes[ $key ] = $value;
             }
         }
-
+        
         $this->id = $this->getKey();
     }
 
@@ -101,11 +101,11 @@ class User extends Authenticatable
      *
      * @see WebGuard::roles()
      *
-     * @return array
+     * @return boolean
      */
     public function roles()
     {
-        return Auth::guard('imissu-web')->roles();  
+        return Auth::guard('imissu-token')->roles();  
     }
 
     /**
@@ -119,7 +119,7 @@ class User extends Authenticatable
      */
     public function hasRole($roles, $resource = '')
     {
-        return Auth::guard('imissu-web')->hasRole($roles, $resource);
+        return Auth::guard('imissu-token')->hasRole($roles, $resource);
     }
 
     /**
@@ -129,7 +129,8 @@ class User extends Authenticatable
      */
     public function permissions()
     {
-        return Auth::guard('imissu-web')->permissions();
+        return [];
+        // return Auth::guard('imissu-web')->permissions();
     }
 
     /**
@@ -142,7 +143,8 @@ class User extends Authenticatable
      */
     public function hasPermission($permissions)
     {
-        return Auth::guard('imissu-web')->hasPermission($permissions);
+        return false;
+        // return Auth::guard('imissu-web')->hasPermission($permissions);
     }
 
     /**
