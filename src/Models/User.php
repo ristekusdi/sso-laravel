@@ -23,12 +23,6 @@ class User extends Authenticatable
     ];
 
     /**
-     * Attributes that developers can add as a custom attribute.
-     * Then, it will be merge with fillable property.
-     */
-    public $custom_fillable = [];
-
-    /**
      * User attributes
      *
      * @var array
@@ -42,7 +36,7 @@ class User extends Authenticatable
      */
     public function __construct(array $profile)
     {
-        $this->fillable = array_merge($this->fillable, $this->custom_fillable);
+        $this->fillable = array_merge($this->fillable, config('sso.user_attributes', []));
         foreach ($profile as $key => $value) {
             if (in_array($key, $this->fillable)) {
                 switch ($key) {
