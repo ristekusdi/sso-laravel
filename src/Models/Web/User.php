@@ -2,6 +2,7 @@
 
 namespace RistekUSDI\SSO\Models\Web;
 
+use Auth;
 use RistekUSDI\SSO\Models\User as UserModel;
 
 class User extends UserModel
@@ -15,7 +16,7 @@ class User extends UserModel
      */
     public function roles()
     {
-        return Auth::guard('imissu-web')->roles();  
+        return Auth::guard('imissu-web')->user()->roles;  
     }
 
     /**
