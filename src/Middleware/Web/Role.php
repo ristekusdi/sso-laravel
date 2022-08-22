@@ -21,15 +21,15 @@ class Role {
             return $next($request);
         }
 		
-		// Role active
-		$role_active = isset(Auth::guard('imissu-web')->user()->role_active) ? Auth::guard('imissu-web')->user()->role_active : null;
+		$roles = isset(Auth::guard('imissu-web')->user()->roles) ? Auth::guard('imissu-web')->user()->roles : null;
         $guards = explode('|', ($guards[0] ?? ''));
 		
 		try {
-			if (in_array($role_active, $guards)) {
+			if (array_intersect($roles, $guards)) {
 				return $next($request);
 			} else {
-				throw new KeycloakGuardException("Hanya peran {$guards['0']} yang diijinkan mengakses sumber ini!", 403);
+				$guards_str = implode(', ', $guards);
+				throw new KeycloakGuardException("Hanya peran {$guards_str} yang diijinkan mengakses sumber ini!", 403);
 			}
 		} catch (\Throwable $th) {
 			throw $th;
