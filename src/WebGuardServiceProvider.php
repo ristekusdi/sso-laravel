@@ -44,7 +44,7 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
 
         // Advance Setup
         $this->publishes([
-            // Controllers
+            // Web Guard
             __DIR__.'/../stubs/app/Services/Auth/Guard/WebGuard.php' => app_path('Services/Auth/Guard/WebGuard.php'),
 
             // Web session service provider
@@ -60,7 +60,7 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/DemoController.php' => app_path('Http/Controllers/SSO/Web/DemoController.php'),
             __DIR__.'/../stubs/resources/views/demo.blade.php' => resource_path('views/sso-web/demo.blade.php'),
             __DIR__.'/../stubs/routes/sso-web-demo.php' => base_path('routes/sso-web-demo.php'),
-        ], 'sso-laravel-web-advance-setup');
+        ], 'sso-laravel-web-advance');
 
         // Web User Provider
         Auth::provider('imissu-web', function($app, array $config) {
