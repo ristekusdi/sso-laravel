@@ -77,6 +77,6 @@ class AuthController extends Controller
             }
         }
 
-        return redirect(route('sso.login'));
+        return redirect(route('sso.web.login'));
     }
 }
