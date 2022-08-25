@@ -137,13 +137,13 @@ class WebGuard implements Guard
         // Get Credentials
         $credentials = IMISSUWeb::retrieveToken();
         if (empty($credentials)) {
-            throw new \Exception('Credentials are empty.');
+            return false;
         }
 
         $user = IMISSUWeb::getUserProfile($credentials);
         if (empty($user)) {
             IMISSUWeb::forgetToken();
-            throw new \Exception('User not found.');
+            return false;
         }
 
         // Provide User
