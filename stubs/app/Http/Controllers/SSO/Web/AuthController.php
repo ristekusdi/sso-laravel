@@ -67,13 +67,12 @@ class AuthController extends Controller
         if (! empty($code)) {
             $token = IMISSUWeb::getAccessToken($code);
 
-            if (Auth::guard('imissu-web')->validate($token)) {
+            try {
+                Auth::guard('imissu-web')->validate($token);
                 $url = config('sso.web.redirect_url', '/');
                 return redirect()->intended($url);
-            } else {
-                // For case like user doesn't have token
-                // or user doesn't have access to certain client app
-                throw new CallbackException('Unauthorized', 403);
+            } catch (\Exception $e) {
+                throw new CallbackException($e->getMessage(), $e->getCode());
             }
         }
 
