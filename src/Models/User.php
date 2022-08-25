@@ -41,16 +41,16 @@ class User extends Authenticatable
             if (in_array($key, $this->fillable)) {
                 switch ($key) {
                     case 'name':
-                        $key = 'full_identity';
+                        $this->attributes['full_identity'] = $profile[$key];
                         break;
                     case 'family_name':
-                        $key = 'name';
+                        $this->attributes['name'] = $profile[$key];
                         break;
                     case 'given_name':
-                        $key = 'identifier';
+                        $this->attributes['identifier'] = $profile[$key];
                         break;
                     case 'preferred_username':
-                        $key = 'username';
+                        $this->attributes['username'] = $profile[$key];
                         break;
                 }
                 $this->attributes[ $key ] = $value;
