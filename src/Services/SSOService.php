@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use RistekUSDI\SSO\Auth\AccessToken;
-use RistekUSDI\SSO\Auth\Guard\WebGuard;
 use RistekUSDI\SSO\Support\OpenIDConfig;
 
 class SSOService
@@ -275,17 +274,6 @@ class SSOService
             // Validate JWT Token
             $token = new AccessToken($credentials);
 
-            if (empty($token->getAccessToken())) {
-                throw new Exception('Access Token is invalid.');
-            }
-
-            $claims = array(
-                'aud' => $this->getClientId(),
-                'iss' => $url = (new OpenIDConfig)->get('issuer'),
-            );
-
-            $token->validateIdToken($claims);
-
             // Get userinfo
             $url = (new OpenIDConfig)->get('userinfo_endpoint');
             $headers = [
@@ -309,7 +297,9 @@ class SSOService
             $user = array_merge($user, $roles);
             
             // Validate retrieved user is owner of token
-            $token->validateSub($user['sub'] ?? '');
+            if (! $token->validateSub($user['sub'] ?? '')) {
+                throw new Exception("This user is not the owner of token.", 401);
+            }
         } catch (GuzzleException $e) {
             log_exception($e);
         } catch (Exception $e) {
@@ -430,5 +420,16 @@ class SSOService
 
         $this->saveToken($credentials);
         return $credentials;
+    }
+
+    /**
+     * Get claims based on client id and issuer
+     */
+    public function getClaims()
+    {
+        return array(
+            'aud' => $this->getClientId(),
+            'iss' => (new OpenIDConfig)->get('issuer'),
+        );
     }
 }

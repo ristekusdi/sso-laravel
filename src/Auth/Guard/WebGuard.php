@@ -8,10 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Contracts\Auth\UserProvider;
 use RistekUSDI\SSO\Auth\AccessToken;
-use RistekUSDI\SSO\Exceptions\CallbackException;
-use RistekUSDI\SSO\Models\User;
 use RistekUSDI\SSO\Facades\IMISSUWeb;
-use RistekUSDI\SSO\Support\OpenIDConfig;
 
 class WebGuard implements Guard
 {
@@ -92,28 +89,32 @@ class WebGuard implements Guard
      *
      * @param  array  $credentials
      *
-     * @throws BadMethodCallException
+     * @throws \Exception
      *
      * @return bool
      */
     public function validate(array $credentials = [])
     {
         if (empty($credentials['access_token']) || empty($credentials['id_token'])) {
-            return false;
+            throw new \Exception('Credentials must have access_token and id_token!');
         }
 
-        /**
-         * If user doesn't have access to certain client app then return false
-         */
         $token = new AccessToken($credentials);
-        $token = $token->parseAccessToken();
-        if (!in_array(Config::get('sso.client_id'), array_keys($token['resource_access']))) {
-            return false;
+        if (empty($token->getAccessToken())) {
+            throw new \Exception('Access Token is invalid.');
         }
 
+        $access_token = $token->parseAccessToken();
         /**
-         * Store the section
+         * If user doesn't have access to certain client app then throw exception
          */
+        if (!in_array(Config::get('sso.client_id'), array_keys($access_token['resource_access']))) {
+            throw new \Exception('Unauthorized', 403);
+        }
+
+        $token->validateIdToken(IMISSUWeb::getClaims());
+
+        // Save credentials if there are no exception throw
         $credentials['refresh_token'] = $credentials['refresh_token'] ?? '';
         IMISSUWeb::saveToken($credentials);
 
@@ -128,7 +129,7 @@ class WebGuard implements Guard
     /**
      * Try to authenticate the user
      *
-     * @throws CallbackException
+     * @throws \Exception
      * @return boolean
      */
     public function authenticate()
@@ -136,13 +137,13 @@ class WebGuard implements Guard
         // Get Credentials
         $credentials = IMISSUWeb::retrieveToken();
         if (empty($credentials)) {
-            return false;
+            throw new \Exception('Credentials are empty.');
         }
 
         $user = IMISSUWeb::getUserProfile($credentials);
         if (empty($user)) {
             IMISSUWeb::forgetToken();
-            return false;
+            throw new \Exception('User not found.');
         }
 
         // Provide User
