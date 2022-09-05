@@ -3,9 +3,8 @@
 namespace RistekUSDI\SSO\Auth;
 
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\UserProvider;
 
-class WebUserProvider implements UserProvider
+class UserProvider implements \Illuminate\Contracts\Auth\UserProvider
 {
     /**
      * The user model.

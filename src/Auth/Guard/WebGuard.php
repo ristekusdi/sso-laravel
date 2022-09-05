@@ -8,10 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Contracts\Auth\UserProvider;
 use RistekUSDI\SSO\Auth\AccessToken;
-use RistekUSDI\SSO\Exceptions\CallbackException;
-use RistekUSDI\SSO\Models\User;
 use RistekUSDI\SSO\Facades\IMISSUWeb;
-use RistekUSDI\SSO\Support\OpenIDConfig;
 
 class WebGuard implements Guard
 {
@@ -92,38 +89,47 @@ class WebGuard implements Guard
      *
      * @param  array  $credentials
      *
-     * @throws BadMethodCallException
+     * @throws \Exception
      *
      * @return bool
      */
     public function validate(array $credentials = [])
     {
         if (empty($credentials['access_token']) || empty($credentials['id_token'])) {
-            return false;
+            throw new \Exception('Credentials must have access_token and id_token!');
         }
 
-        /**
-         * If user doesn't have to certain client app then return false
-         */
         $token = new AccessToken($credentials);
-        $token = $token->parseAccessToken();
-        if (!in_array(Config::get('sso.client_id'), array_keys($token['resource_access']))) {
-            return false;
+        if (empty($token->getAccessToken())) {
+            throw new \Exception('Access Token is invalid.');
         }
 
+        $access_token = $token->parseAccessToken();
         /**
-         * Store the section
+         * If user doesn't have access to certain client app then throw exception
          */
+        if (!in_array(Config::get('sso.client_id'), array_keys($access_token['resource_access']))) {
+            throw new \Exception('Unauthorized', 403);
+        }
+
+        $token->validateIdToken(IMISSUWeb::getClaims());
+
+        // Save credentials if there are no exception throw
         $credentials['refresh_token'] = $credentials['refresh_token'] ?? '';
         IMISSUWeb::saveToken($credentials);
 
         return $this->authenticate();
     }
 
+    public function hasUser()
+    {
+        // ...
+    }
+
     /**
      * Try to authenticate the user
      *
-     * @throws CallbackException
+     * @throws \Exception
      * @return boolean
      */
     public function authenticate()
@@ -165,7 +171,6 @@ class WebGuard implements Guard
      * Check user is authenticated and has a role
      *
      * @param array|string $roles
-     * @param string $resource Default is empty: point to client_id
      *
      * @return boolean
      */
@@ -189,66 +194,7 @@ class WebGuard implements Guard
             return false;
         }
 
-        $token = IMISSUWeb::retrieveToken();
-
-        if (empty($token) || empty($token['access_token'])) {
-            return false;
-        }
-
-        $token = new AccessToken($token);
-        try {
-            $response = (new \GuzzleHttp\Client)->request('POST', 
-            (new OpenIDConfig)->get('token_endpoint'), [
-                'headers' => [
-                    'Authorization' => "Bearer {$token->getAccessToken()}"
-                ],
-                'form_params' => [
-                    'grant_type' => 'urn:ietf:params:oauth:grant-type:uma-ticket',
-                    'audience' => Config::get('sso.client_id')
-                ]
-            ]);
-            
-            if ($response->getStatusCode() !== 200) {
-                return [];
-            }
-            
-            $token = new AccessToken(json_decode($response->getBody()->getContents(), true));
-
-            // Introspection permissions
-            $response = (new \GuzzleHttp\Client)->request('POST', (new OpenIDConfig)->get('introspection_endpoint'), [
-                'auth' => [Config::get('sso.client_id'), Config::get('sso.client_secret')],
-                'form_params' => [
-                    'token_type_hint' => 'requesting_party_token',
-                    'token' => $token->getAccessToken()
-                ]
-            ]);
-
-            if ($response->getStatusCode() !== 200) {
-                return [];
-            }
-
-            $result = json_decode($response->getBody()->getContents(), true);
-
-            // If permissions don't active then return false
-            if (!$result['active']) {
-                return [];
-            }
-
-            $resourcePermissions = [];
-            foreach ($result['permissions'] as $permission) {
-                if (!empty($permission['resource_scopes'])) {
-                    foreach ($permission['resource_scopes'] as $value) {
-                        $resourcePermissions[] = $value;
-                    }
-                }
-            }
-
-            return $resourcePermissions;
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
-            return [];
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            return [];
-        }
+        return [];
     }
 
     /**

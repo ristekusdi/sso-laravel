@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use RistekUSDI\SSO\Auth\AccessToken;
-use RistekUSDI\SSO\Auth\Guard\WebGuard;
 use RistekUSDI\SSO\Support\OpenIDConfig;
 
 class SSOService
@@ -61,13 +60,6 @@ class SSOService
     protected $openid;
 
     /**
-     * Keycloak OpenId Cache Configuration
-     *
-     * @var array
-     */
-    protected $cacheOpenid;
-
-    /**
      * CallbackUrl
      *
      * @var array
@@ -114,12 +106,8 @@ class SSOService
             $this->clientSecret = Config::get('sso.client_secret');
         }
 
-        if (is_null($this->cacheOpenid)) {
-            $this->cacheOpenid = Config::get('sso.cache_openid', false);
-        }
-
         if (is_null($this->callbackUrl)) {
-            $this->callbackUrl = route(Config::get('sso.routes.callback', 'sso.callback'));
+            $this->callbackUrl = route(Config::get('sso.web.routes.callback', 'sso.web.callback'));
         }
 
         $this->state = generate_random_state();
@@ -286,17 +274,6 @@ class SSOService
             // Validate JWT Token
             $token = new AccessToken($credentials);
 
-            if (empty($token->getAccessToken())) {
-                throw new Exception('Access Token is invalid.');
-            }
-
-            $claims = array(
-                'aud' => $this->getClientId(),
-                'iss' => $url = (new OpenIDConfig)->get('issuer'),
-            );
-
-            $token->validateIdToken($claims);
-
             // Get userinfo
             $url = (new OpenIDConfig)->get('userinfo_endpoint');
             $headers = [
@@ -312,19 +289,21 @@ class SSOService
 
             $user = $response->getBody()->getContents();
             $user = json_decode($user, true);
-            
+
             // Get roles
             $roles = ['roles' => []];
             $roles = $token->parseAccessToken()['resource_access'][Config::get('sso.client_id')];
-
+            
             $user = array_merge($user, $roles);
-
+            
             // Validate retrieved user is owner of token
-            $token->validateSub($user['sub'] ?? '');
+            if (! $token->validateSub($user['sub'] ?? '')) {
+                throw new Exception("This user is not the owner of token.", 401);
+            }
         } catch (GuzzleException $e) {
             log_exception($e);
         } catch (Exception $e) {
-            Log::error('[SSO Service] ' . print_r($e->getMessage(), true));
+            Log::error('[Keycloak Service] ' . print_r($e->getMessage(), true));
         }
 
         return $user;
@@ -441,5 +420,16 @@ class SSOService
 
         $this->saveToken($credentials);
         return $credentials;
+    }
+
+    /**
+     * Get claims based on client id and issuer
+     */
+    public function getClaims()
+    {
+        return array(
+            'aud' => $this->getClientId(),
+            'iss' => (new OpenIDConfig)->get('issuer'),
+        );
     }
 }

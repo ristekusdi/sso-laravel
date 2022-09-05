@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\SSO;
+namespace App\Http\Controllers\SSO\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -68,16 +68,15 @@ class AuthController extends Controller
         if (! empty($code)) {
             $token = IMISSUWeb::getAccessToken($code);
 
-            if (Auth::guard('imissu-web')->validate($token)) {
+            try {
+                Auth::guard('imissu-web')->validate($token);
                 $url = config('sso.redirect_url', '/admin');
                 return redirect()->intended($url);
-            } else {
-                // For case like user doesn't have token
-                // or user doesn't have access to certain client app
-                throw new CallbackException('Unauthorized', 403);
+            } catch (\Exception $e) {
+                throw new CallbackException($e->getMessage(), $e->getCode());
             }
         }
 
-        return redirect(route('sso.login'));
+        return redirect(route('sso.web.login'));
     }
 }

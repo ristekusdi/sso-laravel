@@ -5,6 +5,7 @@ namespace RistekUSDI\SSO\Middleware\Web;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use RistekUSDI\SSO\Exceptions\KeycloakGuardException;
 
 class Role {
 	/**
@@ -20,14 +21,20 @@ class Role {
             return $next($request);
         }
 		
-		// Role active
-		$role_active = isset(Auth::guard('imissu-web')->user()->role_active) ? Auth::guard('imissu-web')->user()->role_active : null;
+		$roles = isset(Auth::guard('imissu-web')->user()->roles) ? Auth::guard('imissu-web')->user()->roles : null;
         $guards = explode('|', ($guards[0] ?? ''));
 		
-        if (in_array($role_active, $guards)) {
-            return $next($request);
-        }
+		try {
+			if (array_intersect($roles, $guards)) {
+				return $next($request);
+			} else {
+				$guards_str = implode(', ', $guards);
+				throw new KeycloakGuardException("Hanya peran {$guards_str} yang diijinkan mengakses sumber ini!", 403);
+			}
+		} catch (\Throwable $th) {
+			throw $th;
+		}
 
-        return redirect()->route(Config::get('sso.routes.login', 'sso.login'));
+        return redirect()->route(Config::get('sso.web.routes.login', 'sso.web.login'));
 	}
 }

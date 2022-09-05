@@ -7,17 +7,11 @@ use GuzzleHttp\ClientInterface;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\ServiceProvider;
-use RistekUSDI\SSO\Auth\Guard\WebGuard;
-use RistekUSDI\SSO\Auth\WebUserProvider;
-use RistekUSDI\SSO\Middleware\Web\Authenticate;
-use RistekUSDI\SSO\Middleware\Web\Role;
-use RistekUSDI\SSO\Models\Web\User;
+use RistekUSDI\SSO\Auth\UserProvider;
 use RistekUSDI\SSO\Services\SSOService;
 
-class WebGuardServiceProvider extends ServiceProvider
+class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     /**
      * Bootstrap services.
@@ -31,35 +25,46 @@ class WebGuardServiceProvider extends ServiceProvider
             require __DIR__ . '/helpers.php';
         }
 
-        // Views
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'sso-laravel');
-
         $this->publishes([
-            __DIR__.'/../resources/views' => resource_path('views/vendor/sso-laravel')
-        ]);
+            // Controllers
+            __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/AuthController.php' => app_path('Http/Controllers/SSO/Web/AuthController.php'),
 
-        // Routes
+            // Models
+            __DIR__.'/../stubs/app/Models/SSO/Web/User.php' => app_path('Models/SSO/Web/User.php'),
+
+            // Views
+            __DIR__.'/../stubs/resources/views/errors' => resource_path('views/sso-web/errors'),
+
+            // Routes
+            __DIR__.'/../stubs/routes/web.php' => base_path('routes/sso-web.php'),
+
+            // Config
+            __DIR__ . '/../stubs/config/sso.php' => config_path('sso.php')
+        ], 'sso-laravel-web');
+
+        // Advance Setup
         $this->publishes([
-            __DIR__.'/../stubs/routes/web.php' => base_path('routes/sso.php')
-        ]);
+            // Web Guard
+            __DIR__.'/../stubs/app/Services/Auth/Guard/WebGuard.php' => app_path('Services/Auth/Guard/WebGuard.php'),
 
-        // Controllers
-        $this->publishes([
-            __DIR__.'/../stubs/App/Http/Controllers/SSO/AuthController.php' => app_path('Http/Controllers/SSO/AuthController.php')
-        ]);
+            // Web session service provider
+            __DIR__.'/../stubs/app/Facades/WebSession.php' => app_path('Facades/WebSession.php'),
+            __DIR__.'/../stubs/app/Services/WebSession.php' => app_path('Services/WebSession.php'),
+            __DIR__.'/../stubs/app/Providers/WebSessionProvider.php' => app_path('Providers/WebSessionProvider.php'),
 
-        // Configuration
-        $config = __DIR__ . '/../config/sso.php';
+            // Web session controller
+            __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/WebSessionController.php' => app_path('Http/Controllers/SSO/Web/WebSessionController.php'),
+            __DIR__.'/../stubs/routes/web-session.php' => base_path('routes/web-session.php'),
 
-        $this->publishes([$config => config_path('sso.php')], 'config');
-        $this->mergeConfigFrom($config, 'sso');
+            // SSO Web demo
+            __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/DemoController.php' => app_path('Http/Controllers/SSO/Web/DemoController.php'),
+            __DIR__.'/../stubs/resources/views/demo.blade.php' => resource_path('views/sso-web/demo.blade.php'),
+            __DIR__.'/../stubs/routes/sso-web-demo.php' => base_path('routes/sso-web-demo.php'),
+        ], 'sso-laravel-web-advance');
 
-        // Routes
-        // $this->registerRoutes();
-
-        // User Provider
+        // Web User Provider
         Auth::provider('imissu-web', function($app, array $config) {
-            return new WebUserProvider($config['model']);
+            return new UserProvider($config['model']);
         });
     }
 
@@ -73,7 +78,7 @@ class WebGuardServiceProvider extends ServiceProvider
         // SSO Web Guard
         Auth::extend('imissu-web', function ($app, $name, array $config) {
             $provider = Auth::createUserProvider($config['provider']);
-            $web_guard_class = Config::get('sso.guards.web');
+            $web_guard_class = Config::get('sso.web.guard');
             return new $web_guard_class($provider, $app->request);
         });
 
@@ -82,30 +87,20 @@ class WebGuardServiceProvider extends ServiceProvider
             return $app->make(SSOService::class);
         });
 
-        // Middleware Group
+        // Middleware IMISSU Web
         $this->app['router']->middlewareGroup('imissu-web', [
             StartSession::class,
-            Authenticate::class,
+            \RistekUSDI\SSO\Middleware\Web\Authenticate::class,
         ]);
 
         // Middleware IMISSU Web Role
-        $this->app['router']->aliasMiddleware('imissu-web-role', Role::class);
+        $this->app['router']->aliasMiddleware('imissu-web-role', 
+            \RistekUSDI\SSO\Middleware\Web\Role::class
+        );
 
         // Bind for client data
         $this->app->when(SSOService::class)->needs(ClientInterface::class)->give(function() {
             return new Client(Config::get('sso.guzzle_options', []));
-        });
-    }
-
-    /**
-     * Register the authentication routes for keycloak.
-     *
-     * @return void
-     */
-    private function registerRoutes()
-    {
-        Route::group(['middleware' => 'web'], function () {
-            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
     }
 }

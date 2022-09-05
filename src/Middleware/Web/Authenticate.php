@@ -20,7 +20,7 @@ class Authenticate {
             return $next($request);
         }
 
-		return redirect()->route(Config::get('sso.routes.login', 'sso.login'));
+		return redirect()->route(Config::get('sso.routes.login', 'sso.web.login'));
 	}
 
 }
