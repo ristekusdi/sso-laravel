@@ -60,7 +60,7 @@ class TokenGuardServiceProvider extends \Illuminate\Support\ServiceProvider
 
         // Middleware IMISSU Token Role
         $this->app['router']->aliasMiddleware('imissu-token-role', 
-            \RistekUSDI\SSO\Middleware\Web\Role::class
+            \RistekUSDI\SSO\Middleware\Token\Role::class
         );
     }
 }
