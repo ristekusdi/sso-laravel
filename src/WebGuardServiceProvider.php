@@ -32,9 +32,6 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
             // Models
             __DIR__.'/../stubs/app/Models/SSO/Web/User.php' => app_path('Models/SSO/Web/User.php'),
 
-            // Views
-            __DIR__.'/../stubs/resources/views/errors' => resource_path('views/sso-web/errors'),
-
             // Routes
             __DIR__.'/../stubs/routes/web.php' => base_path('routes/sso-web.php'),
 
