@@ -179,8 +179,8 @@ class WebGuard implements Guard
         if (! $this->check()) {
             return false;
         }
-
-        return empty(array_diff((array) $roles, $this->roles()));
+        
+        return !empty(array_intersect((array) $roles, $this->roles()));
     }
 
     /**
