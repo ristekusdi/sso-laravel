@@ -7,7 +7,6 @@ use GuzzleHttp\ClientInterface;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Route;
 use RistekUSDI\SSO\Auth\UserProvider;
 use RistekUSDI\SSO\Services\SSOService;
 
@@ -93,6 +92,11 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
         // Middleware IMISSU Web Role
         $this->app['router']->aliasMiddleware('imissu-web-role', 
             \RistekUSDI\SSO\Middleware\Web\Role::class
+        );
+
+        // Middleware IMISSU Web Role Active
+        $this->app['router']->aliasMiddleware('imissu-web-role_active', 
+            \RistekUSDI\SSO\Middleware\Web\RoleActive::class
         );
 
         // Bind for client data
