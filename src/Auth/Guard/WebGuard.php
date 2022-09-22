@@ -184,6 +184,22 @@ class WebGuard implements Guard
     }
 
     /**
+     * Check user is authenticated and has correct role active
+     *
+     * @param array|string $roles
+     *
+     * @return boolean
+     */
+    public function hasRoleActive($roles)
+    {
+        if (! $this->check()) {
+            return false;
+        }
+
+        return (in_array($this->user()->role_active, $roles)) ? true : false;
+    }
+
+    /**
      * Get list of permission authenticate user
      *
      * @return array
