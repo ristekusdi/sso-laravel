@@ -63,6 +63,7 @@ return [
         'unud_identifier_id',
         'unud_sso_id',
         'unud_user_type_id',
+        'role_active',
     ],
     
     'web' => [
