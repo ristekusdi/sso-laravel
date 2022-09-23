@@ -5,7 +5,6 @@ namespace App\Http\Controllers\SSO\Web;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use RistekUSDI\SSO\Exceptions\CallbackException;
 use RistekUSDI\SSO\Facades\IMISSUWeb;
 
 class AuthController extends Controller
@@ -52,7 +51,7 @@ class AuthController extends Controller
             $error = $request->input('error_description');
             $error = ($error) ?: $request->input('error');
 
-            throw new CallbackException($error);
+            abort(401, $error);
         }
 
         // Check given state to mitigate CSRF attack
@@ -60,7 +59,7 @@ class AuthController extends Controller
         if (empty($state) || ! IMISSUWeb::validateState($state)) {
             IMISSUWeb::forgetState();
 
-            throw new CallbackException('Invalid state');
+            abort(401, 'Invalid state');
         }
 
         // Change code for token
@@ -73,7 +72,7 @@ class AuthController extends Controller
                 $url = config('sso.redirect_url', '/admin');
                 return redirect()->intended($url);
             } catch (\Exception $e) {
-                throw new CallbackException($e->getMessage(), $e->getCode());
+                abort($e->getCode(), $e->getMessage());
             }
         }
 
