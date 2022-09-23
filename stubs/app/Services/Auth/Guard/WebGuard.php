@@ -13,13 +13,13 @@ class WebGuard extends Guard
         // Get Credentials
         $credentials = IMISSUWeb::retrieveToken();
         if (empty($credentials)) {
-            return false;
+            throw new \Exception('Credentials are empty.');
         }
 
         $user = IMISSUWeb::getUserProfile($credentials);
         if (empty($user)) {
             IMISSUWeb::forgetToken();
-            return false;
+            throw new \Exception('User not found.');
         }
         
         /**
@@ -34,14 +34,50 @@ class WebGuard extends Guard
         return true;
     }
 
+    /**
+     * Check if user in a certain role active from roles guard.
+     *
+     * @param array|string $roles
+     *
+     * @return boolean
+     */
+    public function hasRole($roles)
+    {
+        if (! $this->check()) {
+            return false;
+        }
+        
+        if (!empty($roles)) {
+            return (in_array($this->user()->getAttribute('role_active'), (array) $roles)) ? true : false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Get list of permission in a role active user
+     *
+     * @return array
+     */
     public function permissions()
     {
         if (! $this->check()) {
             return false;
         }
 
-        // role_permission attribute get from $custom_fillable.
-        return $this->user()->role_permissions;
+        return $this->user()->getAttribute('role_active_permissions');
+    }
+
+    /**
+     * Check if user has permission(s) in role active permissions
+     *
+     * @param array|string $scopes
+     *
+     * @return boolean
+     */
+    public function hasPermission($permissions)
+    {
+        return !empty(array_intersect((array) $permissions, $this->permissions()));
     }
 
     // Ini digunakan untuk mengubah role active dalam session internal aplikasi

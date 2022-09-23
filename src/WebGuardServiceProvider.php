@@ -98,6 +98,11 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
             \RistekUSDI\SSO\Middleware\Web\Role::class
         );
 
+        // Middleware IMISSU Web Permission
+        $this->app['router']->aliasMiddleware('imissu-web-permission', 
+            \RistekUSDI\SSO\Middleware\Web\Permission::class
+        );
+
         // Bind for client data
         $this->app->when(SSOService::class)->needs(ClientInterface::class)->give(function() {
             return new Client(Config::get('sso.guzzle_options', []));

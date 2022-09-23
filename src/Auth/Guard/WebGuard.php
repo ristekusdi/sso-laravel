@@ -168,7 +168,7 @@ class WebGuard implements Guard
     }
 
     /**
-     * Check user is authenticated and has a role
+     * Check if user in a certain role active from roles guard.
      *
      * @param array|string $roles
      *
@@ -179,12 +179,16 @@ class WebGuard implements Guard
         if (! $this->check()) {
             return false;
         }
-
-        return empty(array_diff((array) $roles, $this->roles()));
+        
+        if (!empty($roles)) {
+            return (in_array($this->user()->getAttribute('role_active'), (array) $roles)) ? true : false;
+        } else {
+            return true;
+        }
     }
 
     /**
-     * Get list of permission authenticate user
+     * Get list of permission in a role active user
      *
      * @return array
      */
@@ -194,11 +198,11 @@ class WebGuard implements Guard
             return false;
         }
 
-        return [];
+        return $this->user()->getAttribute('role_active_permissions');
     }
 
     /**
-     * Check user is authenticated and has a permission(s)
+     * Check if user has permission(s) in role active permissions
      *
      * @param array|string $scopes
      *

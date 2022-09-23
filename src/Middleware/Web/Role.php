@@ -4,37 +4,25 @@ namespace RistekUSDI\SSO\Middleware\Web;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
-use RistekUSDI\SSO\Exceptions\KeycloakGuardException;
 
 class Role {
+
 	/**
-	 * Handle an incoming request.
+	 * Handle if user have role(s) based on list of roles in current client app.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
 	 * @param  \Closure  $next
 	 * @return mixed
 	 */
-	public function handle($request, Closure $next, ...$guards)
-	{
-		if (empty($guards) && Auth::guard('imissu-web')->check()) {
-            return $next($request);
+	public function handle($request, Closure $next, ...$roles)
+	{	
+		// Make sure that we receive array with value is not empty.
+        $roles = array_unique(array_filter(explode('|', ($roles[0] ?? ''))));
+		if (! Auth::guard('imissu-web')->hasRole($roles)) {
+            $roles_str = implode(', ', $roles);
+            abort(403, "Pengguna dengan peran {$roles_str} yang diijinkan mengakses sumber ini!");
         }
-		
-		$roles = isset(Auth::guard('imissu-web')->user()->roles) ? Auth::guard('imissu-web')->user()->roles : null;
-        $guards = explode('|', ($guards[0] ?? ''));
-		
-		try {
-			if (array_intersect($roles, $guards)) {
-				return $next($request);
-			} else {
-				$guards_str = implode(', ', $guards);
-				throw new KeycloakGuardException("Hanya peran {$guards_str} yang diijinkan mengakses sumber ini!", 403);
-			}
-		} catch (\Throwable $th) {
-			throw $th;
-		}
 
-        return redirect()->route(Config::get('sso.web.routes.login', 'sso.web.login'));
+        return $next($request);
 	}
 }
