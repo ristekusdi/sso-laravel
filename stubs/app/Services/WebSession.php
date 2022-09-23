@@ -7,10 +7,10 @@ class WebSession
     public function stick($user)
     {
         $role_active = $this->getRoleActive($user['roles']);
-        $role_permissions = $this->getRolePermissions($role_active);
+        
         $data = [
             'role_active' => $role_active,
-            'role_permissions' => $role_permissions,
+            'role_active_permissions' => $this->getRoleActivePermissions($role_active),
         ];
         
         $user = array_merge($user, $data);
@@ -23,20 +23,7 @@ class WebSession
         return (session()->has('role_active')) ? session()->get('role_active') : $roles[0];
     }
 
-    public function changeRoleActive($role_active)
-    {
-        $this->forgetRoleActive();
-        session()->put('role_active', $role_active);
-        session()->save();
-    }
-
-    public function forgetRoleActive()
-    {
-        session()->forget('role_active');
-        session()->save();
-    }
-
-    public function getRolePermissions($role_active)
+    public function getRoleActivePermissions($role_active)
     {
         $permissions = [
             'Admin' => [
@@ -60,5 +47,18 @@ class WebSession
         }
 
         return $selected_permissions;
+    }
+
+    public function changeRoleActive($role_active)
+    {
+        $this->forgetRoleActive();
+        session()->put('role_active', $role_active);
+        session()->save();
+    }
+
+    public function forgetRoleActive()
+    {
+        session()->forget('role_active');
+        session()->save();
     }
 }
