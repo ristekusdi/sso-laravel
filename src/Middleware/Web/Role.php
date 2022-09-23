@@ -16,8 +16,8 @@ class Role {
 	 */
 	public function handle($request, Closure $next, ...$roles)
 	{	
-        $roles = explode('|', ($roles[0] ?? ''));
-		
+		// Make sure that we receive array with value is not empty.
+        $roles = array_unique(array_filter(explode('|', ($roles[0] ?? ''))));
 		if (! Auth::guard('imissu-web')->hasRole($roles)) {
             $roles_str = implode(', ', $roles);
             abort(403, "Hanya peran {$roles_str} yang diijinkan mengakses sumber ini!");

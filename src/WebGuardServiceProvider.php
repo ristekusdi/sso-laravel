@@ -94,11 +94,6 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
             \RistekUSDI\SSO\Middleware\Web\Role::class
         );
 
-        // Middleware IMISSU Web Role Active
-        $this->app['router']->aliasMiddleware('imissu-web-role_active', 
-            \RistekUSDI\SSO\Middleware\Web\RoleActive::class
-        );
-
         // Bind for client data
         $this->app->when(SSOService::class)->needs(ClientInterface::class)->give(function() {
             return new Client(Config::get('sso.guzzle_options', []));

@@ -180,23 +180,11 @@ class WebGuard implements Guard
             return false;
         }
         
-        return !empty(array_intersect((array) $roles, $this->roles()));
-    }
-
-    /**
-     * Check user is authenticated and has correct role active
-     *
-     * @param array|string $roles
-     *
-     * @return boolean
-     */
-    public function hasRoleActive($roles)
-    {
-        if (! $this->check()) {
-            return false;
+        if (!empty($roles)) {
+            return (in_array($this->user()->getAttribute('role_active'), $roles)) ? true : false;
+        } else {
+            return true;
         }
-
-        return (in_array($this->user()->role_active, $roles)) ? true : false;
     }
 
     /**
