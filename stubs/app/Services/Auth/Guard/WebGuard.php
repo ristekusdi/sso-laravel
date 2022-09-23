@@ -48,7 +48,7 @@ class WebGuard extends Guard
         }
         
         if (!empty($roles)) {
-            return (in_array($this->user()->getAttribute('role_active'), $roles)) ? true : false;
+            return (in_array($this->user()->getAttribute('role_active'), (array) $roles)) ? true : false;
         } else {
             return true;
         }
@@ -82,7 +82,7 @@ class WebGuard extends Guard
         }
         
         if (!empty($permissions)) {
-            return (in_array($this->permissions(), $permissions)) ? true : false;
+            return (array_intersect($permissions, $this->permissions())) ? true : false;
         } else {
             return true;
         }
