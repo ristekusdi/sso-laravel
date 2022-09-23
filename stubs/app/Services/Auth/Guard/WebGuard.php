@@ -34,14 +34,58 @@ class WebGuard extends Guard
         return true;
     }
 
+    /**
+     * Check if user in a certain role active from roles guard.
+     *
+     * @param array|string $roles
+     *
+     * @return boolean
+     */
+    public function hasRole($roles)
+    {
+        if (! $this->check()) {
+            return false;
+        }
+        
+        if (!empty($roles)) {
+            return (in_array($this->user()->getAttribute('role_active'), $roles)) ? true : false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Get list of permission in a role active user
+     *
+     * @return array
+     */
     public function permissions()
     {
         if (! $this->check()) {
             return false;
         }
 
-        // role_permission attribute get from $custom_fillable.
-        return $this->user()->role_permissions;
+        return $this->user()->getAttribute('role_active_permissions');
+    }
+
+    /**
+     * Check if user has permission(s) in role active permissions
+     *
+     * @param array|string $scopes
+     *
+     * @return boolean
+     */
+    public function hasPermission($permissions)
+    {
+        if (! $this->check()) {
+            return false;
+        }
+        
+        if (!empty($permissions)) {
+            return (in_array($this->permissions(), $permissions)) ? true : false;
+        } else {
+            return true;
+        }
     }
 
     // Ini digunakan untuk mengubah role active dalam session internal aplikasi
