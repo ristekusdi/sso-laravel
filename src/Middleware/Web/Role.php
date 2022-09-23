@@ -20,7 +20,7 @@ class Role {
         $roles = array_unique(array_filter(explode('|', ($roles[0] ?? ''))));
 		if (! Auth::guard('imissu-web')->hasRole($roles)) {
             $roles_str = implode(', ', $roles);
-            abort(403, "Hanya peran {$roles_str} yang diijinkan mengakses sumber ini!");
+            abort(403, "Pengguna dengan peran {$roles_str} yang diijinkan mengakses sumber ini!");
         }
 
         return $next($request);
