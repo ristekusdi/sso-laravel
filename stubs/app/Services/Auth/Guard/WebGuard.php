@@ -82,7 +82,7 @@ class WebGuard extends Guard
         }
         
         if (!empty($permissions)) {
-            return (array_intersect($permissions, $this->permissions())) ? true : false;
+            return (array_intersect((array) $permissions, $this->permissions())) ? true : false;
         } else {
             return true;
         }
