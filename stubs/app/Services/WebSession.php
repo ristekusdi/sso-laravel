@@ -51,14 +51,22 @@ class WebSession
 
     public function changeRoleActive($role_active)
     {
-        $this->forgetRoleActive();
+        session()->forget('role_active');
+        session()->save();
         session()->put('role_active', $role_active);
         session()->save();
     }
 
-    public function forgetRoleActive()
+    /**
+     * Forget selected session from app.
+     * Dear maintainer and developers:
+     * Please don't use session()->flush() 
+     * because it also remove session SSO like access_token and refresh_token!
+     * Use session()->forget() instead!
+     */
+    public function forget()
     {
-        session()->forget('role_active');
+        session()->forget(['role_active']);
         session()->save();
     }
 }
