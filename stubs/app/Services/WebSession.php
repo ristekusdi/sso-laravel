@@ -4,7 +4,7 @@ namespace App\Services;
 
 class WebSession
 {
-    public function stick($user)
+    public function bind($user)
     {
         $role_active = $this->getRoleActive($user['roles']);
         

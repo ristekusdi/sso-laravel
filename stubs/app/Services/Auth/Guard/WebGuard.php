@@ -26,7 +26,7 @@ class WebGuard extends Guard
          * NOTE
          * Here's the way you want to bind user with data come from database or session.
          */
-        $user = WebSession::stick($user);
+        $user = WebSession::bind($user);
         
         $user = $this->provider->retrieveByCredentials($user);
         $this->setUser($user);
