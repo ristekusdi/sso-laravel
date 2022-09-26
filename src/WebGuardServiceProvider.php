@@ -27,6 +27,7 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->publishes([
             // Controllers
             __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/AuthController.php' => app_path('Http/Controllers/SSO/Web/AuthController.php'),
+            __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/BasicController.php' => app_path('Http/Controllers/SSO/Web/BasicController.php'),
 
             // Models
             __DIR__.'/../stubs/app/Models/SSO/Web/User.php' => app_path('Models/SSO/Web/User.php'),
@@ -35,10 +36,13 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__.'/../stubs/routes/web.php' => base_path('routes/sso-web.php'),
 
             // Config
-            __DIR__ . '/../stubs/config/sso.php' => config_path('sso.php')
+            __DIR__ . '/../stubs/config/sso.php' => config_path('sso.php'),
+
+            // Views
+            __DIR__.'/../stubs/resources/views/basic.blade.php' => resource_path('views/sso-web/basic.blade.php'),
         ], 'sso-laravel-web');
 
-        // Advance Setup
+        // Advance setup
         $this->publishes([
             // Web Guard
             __DIR__.'/../stubs/app/Services/Auth/Guard/WebGuard.php' => app_path('Services/Auth/Guard/WebGuard.php'),
@@ -52,11 +56,28 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/WebSessionController.php' => app_path('Http/Controllers/SSO/Web/WebSessionController.php'),
             __DIR__.'/../stubs/routes/web-session.php' => base_path('routes/web-session.php'),
 
-            // SSO Web demo
-            __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/DemoController.php' => app_path('Http/Controllers/SSO/Web/DemoController.php'),
-            __DIR__.'/../stubs/resources/views/demo.blade.php' => resource_path('views/sso-web/demo.blade.php'),
-            __DIR__.'/../stubs/routes/sso-web-demo.php' => base_path('routes/sso-web-demo.php'),
+            // SSO web advance demo
+            __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/AdvanceController.php' => app_path('Http/Controllers/SSO/Web/AdvanceController.php'),
+            __DIR__.'/../stubs/resources/views/advance.blade.php' => resource_path('views/sso-web/advance.blade.php'),
+            __DIR__.'/../stubs/routes/sso-web-advance.php' => base_path('routes/sso-web-advance.php'),
         ], 'sso-laravel-web-advance');
+
+        // Tutorial advance Setup
+        $this->publishes([
+            // Tutorial
+            __DIR__.'/../stubs/tutorial/Services/Auth/Guard/WebGuard.php' => app_path('Services/Auth/Guard/WebGuard.php'),
+            __DIR__.'/../stubs/tutorial/app/Services/WebSession.php' => app_path('Services/WebSession.php'),
+            __DIR__.'/../stubs/tutorial/Http/Controllers/SSO/Web/WebSessionController.php' => app_path('Http/Controllers/SSO/Web/WebSessionController.php'),
+            __DIR__.'/../stubs/tutorial/Http/Controllers/SSO/Web/DemoController.php' => app_path('Http/Controllers/SSO/Web/DemoController.php'),
+            __DIR__.'/../stubs/tutorial/routes/web-session.php' => base_path('routes/web-session.php'),
+
+            // Web session service provider
+            __DIR__.'/../stubs/app/Facades/WebSession.php' => app_path('Facades/WebSession.php'),
+            __DIR__.'/../stubs/app/Providers/WebSessionProvider.php' => app_path('Providers/WebSessionProvider.php'),
+
+            // SSO web advance demo
+            __DIR__.'/../stubs/resources/views/advance.blade.php' => resource_path('views/sso-web/advance.blade.php'),
+        ], 'tutorial-sso-laravel-web-advance');
 
         // Web User Provider
         Auth::provider('imissu-web', function($app, array $config) {
