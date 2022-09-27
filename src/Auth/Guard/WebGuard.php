@@ -66,11 +66,12 @@ class WebGuard implements Guard
      * Set the current user.
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @return void
+     * @return self
      */
     public function setUser(?Authenticatable $user)
     {
         $this->user = $user;
+        return $this;
     }
 
     /**
@@ -129,8 +130,7 @@ class WebGuard implements Guard
     /**
      * Try to authenticate the user
      *
-     * @throws \Exception
-     * @return boolean
+     * @return \Illuminate\Contracts\Auth\Authenticatable|boolean
      */
     public function authenticate()
     {
@@ -149,8 +149,6 @@ class WebGuard implements Guard
         // Provide User
         $user = $this->provider->retrieveByCredentials($user);
         $this->setUser($user);
-
-        return true;
     }
 
     /**
