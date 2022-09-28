@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Demo SSO Laravel</title>
+    <title>Demo SSO Laravel - Advance</title>
 </head>
 <body>
     <h1>Hello</h1>
@@ -13,14 +13,14 @@
     <a href="{{ route('sso.web.logout') }}">Log out</a>
     <p>Berikut daftar peran yang dimiliki oleh {{ auth('imissu-web')->user()->name }}</p>
     <ul>
-        @foreach (auth('imissu-web')->user()->roles() as $role)
+        @foreach (auth('imissu-web')->user()->roles as $role)
             <li>{{ $role }}</li>
         @endforeach
     </ul>
     <p>Peran aktif: {{ auth('imissu-web')->user()->role_active }}</p>
     <p>Daftar permission: </p>
     <ul>
-        @foreach (auth('imissu-web')->user()->permissions() as $perm)
+        @foreach (auth('imissu-web')->user()->role_active_permissions as $perm)
             <li>{{ $perm }}</li>
         @endforeach
     </ul>
@@ -42,7 +42,6 @@
                 <option value="{{ $role }}" {{ (auth('imissu-web')->user()->role_active == $role) ? 'selected' : '' }}>{{ $role }}</option>
             @endforeach
         </select>
-        <input type="hidden" name="url_change_role_active" value="{{ url('/web-session/change-role-active') }}">
         <input type="hidden" name="current_url" value="{{ url()->current() }}">
     </form>
     <p>Atribut yang bisa di akses sebagai berikut</p>
@@ -66,32 +65,5 @@
             @endforeach
         </tbody>
     </table>
-    <script>
-        document.getElementById('roles-combo').onchange = function (e) {
-            const value = e.target.value;
-            const url = document.querySelector('input[name="url_change_role_active"]').value;
-            const current_url = document.querySelector('input[name="current_url"]').value;
-            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            if (value != '0') {
-                fetch(url, {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRF-TOKEN': token
-                    },
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    body: `role_active=${value}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.code == 200) {
-                        window.location.href = current_url;
-                    } else {
-                        alert(data.message);
-                    }
-                });
-            }
-        }
-    </script>
 </body>
 </html>

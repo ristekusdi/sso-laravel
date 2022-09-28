@@ -3,7 +3,6 @@
 namespace RistekUSDI\SSO\Middleware\Web;
 
 use Closure;
-use Illuminate\Support\Facades\Config;
 
 class Authenticate {
 	/**
@@ -20,7 +19,7 @@ class Authenticate {
             return $next($request);
         }
 
-		return redirect()->route(Config::get('sso.web.routes.login', 'sso.web.login'));
+		return redirect()->route(config('sso.web.routes.login', 'sso.web.login'));
 	}
 
 }

@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Test SSO Laravel</title>
+    <title>Demo SSO Laravel - Basic</title>
 </head>
 <body>
     <h1>Hello</h1>
@@ -13,7 +13,7 @@
     <a href="{{ route('sso.web.logout') }}">Log out</a>
     <p>Berikut daftar peran yang dimiliki oleh {{ auth('imissu-web')->user()->name }}</p>
     <ul>
-        @foreach (auth('imissu-web')->user()->roles() as $role)
+        @foreach (auth('imissu-web')->user()->roles as $role)
             <li>{{ $role }}</li>
         @endforeach
     </ul>

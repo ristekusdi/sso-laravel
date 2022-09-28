@@ -4,10 +4,10 @@ namespace RistekUSDI\SSO\Middleware\Web;
 
 use Closure;
 
-class Role {
+class RoleActive {
 
 	/**
-	 * Handle if user have role(s) based on list of roles current client app.
+	 * Handle if user currently in a role active.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
 	 * @param  \Closure  $next
@@ -17,9 +17,9 @@ class Role {
 	{	
 		// Make sure that we receive array with value is not empty.
         $roles = array_unique(array_filter(explode('|', ($roles[0] ?? ''))));
-		if (! auth('imissu-web')->user()->hasRole($roles)) {
+		if (! auth('imissu-web')->user()->hasRoleActive($roles)) {
             $roles_str = implode(', ', $roles);
-            abort(403, "Pengguna dengan peran {$roles_str} yang diijinkan mengakses sumber ini!");
+            abort(403, "Pengguna dengan peran aktif {$roles_str} yang diijinkan mengakses sumber ini!");
         }
 
         return $next($request);

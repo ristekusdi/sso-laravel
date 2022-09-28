@@ -91,49 +91,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Get user roles
-     *
-     * @return array
-     */
-    public function roles()
-    {
-        return [];
-    }
-
-    /**
-     * Check user has roles
-     *
-     * @param  string|array  $roles
-     * @param  string  $resource
-     * @return boolean
-     */
-    public function hasRole($roles, $resource = '')
-    {
-        return false;
-    }
-
-    /**
-     * Get list of permission authenticate user
-     *
-     * @return array
-     */
-    public function permissions()
-    {
-        return [];
-    }
-
-    /**
-     * Check user has permissions
-     *
-     * @param  string|array  $permissions
-     * @return boolean
-     */
-    public function hasPermission($permissions)
-    {
-        return false;
-    }
-
-    /**
      * Get the password for the user.
      *
      * @return string
