@@ -1,10 +1,10 @@
 <?php
 
-namespace RistekUSDI\SSO;
+namespace RistekUSDI\SSO\Laravel;
 
 use Illuminate\Support\Facades\Auth;
-use RistekUSDI\SSO\Auth\UserProvider;
-use RistekUSDI\SSO\Auth\Guard\TokenGuard;
+use RistekUSDI\SSO\Laravel\Auth\UserProvider;
+use RistekUSDI\SSO\Laravel\Auth\Guard\TokenGuard;
 
 class TokenGuardServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -55,12 +55,12 @@ class TokenGuardServiceProvider extends \Illuminate\Support\ServiceProvider
 
         // Middleware IMISSU Token
         $this->app['router']->middlewareGroup('imissu-token', [
-            \RistekUSDI\SSO\Middleware\Token\Authenticate::class,
+            \RistekUSDI\SSO\Laravel\Middleware\Token\Authenticate::class,
         ]);
 
         // Middleware IMISSU Token Role
         $this->app['router']->aliasMiddleware('imissu-token-role', 
-            \RistekUSDI\SSO\Middleware\Token\Role::class
+            \RistekUSDI\SSO\Laravel\Middleware\Token\Role::class
         );
     }
 }

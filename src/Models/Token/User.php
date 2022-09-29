@@ -1,9 +1,9 @@
 <?php
 
-namespace RistekUSDI\SSO\Models\Token;
+namespace RistekUSDI\SSO\Laravel\Models\Token;
 
 use Auth;
-use RistekUSDI\SSO\Models\User as UserModel;
+use RistekUSDI\SSO\Laravel\Models\User as UserModel;
 
 class User extends UserModel
 {

@@ -1,15 +1,15 @@
 <?php
 
-namespace RistekUSDI\SSO\Auth\Guard;
+namespace RistekUSDI\SSO\Laravel\Auth\Guard;
 
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Http\Request;
-use RistekUSDI\SSO\Auth\Token;
-use RistekUSDI\SSO\Exceptions\TokenException;
-use RistekUSDI\SSO\Exceptions\UserNotFoundException;
-use RistekUSDI\SSO\Exceptions\ResourceAccessNotAllowedException;
+use RistekUSDI\SSO\Laravel\Auth\Token;
+use RistekUSDI\SSO\Laravel\Exceptions\TokenException;
+use RistekUSDI\SSO\Laravel\Exceptions\UserNotFoundException;
+use RistekUSDI\SSO\Laravel\Exceptions\ResourceAccessNotAllowedException;
 
 class TokenGuard implements Guard
 {

@@ -1,7 +1,7 @@
 <?php
-namespace RistekUSDI\SSO\Exceptions;
+namespace RistekUSDI\SSO\Laravel\Exceptions;
 
-use RistekUSDI\SSO\Exceptions\KeycloakGuardException;
+use RistekUSDI\SSO\Laravel\Exceptions\KeycloakGuardException;
 
 class ResourceAccessNotAllowedException extends KeycloakGuardException
 {

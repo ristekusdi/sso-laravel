@@ -84,7 +84,7 @@ return [
         /**
          * Load web guard class.
          */
-        'guard' => RistekUSDI\SSO\Auth\Guard\WebGuard::class,
+        'guard' => RistekUSDI\SSO\Laravel\Auth\Guard\WebGuard::class,
     ],
     'token' => [
         'load_user_from_database' => false,

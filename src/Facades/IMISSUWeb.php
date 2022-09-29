@@ -1,6 +1,6 @@
 <?php
 
-namespace RistekUSDI\SSO\Facades;
+namespace RistekUSDI\SSO\Laravel\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

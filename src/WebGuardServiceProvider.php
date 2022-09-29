@@ -1,13 +1,12 @@
 <?php
 
-namespace RistekUSDI\SSO;
+namespace RistekUSDI\SSO\Laravel;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
-use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Auth;
-use RistekUSDI\SSO\Auth\UserProvider;
-use RistekUSDI\SSO\Services\SSOService;
+use RistekUSDI\SSO\Laravel\Auth\UserProvider;
+use RistekUSDI\SSO\Laravel\Services\SSOService;
 
 class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -118,32 +117,32 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
         // Middleware IMISSU Web
         $this->app['router']->middlewareGroup('imissu-web', [
             // StartSession::class,
-            \RistekUSDI\SSO\Middleware\Web\Authenticate::class,
+            \RistekUSDI\SSO\Laravel\Middleware\Web\Authenticate::class,
         ]);
 
         // Middleware IMISSU Web Role
         $this->app['router']->aliasMiddleware('imissu-web-role', 
-            \RistekUSDI\SSO\Middleware\Web\Role::class
+            \RistekUSDI\SSO\Laravel\Middleware\Web\Role::class
         );
 
         // Middleware IMISSU Web Role
         $this->app['router']->aliasMiddleware('imissu-web.role', 
-            \RistekUSDI\SSO\Middleware\Web\Role::class
+            \RistekUSDI\SSO\Laravel\Middleware\Web\Role::class
         );
 
         // Middleware IMISSU Web Role Active
         $this->app['router']->aliasMiddleware('imissu-web.role_active', 
-            \RistekUSDI\SSO\Middleware\Web\RoleActive::class
+            \RistekUSDI\SSO\Laravel\Middleware\Web\RoleActive::class
         );
 
         // Middleware IMISSU Web Permission
         $this->app['router']->aliasMiddleware('imissu-web-permission', 
-            \RistekUSDI\SSO\Middleware\Web\Permission::class
+            \RistekUSDI\SSO\Laravel\Middleware\Web\Permission::class
         );
 
         // Middleware IMISSU Web Permission
         $this->app['router']->aliasMiddleware('imissu-web.permission', 
-            \RistekUSDI\SSO\Middleware\Web\Permission::class
+            \RistekUSDI\SSO\Laravel\Middleware\Web\Permission::class
         );
 
         // Bind for client data

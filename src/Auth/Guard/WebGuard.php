@@ -1,13 +1,13 @@
 <?php
 
-namespace RistekUSDI\SSO\Auth\Guard;
+namespace RistekUSDI\SSO\Laravel\Auth\Guard;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\UserProvider;
-use RistekUSDI\SSO\Auth\AccessToken;
-use RistekUSDI\SSO\Facades\IMISSUWeb;
+use RistekUSDI\SSO\Laravel\Auth\AccessToken;
+use RistekUSDI\SSO\Laravel\Facades\IMISSUWeb;
 
 class WebGuard implements Guard
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace RistekUSDI\SSO\Models;
+namespace RistekUSDI\SSO\Laravel\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 

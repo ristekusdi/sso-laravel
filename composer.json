@@ -18,22 +18,22 @@
     },
     "autoload": {
         "psr-4": {
-            "RistekUSDI\\SSO\\": "src/"
+            "RistekUSDI\\SSO\\Laravel\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "RistekUSDI\\SSO\\Tests\\": "tests"
+            "RistekUSDI\\SSO\\Laravel\\Tests\\": "tests"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "RistekUSDI\\SSO\\WebGuardServiceProvider",
-                "RistekUSDI\\SSO\\TokenGuardServiceProvider"
+                "RistekUSDI\\SSO\\Laravel\\WebGuardServiceProvider",
+                "RistekUSDI\\SSO\\Laravel\\TokenGuardServiceProvider"
             ],
             "aliases": {
-                "IMISSUWeb": "RistekUSDI\\SSO\\Facades\\IMISSUWeb"
+                "IMISSUWeb": "RistekUSDI\\SSO\\Laravel\\Facades\\IMISSUWeb"
             }
         }
     }

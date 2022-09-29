@@ -1,6 +1,6 @@
 <?php
 
-namespace RistekUSDI\SSO\Auth;
+namespace RistekUSDI\SSO\Laravel\Auth;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 

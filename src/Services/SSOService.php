@@ -1,6 +1,6 @@
 <?php
 
-namespace RistekUSDI\SSO\Services;
+namespace RistekUSDI\SSO\Laravel\Services;
 
 use Exception;
 use GuzzleHttp\ClientInterface;
@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
-use RistekUSDI\SSO\Auth\AccessToken;
-use RistekUSDI\SSO\Support\OpenIDConfig;
+use RistekUSDI\SSO\Laravel\Auth\AccessToken;
+use RistekUSDI\SSO\Laravel\Support\OpenIDConfig;
 
 class SSOService
 {

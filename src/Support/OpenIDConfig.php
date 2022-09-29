@@ -1,6 +1,6 @@
 <?php
 
-namespace RistekUSDI\SSO\Support;
+namespace RistekUSDI\SSO\Laravel\Support;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
