@@ -7,14 +7,6 @@ use RistekUSDI\SSO\Laravel\Models\User as UserModel;
 class User extends UserModel
 {
     /**
-     * Get roles
-     */
-    public function roles()
-    {
-        return $this->getAttribute('roles');
-    }
-
-    /**
      * Check if user has role(s) in user's roles from client
      * @return boolean
      */
