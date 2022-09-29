@@ -4,7 +4,7 @@ namespace App\Http\Controllers\SSO\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use RistekUSDI\SSO\Facades\IMISSUWeb;
+use RistekUSDI\SSO\Laravel\Facades\IMISSUWeb;
 
 class AuthController extends Controller
 {

@@ -1,6 +1,6 @@
 <?php 
 
-namespace RistekUSDI\SSO\Middleware\Web;
+namespace RistekUSDI\SSO\Laravel\Middleware\Web;
 
 use Closure;
 

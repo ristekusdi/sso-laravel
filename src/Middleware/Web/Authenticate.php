@@ -1,6 +1,6 @@
 <?php 
 
-namespace RistekUSDI\SSO\Middleware\Web;
+namespace RistekUSDI\SSO\Laravel\Middleware\Web;
 
 use Closure;
 
@@ -15,7 +15,7 @@ class Authenticate {
 	public function handle($request, Closure $next)
 	{
 		$user = auth()->guard('imissu-web')->user();
-        if ($user !== null && $user instanceof \RistekUSDI\SSO\Models\Web\User) {
+        if ($user !== null && $user instanceof \RistekUSDI\SSO\Laravel\Models\Web\User) {
             return $next($request);
         }
 

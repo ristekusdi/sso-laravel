@@ -1,5 +1,5 @@
 <?php
-namespace RistekUSDI\SSO\Auth;
+namespace RistekUSDI\SSO\Laravel\Auth;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;

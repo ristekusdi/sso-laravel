@@ -1,5 +1,5 @@
 <?php
-namespace RistekUSDI\SSO\Exceptions;
+namespace RistekUSDI\SSO\Laravel\Exceptions;
 
 class KeycloakGuardException extends \UnexpectedValueException
 {

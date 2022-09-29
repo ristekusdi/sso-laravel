@@ -1,10 +1,10 @@
 <?php 
 
-namespace RistekUSDI\SSO\Middleware\Token;
+namespace RistekUSDI\SSO\Laravel\Middleware\Token;
 
 use Closure;
 use Illuminate\Support\Facades\Config;
-use RistekUSDI\SSO\Auth\Token;
+use RistekUSDI\SSO\Laravel\Auth\Token;
 
 class Authenticate {
 	/**
@@ -18,7 +18,7 @@ class Authenticate {
 	{
         try {
             $user = auth()->guard('imissu-token')->user();
-            if ($user !== null && $user instanceof \RistekUSDI\SSO\Models\Token\User) {
+            if ($user !== null && $user instanceof \RistekUSDI\SSO\Laravel\Models\Token\User) {
                 return $next($request);
             }
         } catch (\Throwable $th) {

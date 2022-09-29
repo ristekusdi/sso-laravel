@@ -1,11 +1,11 @@
 <?php 
 
-namespace RistekUSDI\SSO\Middleware\Token;
+namespace RistekUSDI\SSO\Laravel\Middleware\Token;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
-use RistekUSDI\SSO\Exceptions\TokenException;
+use RistekUSDI\SSO\Laravel\Exceptions\TokenException;
 
 class Role {
 	/**
