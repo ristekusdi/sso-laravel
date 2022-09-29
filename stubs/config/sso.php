@@ -53,8 +53,7 @@ return [
     /**
      * User attributes
      * 
-     * List of additional user attributes from Keycloak or created by your self
-     * that you want to load in auth user model (Web and Token guard)
+     * List of additional user attributes from Keycloak.
      * @see RistekUSDI\SSO\Models\User::_construct()
      * 
      */
@@ -63,15 +62,13 @@ return [
         'unud_identifier_id',
         'unud_sso_id',
         'unud_user_type_id',
-        'role_active',
-        'role_active_permissions',
     ],
     
     'web' => [
         /**
          * Page to redirect after callback if there's no "intent"
          *
-         * @see RistekUSDI\SSO\Controllers\AuthController::callback()
+         * @see App\Http\Controllers\SSO\Web\AuthController::callback()
          */
         'redirect_url' => '/',
 

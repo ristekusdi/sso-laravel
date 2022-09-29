@@ -12,8 +12,18 @@ class DemoController extends Controller
         return view('sso-web.demo');
     }
 
+    public function basic()
+    {
+        return view('sso-web.basic');
+    }
+
+    public function advance()
+    {
+        return view('sso-web.advance');
+    }
+
     public function admin()
     {
-        return 'Hello admin!';
+        return 'Admin page';
     }
 }

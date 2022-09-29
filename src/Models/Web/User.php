@@ -2,57 +2,50 @@
 
 namespace RistekUSDI\SSO\Models\Web;
 
-use Auth;
 use RistekUSDI\SSO\Models\User as UserModel;
 
 class User extends UserModel
 {
     /**
-     * Get user roles
-     *
-     * @see WebGuard::roles()
-     *
-     * @return array
+     * Get roles
      */
     public function roles()
     {
-        return Auth::guard('imissu-web')->user()->roles;  
+        return $this->getAttribute('roles');
     }
 
     /**
-     * Check user has roles
-     *
-     * @see WebGuard::hasRole($roles, $resource = '')
-     *
-     * @param  string|array  $roles
-     * @param  string  $resource
+     * Check if user has role(s) in user's roles from client
      * @return boolean
      */
-    public function hasRole($roles, $resource = '')
+    public function hasRole($roles)
     {
-        return Auth::guard('imissu-web')->hasRole($roles, $resource);
+        return !empty(array_intersect((array) $this->getAttribute('roles'), (array) $roles));
     }
 
     /**
-     * Get list of permission authenticate user
-     *
-     * @return array
+     * Check if user has role active from selected roles active
+     * @return boolean
      */
-    public function permissions()
+    public function hasRoleActive($roles)
     {
-        return Auth::guard('imissu-web')->permissions();
+        if (!empty($roles)) {
+            return (in_array($this->getAttribute('role_active'), (array) $roles)) ? true : false;
+        } else {
+            return true;
+        }
     }
 
     /**
-     * Check user has permissions
-     *
-     * @see WebGuard::hasPermission($permissions)
-     *
-     * @param  string|array  $permissions
+     * Check if user has permission from role active permissions
      * @return boolean
      */
     public function hasPermission($permissions)
     {
-        return Auth::guard('imissu-web')->hasPermission($permissions);
+        if (!empty($permissions)) {
+            return (array_intersect((array) $this->getAttribute('role_active_permissions'), (array) $permissions)) ? true : false;
+        } else {
+            return true;
+        }
     }
 }

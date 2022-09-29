@@ -4,7 +4,6 @@ namespace App\Http\Controllers\SSO\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use RistekUSDI\SSO\Facades\IMISSUWeb;
 
 class AuthController extends Controller
@@ -67,9 +66,9 @@ class AuthController extends Controller
             $token = IMISSUWeb::getAccessToken($code);
 
             try {
-                Auth::guard('imissu-web')->validate($token);
+                auth('imissu-web')->validate($token);
                 $url = config('sso.web.redirect_url', '/');
-                return redirect()->intended($url);
+                return redirect($url);
             } catch (\Exception $e) {
                 abort($e->getCode(), $e->getMessage());
             }

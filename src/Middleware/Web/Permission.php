@@ -3,7 +3,6 @@
 namespace RistekUSDI\SSO\Middleware\Web;
 
 use Closure;
-use Illuminate\Support\Facades\Auth;
 
 class Permission {
 
@@ -18,7 +17,7 @@ class Permission {
 	{	
 		// Make sure that we receive array with value is not empty.
         $permissions = array_unique(array_filter(explode('|', ($permissions[0] ?? ''))));
-		if (! Auth::guard('imissu-web')->hasPermission($permissions)) {
+		if (! auth('imissu-web')->user()->hasPermission($permissions)) {
             $permissions_str = implode(', ', $permissions);
             abort(403, "Pengguna dengan ijin {$permissions_str} yang diijinkan mengakses sumber ini!");
         }

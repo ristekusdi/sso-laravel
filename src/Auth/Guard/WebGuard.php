@@ -5,7 +5,6 @@ namespace RistekUSDI\SSO\Auth\Guard;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Contracts\Auth\UserProvider;
 use RistekUSDI\SSO\Auth\AccessToken;
 use RistekUSDI\SSO\Facades\IMISSUWeb;
@@ -66,11 +65,12 @@ class WebGuard implements Guard
      * Set the current user.
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @return void
+     * @return self
      */
     public function setUser(?Authenticatable $user)
     {
         $this->user = $user;
+        return $this;
     }
 
     /**
@@ -108,7 +108,7 @@ class WebGuard implements Guard
         /**
          * If user doesn't have access to certain client app then throw exception
          */
-        if (!in_array(Config::get('sso.client_id'), array_keys($access_token['resource_access']))) {
+        if (!in_array(config('sso.client_id'), array_keys($access_token['resource_access']))) {
             throw new \Exception('Unauthorized', 403);
         }
 
@@ -129,8 +129,7 @@ class WebGuard implements Guard
     /**
      * Try to authenticate the user
      *
-     * @throws \Exception
-     * @return boolean
+     * @return \Illuminate\Contracts\Auth\Authenticatable|boolean
      */
     public function authenticate()
     {
@@ -149,75 +148,5 @@ class WebGuard implements Guard
         // Provide User
         $user = $this->provider->retrieveByCredentials($user);
         $this->setUser($user);
-
-        return true;
-    }
-
-    /**
-     * Get list of role authenticate user
-     *
-     * @return array
-     */
-    public function roles()
-    {
-        if (! $this->check()) {
-            return false;
-        }
-
-        return $this->user()->roles;
-    }
-
-    /**
-     * Check if user in a certain role active from roles guard.
-     *
-     * @param array|string $roles
-     *
-     * @return boolean
-     */
-    public function hasRole($roles)
-    {
-        if (! $this->check()) {
-            return false;
-        }
-        
-        if (!empty($roles)) {
-            return (in_array($this->user()->getAttribute('role_active'), (array) $roles)) ? true : false;
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * Get list of permission in a role active user
-     *
-     * @return array
-     */
-    public function permissions()
-    {
-        if (! $this->check()) {
-            return false;
-        }
-
-        return $this->user()->getAttribute('role_active_permissions');
-    }
-
-    /**
-     * Check if user has permission(s) in role active permissions
-     *
-     * @param array|string $scopes
-     *
-     * @return boolean
-     */
-    public function hasPermission($permissions)
-    {
-        if (! $this->check()) {
-            return false;
-        }
-        
-        if (!empty($permissions)) {
-            return (array_intersect((array) $permissions, $this->permissions())) ? true : false;
-        } else {
-            return true;
-        }
     }
 }
