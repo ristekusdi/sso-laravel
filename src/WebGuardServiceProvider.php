@@ -44,7 +44,6 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__.'/../stubs/app/Models/SSO/Web/User.php' => app_path('Models/SSO/Web/User.php'),
 
             // Routes
-            __DIR__.'/../stubs/routes/web.php' => base_path('routes/sso-web.php'),
             __DIR__.'/../stubs/routes/sso-web-demo.php' => base_path('routes/sso-web-demo.php'),
 
             // Config
@@ -78,6 +77,18 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
             // Routes
             __DIR__.'/../stubs/routes/web-session.php' => base_path('routes/web-session.php'),
         ], 'sso-laravel-web-session');
+
+        // SSO web route V1
+        $this->publishes([
+            // Routes
+            __DIR__.'/../stubs/routes/v1/web.php' => base_path('routes/sso-web.php'),
+        ], 'sso-laravel-web-route-v1');
+
+        // SSO web route V2
+        $this->publishes([
+            // Routes
+            __DIR__.'/../stubs/routes/v2/web.php' => base_path('routes/sso-web.php'),
+        ], 'sso-laravel-web-route-v2');
 
         // Web User Provider
         Auth::provider('imissu-web', function($app, array $config) {
