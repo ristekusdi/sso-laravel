@@ -7,6 +7,7 @@ use GuzzleHttp\ClientInterface;
 use Illuminate\Support\Facades\Auth;
 use RistekUSDI\SSO\Laravel\Auth\UserProvider;
 use RistekUSDI\SSO\Laravel\Services\SSOService;
+use RistekUSDI\SSO\Laravel\Auth\Guard\WebGuard;
 
 class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -106,8 +107,7 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
         // SSO Web Guard
         Auth::extend('imissu-web', function ($app, $name, array $config) {
             $provider = Auth::createUserProvider($config['provider']);
-            $web_guard_class = config('sso.web.guard');
-            return new $web_guard_class($provider, $app->request);
+            return new WebGuard($provider, $app->request);
         });
 
         // Facades

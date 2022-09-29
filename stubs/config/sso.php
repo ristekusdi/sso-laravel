@@ -49,20 +49,6 @@ return [
     * @link http://docs.guzzlephp.org/en/stable/request-options.html
     */
     'guzzle_options' => [],
-
-    /**
-     * User attributes
-     * 
-     * List of additional user attributes from Keycloak.
-     * @see RistekUSDI\SSO\Models\User::_construct()
-     * 
-     */
-    'user_attributes' => [
-        // default attributes
-        'unud_identifier_id',
-        'unud_sso_id',
-        'unud_user_type_id',
-    ],
     
     'web' => [
         /**
@@ -80,11 +66,6 @@ return [
             'callback' => 'sso.web.callback',
             'logout' => 'sso.web.logout',
         ],
-
-        /**
-         * Load web guard class.
-         */
-        'guard' => RistekUSDI\SSO\Laravel\Auth\Guard\WebGuard::class,
     ],
     'token' => [
         'load_user_from_database' => false,
