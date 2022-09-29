@@ -116,14 +116,8 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
 
         // Middleware IMISSU Web
         $this->app['router']->middlewareGroup('imissu-web', [
-            // StartSession::class,
             \RistekUSDI\SSO\Laravel\Middleware\Web\Authenticate::class,
         ]);
-
-        // Middleware IMISSU Web Role
-        $this->app['router']->aliasMiddleware('imissu-web-role', 
-            \RistekUSDI\SSO\Laravel\Middleware\Web\Role::class
-        );
 
         // Middleware IMISSU Web Role
         $this->app['router']->aliasMiddleware('imissu-web.role', 
@@ -133,11 +127,6 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
         // Middleware IMISSU Web Role Active
         $this->app['router']->aliasMiddleware('imissu-web.role_active', 
             \RistekUSDI\SSO\Laravel\Middleware\Web\RoleActive::class
-        );
-
-        // Middleware IMISSU Web Permission
-        $this->app['router']->aliasMiddleware('imissu-web-permission', 
-            \RistekUSDI\SSO\Laravel\Middleware\Web\Permission::class
         );
 
         // Middleware IMISSU Web Permission
