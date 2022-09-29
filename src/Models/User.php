@@ -19,15 +19,12 @@ class User extends Authenticatable
         'given_name',
         'family_name',
         'roles',
-        'picture'
+        'picture',
+        // Unud
+        'unud_identifier_id',
+        'unud_sso_id',
+        'unud_user_type_id',
     ];
-
-    /**
-     * User attributes
-     *
-     * @var array
-     */
-    protected $attributes = [];
 
     /**
      * Constructor
@@ -36,23 +33,8 @@ class User extends Authenticatable
      */
     public function __construct(array $profile)
     {
-        $this->fillable = array_merge($this->fillable, config('sso.user_attributes', []));
         foreach ($profile as $key => $value) {
             if (in_array($key, $this->fillable)) {
-                switch ($key) {
-                    case 'name':
-                        $this->attributes['full_identity'] = $profile[$key];
-                        break;
-                    case 'family_name':
-                        $this->attributes['name'] = $profile[$key];
-                        break;
-                    case 'given_name':
-                        $this->attributes['identifier'] = $profile[$key];
-                        break;
-                    case 'preferred_username':
-                        $this->attributes['username'] = $profile[$key];
-                        break;
-                }
                 $this->attributes[ $key ] = $value;
             }
         }
@@ -67,7 +49,7 @@ class User extends Authenticatable
      */
     public function getKey()
     {
-        return $this->username;
+        return $this->preferred_username;
     }
 
     /**
@@ -77,7 +59,7 @@ class User extends Authenticatable
      */
     public function getAuthIdentifierName()
     {
-        return 'username';
+        return 'preferred_username';
     }
 
     /**
@@ -87,7 +69,7 @@ class User extends Authenticatable
      */
     public function getAuthIdentifier()
     {
-        return $this->username;
+        return $this->preferred_username;
     }
 
     /**
@@ -128,5 +110,28 @@ class User extends Authenticatable
     public function getRememberTokenName()
     {
         throw new \BadMethodCallException('Unexpected method [getRememberTokenName] call');
+    }
+
+    /**
+     * Get roles
+     */
+    public function roles()
+    {
+        return $this->attributes['roles'];
+    }
+
+    public function getUsernameAttribute()
+    {
+        return $this->attributes['username'] = $this->attributes['preferred_username'];
+    }
+
+    public function getIdentifierAttribute()
+    {
+        return $this->attributes['identifier'] = $this->attributes['given_name'];
+    }
+
+    public function getFullIdentityAttribute()
+    {
+        return $this->attributes['full_identity'] = $this->attributes['name'];
     }
 }

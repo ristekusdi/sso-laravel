@@ -26,22 +26,12 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->publishes([
             // Controllers
             __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/AuthController.php' => app_path('Http/Controllers/SSO/Web/AuthController.php'),
-            __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/SessionController.php' => app_path('Http/Controllers/SSO/Web/SessionController.php'),
 
             // Models
             __DIR__.'/../stubs/app/Models/SSO/Web/User.php' => app_path('Models/SSO/Web/User.php'),
 
-            // Session facade, provider, and service
-            __DIR__.'/../stubs/app/Facades/WebSession.php' => app_path('Facades/WebSession.php'),
-            __DIR__.'/../stubs/app/Providers/WebSessionProvider.php' => app_path('Providers/WebSessionProvider.php'),
-            __DIR__.'/../stubs/app/Services/WebSession.php' => app_path('Services/WebSession.php'),
-
             // Config
             __DIR__ . '/../stubs/config/sso.php' => config_path('sso.php'),
-
-            // Routes
-            __DIR__.'/../stubs/routes/web-session.php' => base_path('routes/web-session.php'),
-            __DIR__.'/../stubs/routes/web.php' => base_path('routes/sso-web.php'),
         ], 'sso-laravel-web');
 
         // Basic demo
@@ -54,7 +44,6 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__.'/../stubs/app/Models/SSO/Web/User.php' => app_path('Models/SSO/Web/User.php'),
 
             // Routes
-            __DIR__.'/../stubs/routes/web.php' => base_path('routes/sso-web.php'),
             __DIR__.'/../stubs/routes/sso-web-demo.php' => base_path('routes/sso-web-demo.php'),
 
             // Config
@@ -88,6 +77,18 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
             // Routes
             __DIR__.'/../stubs/routes/web-session.php' => base_path('routes/web-session.php'),
         ], 'sso-laravel-web-session');
+
+        // SSO web route V1
+        $this->publishes([
+            // Routes
+            __DIR__.'/../stubs/routes/v1/web.php' => base_path('routes/sso-web.php'),
+        ], 'sso-laravel-web-route-v1');
+
+        // SSO web route V2
+        $this->publishes([
+            // Routes
+            __DIR__.'/../stubs/routes/v2/web.php' => base_path('routes/sso-web.php'),
+        ], 'sso-laravel-web-route-v2');
 
         // Web User Provider
         Auth::provider('imissu-web', function($app, array $config) {
