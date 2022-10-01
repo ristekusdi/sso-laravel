@@ -125,9 +125,9 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
             \RistekUSDI\SSO\Laravel\Middleware\Web\Role::class
         );
 
-        // Middleware IMISSU Web Role (backward compatibility)
+        // Middleware IMISSU Web Role a.k.a IMISSU Web RoleActive for backward compatibility.
         $this->app['router']->aliasMiddleware('imissu-web-role', 
-            \RistekUSDI\SSO\Laravel\Middleware\Web\Role::class
+            \RistekUSDI\SSO\Laravel\Middleware\Web\RoleActive::class
         );
 
         // Middleware IMISSU Web Role Active
