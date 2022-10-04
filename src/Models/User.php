@@ -31,7 +31,7 @@ class User extends Authenticatable
      *
      * @param array $profile Keycloak user info
      */
-    public function __construct(array $profile)
+    public function __construct(array $profile = [])
     {
         foreach ($profile as $key => $value) {
             if (in_array($key, $this->fillable)) {
