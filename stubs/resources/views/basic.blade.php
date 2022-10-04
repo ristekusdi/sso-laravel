@@ -13,7 +13,7 @@
     <a href="{{ route('sso.web.logout') }}">Log out</a>
     <p>Berikut daftar peran yang dimiliki oleh {{ auth('imissu-web')->user()->name }}</p>
     <ul>
-        @foreach (auth('imissu-web')->user()->roles as $role)
+        @foreach (auth('imissu-web')->user()->client_roles as $role)
             <li>{{ $role }}</li>
         @endforeach
     </ul>

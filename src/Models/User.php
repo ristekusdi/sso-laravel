@@ -18,7 +18,7 @@ class User extends Authenticatable
         'preferred_username',
         'given_name',
         'family_name',
-        'roles',
+        'client_roles',
         'picture',
         // Unud
         'unud_identifier_id',
@@ -110,14 +110,6 @@ class User extends Authenticatable
     public function getRememberTokenName()
     {
         throw new \BadMethodCallException('Unexpected method [getRememberTokenName] call');
-    }
-
-    /**
-     * Get roles
-     */
-    public function roles()
-    {
-        return $this->attributes['roles'];
     }
 
     public function getUsernameAttribute()

@@ -13,7 +13,7 @@
     <a href="{{ route('sso.web.logout') }}">Log out</a>
     <p>Berikut daftar peran yang dimiliki oleh {{ auth('imissu-web')->user()->name }}</p>
     <ul>
-        @foreach (auth('imissu-web')->user()->roles as $role)
+        @foreach (auth('imissu-web')->user()->client_roles as $role)
             <li>{{ $role }}</li>
         @endforeach
     </ul>
@@ -38,7 +38,7 @@
     <form action="">
         <select name="roles" id="roles-combo">
             <option value="0">Daftar Peran</option>
-            @foreach (auth('imissu-web')->user()->roles() as $role)
+            @foreach (auth('imissu-web')->user()->client_roles as $role)
                 <option value="{{ $role }}" {{ (auth('imissu-web')->user()->role_active == $role) ? 'selected' : '' }}>{{ $role }}</option>
             @endforeach
         </select>

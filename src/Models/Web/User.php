@@ -12,7 +12,7 @@ class User extends UserModel
      */
     public function hasRole($roles)
     {
-        return !empty(array_intersect((array) $this->getAttribute('roles'), (array) $roles));
+        return !empty(array_intersect((array) $this->getAttribute('client_roles'), (array) $roles));
     }
 
     /**
