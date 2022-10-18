@@ -127,12 +127,12 @@ class TokenGuard implements Guard
         $roles = (array) $resource_access[config('sso.client_id')];
         
         if (!empty($roles)) {
-            $roles_array = ['roles' => $roles['roles']];
+            $roles_array = ['client_roles' => $roles['roles']];
         } else {
-            $roles_array = ['roles' => []];
+            $roles_array = ['client_roles' => []];
         }
 
-        $credentials = array_merge($credentials, $roles);
+        $credentials = array_merge($credentials, $roles_array);
 
         if ($this->config['token']['load_user_from_database']) {
             $methodOnProvider = $this->config['token']['user_provider_custom_retrieve_method'] ?? null;

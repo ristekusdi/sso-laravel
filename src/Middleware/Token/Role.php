@@ -17,15 +17,16 @@ class Role {
 	 */
 	public function handle(\Illuminate\Http\Request $request, Closure $next, ...$guards)
 	{
+        
 		try {
-            if (empty($guards) && Auth::guard('imissu-token')->check()) {
-                return $next($request);
+            if (!Auth::guard('imissu-token')->check()) {
+                throw new TokenException("Unauthenticated", 401);
             }
             
-            $roles = Auth::guard('imissu-token')->user()->roles;
+            $client_roles = Auth::guard('imissu-token')->user()->getAttribute('client_roles');
             $guards = explode('|', ($guards[0] ?? ''));
             
-            $result = array_intersect($roles, $guards);
+            $result = array_intersect($client_roles, $guards);
             
             if (!empty($result)) {
                 return $next($request);
