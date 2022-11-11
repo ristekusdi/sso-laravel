@@ -88,26 +88,11 @@ class SSOService
      */
     public function __construct(ClientInterface $client)
     {
-        if (is_null($this->baseUrl)) {
-            $this->baseUrl = trim(Config::get('sso.base_url'), '/');
-        }
-
-        if (is_null($this->realm)) {
-            $this->realm = Config::get('sso.realm');
-        }
-
-        if (is_null($this->clientId)) {
-            $this->clientId = Config::get('sso.client_id');
-        }
-
-        if (is_null($this->clientSecret)) {
-            $this->clientSecret = Config::get('sso.client_secret');
-        }
-
-        if (is_null($this->callbackUrl)) {
-            $this->callbackUrl = route(Config::get('sso.web.routes.callback', 'sso.web.callback'));
-        }
-
+        $this->baseUrl = trim(Config::get('sso.base_url'), '/');
+        $this->realm = Config::get('sso.realm');
+        $this->clientId = Config::get('sso.client_id');
+        $this->clientSecret = Config::get('sso.client_secret');
+        $this->callbackUrl = route(Config::get('sso.web.routes.callback', 'sso.web.callback'));
         $this->state = generate_random_state();
         $this->httpClient = $client;
     }
