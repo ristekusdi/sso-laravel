@@ -107,6 +107,21 @@ class SSOService
         return $this->clientId;
     }
 
+    protected function getClientSecret()
+    {
+        return $this->clientSecret;
+    }
+
+    protected function getRealm()
+    {
+        return $this->realm;
+    }
+
+    public function getCallbackUrl()
+    {
+        return $this->callbackUrl;
+    }
+
     /**
      * Return the state for requests
      *
