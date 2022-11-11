@@ -191,7 +191,7 @@ class TokenGuard implements Guard
     }
 
     /**
-     * Get list of role authenticate user
+     * Get list of role authenticate user based on current resource
      *
      * @return array
      */
@@ -201,7 +201,7 @@ class TokenGuard implements Guard
             return false;
         }
 
-        return $this->user()->roles;
+        return $this->user()->getAttribute('client_roles');
     }
 
     /**
