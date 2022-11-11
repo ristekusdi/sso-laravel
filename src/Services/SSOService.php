@@ -211,7 +211,7 @@ class SSOService
             'scope' => 'openid',
             'response_type' => 'code',
             'client_id' => $this->getClientId(),
-            'redirect_uri' => $this->callbackUrl,
+            'redirect_uri' => $this->getCallbackUrl(),
             'state' => $this->getState(),
         ];
 
@@ -252,11 +252,11 @@ class SSOService
             'code' => $code,
             'client_id' => $this->getClientId(),
             'grant_type' => 'authorization_code',
-            'redirect_uri' => $this->callbackUrl,
+            'redirect_uri' => $this->getCallbackUrl(),
         ];
 
-        if (! empty($this->clientSecret)) {
-            $params['client_secret'] = $this->clientSecret;
+        if (! empty($this->getClientSecret())) {
+            $params['client_secret'] = $this->getClientSecret();
         }
 
         $token = [];
@@ -292,11 +292,11 @@ class SSOService
             'client_id' => $this->getClientId(),
             'grant_type' => 'refresh_token',
             'refresh_token' => $credentials['refresh_token'],
-            'redirect_uri' => $this->callbackUrl,
+            'redirect_uri' => $this->getCallbackUrl(),
         ];
 
-        if (! empty($this->clientSecret)) {
-            $params['client_secret'] = $this->clientSecret;
+        if (! empty($this->getClientSecret())) {
+            $params['client_secret'] = $this->getClientSecret();
         }
 
         $token = [];
@@ -329,8 +329,8 @@ class SSOService
             'refresh_token' => $refreshToken,
         ];
 
-        if (! empty($this->clientSecret)) {
-            $params['client_secret'] = $this->clientSecret;
+        if (! empty($this->getClientSecret())) {
+            $params['client_secret'] = $this->getClientSecret();
         }
 
         try {
