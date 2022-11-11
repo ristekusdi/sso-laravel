@@ -6,9 +6,7 @@ use Exception;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Route;
 use RistekUSDI\SSO\Laravel\Auth\AccessToken;
 use RistekUSDI\SSO\Laravel\Support\OpenIDConfig;
 
@@ -112,6 +110,91 @@ class SSOService
 
         $this->state = generate_random_state();
         $this->httpClient = $client;
+    }
+
+    /**
+     * Return the client id for requests
+     *
+     * @return string
+     */
+    protected function getClientId()
+    {
+        return $this->clientId;
+    }
+
+    /**
+     * Return the state for requests
+     *
+     * @return string
+     */
+    protected function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * Retrieve Token from Session
+     *
+     * @return array|null
+     */
+    public function retrieveToken()
+    {
+        return session()->get(self::SSO_SESSION);
+    }
+
+    /**
+     * Save Token to Session
+     *
+     * @return void
+     */
+    public function saveToken($credentials)
+    {
+        session()->put(self::SSO_SESSION, $credentials);
+        session()->save();
+    }
+
+    /**
+     * Remove Token from Session
+     *
+     * @return void
+     */
+    public function forgetToken()
+    {
+        session()->forget(self::SSO_SESSION);
+        session()->save();
+    }
+
+    /**
+     * Validate State from Session
+     *
+     * @return void
+     */
+    public function validateState($state)
+    {
+        $challenge = session()->get(self::SSO_SESSION_STATE);
+        return (! empty($state) && ! empty($challenge) && $challenge === $state);
+    }
+
+    /**
+     * Save State to Session
+     *
+     * @return void
+     */
+    public function saveState()
+    {
+        session()->put(self::SSO_SESSION_STATE, $this->state);
+        session()->save();
+    }
+
+    /**
+     * Remove State from Session
+     *
+     * @return void
+     */
+    public function forgetState()
+    {
+        session()->forget(self::SSO_SESSION_STATE);
+        session()->save();
     }
 
     /**
@@ -306,91 +389,6 @@ class SSOService
         }
 
         return $user;
-    }
-
-    /**
-     * Retrieve Token from Session
-     *
-     * @return array|null
-     */
-    public function retrieveToken()
-    {
-        return session()->get(self::SSO_SESSION);
-    }
-
-    /**
-     * Save Token to Session
-     *
-     * @return void
-     */
-    public function saveToken($credentials)
-    {
-        session()->put(self::SSO_SESSION, $credentials);
-        session()->save();
-    }
-
-    /**
-     * Remove Token from Session
-     *
-     * @return void
-     */
-    public function forgetToken()
-    {
-        session()->forget(self::SSO_SESSION);
-        session()->save();
-    }
-
-    /**
-     * Validate State from Session
-     *
-     * @return void
-     */
-    public function validateState($state)
-    {
-        $challenge = session()->get(self::SSO_SESSION_STATE);
-        return (! empty($state) && ! empty($challenge) && $challenge === $state);
-    }
-
-    /**
-     * Save State to Session
-     *
-     * @return void
-     */
-    public function saveState()
-    {
-        session()->put(self::SSO_SESSION_STATE, $this->state);
-        session()->save();
-    }
-
-    /**
-     * Remove State from Session
-     *
-     * @return void
-     */
-    public function forgetState()
-    {
-        session()->forget(self::SSO_SESSION_STATE);
-        session()->save();
-    }
-
-    /**
-     * Return the client id for requests
-     *
-     * @return string
-     */
-    protected function getClientId()
-    {
-        return $this->clientId;
-    }
-
-    /**
-     * Return the state for requests
-     *
-     * @return string
-     */
-    protected function getState()
-    {
-        return $this->state;
     }
 
     /**
