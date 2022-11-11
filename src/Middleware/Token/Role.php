@@ -23,12 +23,8 @@ class Role {
                 throw new TokenException("Unauthenticated", 401);
             }
             
-            $client_roles = Auth::guard('imissu-token')->user()->getAttribute('client_roles');
-            $guards = explode('|', ($guards[0] ?? ''));
-            
-            $result = array_intersect($client_roles, $guards);
-            
-            if (!empty($result)) {
+            $roles = explode('|', ($guards[0] ?? ''));
+            if (Auth::guard('imissu-token')->user()->hasRole($roles)) {
                 return $next($request);
             } else {
                 throw new TokenException("Peran {$guards['0']} tidak diijinkan mengakses sumber ini", 403);
