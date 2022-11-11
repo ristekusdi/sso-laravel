@@ -111,7 +111,7 @@ class TokenGuard implements Guard
      * Validate a user's credentials.
      *
      * @param  array  $credentials
-     * @return bool
+     * @return mixed
      */
     public function validate(array $credentials = [])
     {
@@ -150,8 +150,6 @@ class TokenGuard implements Guard
         }
         
         $this->setUser($user);
-
-        return true;
     }
 
     /**
