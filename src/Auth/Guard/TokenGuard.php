@@ -208,8 +208,25 @@ class TokenGuard implements Guard
      * @param string $resource
      * @return bool
      */
-    public function hasRole($roles, $resource)
+    public function hasRole($roles = array(), $resource = '')
     {
-        return empty(array_diff((array) $roles, $this->roles()));
+        if (!empty($resource)) {
+            $token_resource_access = (array) $this->decodedToken->resource_access;
+            
+            if (array_key_exists($resource, $token_resource_access)) {
+                $resource_access = (array) $token_resource_access[$resource];
+                $resource_roles = $resource_access['roles'];
+                
+                if (array_intersect($roles, $resource_roles)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return array_intersect($roles, $this->roles());
+        }
     }
 }
