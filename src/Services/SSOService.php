@@ -420,6 +420,57 @@ class SSOService
     }
 
     /**
+     * Get access token of impersonate user.
+     * 
+     * Notes: 
+     * 1. Enable feature Token Exchange, Fine-Grained Admin Permissions, and Account Management REST API in Keycloak.
+     * 2. Register user(s) as impersonator in impersonate scope user permissions.
+     * 
+     * @param credentials (access token of impersonator), username
+     * @return array
+     */
+    public function impersonateRequest($credentials = array(), $username)
+    {
+        $token = [];
+        
+        try {
+            $credentials = $this->refreshTokenIfNeeded($credentials);
+
+            // Validate JWT Token
+            $token = new AccessToken($credentials);
+
+            $url = (new OpenIDConfig)->get('token_endpoint');
+            
+            $headers = [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+            ];
+
+            $form_params = [
+                'client_id' => $this->getClientId(),
+                'grant_type' => 'urn:ietf:params:oauth:grant-type:token-exchange',
+                'requested_token_type' => 'urn:ietf:params:oauth:token-type:refresh_token',
+                'requested_subject' => $username,
+                'subject_token' => $token->getAccessToken(),
+            ];
+
+            $response = $this->httpClient->request('POST', $url, ['headers' => $headers, 'form_params', $form_params]);
+
+            if ($response->getStatusCode() !== 200) {
+                throw new Exception('User not allowed to impersonate');
+            }
+
+            $response_body = $response->getBody()->getContents();
+            $token = json_decode($response_body, true);
+        } catch (GuzzleException $e) {
+            log_exception($e);
+        } catch (Exception $e) {
+            Log::error('[Keycloak Service] ' . print_r($e->getMessage(), true));
+        }
+
+        return $token;
+    }
+
+    /**
      * Get claims based on client id and issuer
      */
     public function getClaims()
