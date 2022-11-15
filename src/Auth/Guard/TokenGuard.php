@@ -111,7 +111,7 @@ class TokenGuard implements Guard
      * Validate a user's credentials.
      *
      * @param  array  $credentials
-     * @return bool
+     * @return mixed
      */
     public function validate(array $credentials = [])
     {
@@ -150,19 +150,18 @@ class TokenGuard implements Guard
         }
         
         $this->setUser($user);
-
-        return true;
     }
 
     /**
      * Set the current user.
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @return void
+     * @return self
      */
     public function setUser(Authenticatable $user)
     {
         $this->user = $user;
+        return $this;
     }
 
     /**
@@ -190,7 +189,7 @@ class TokenGuard implements Guard
     }
 
     /**
-     * Get list of role authenticate user
+     * Get list of role authenticate user based on current resource
      *
      * @return array
      */
@@ -200,7 +199,7 @@ class TokenGuard implements Guard
             return false;
         }
 
-        return $this->user()->roles;
+        return $this->user()->getAttribute('client_roles');
     }
 
     /**
@@ -209,8 +208,25 @@ class TokenGuard implements Guard
      * @param string $resource
      * @return bool
      */
-    public function hasRole($roles, $resource)
+    public function hasRole($roles = array(), $resource = '')
     {
-        return empty(array_diff((array) $roles, $this->roles()));
+        if (!empty($resource)) {
+            $token_resource_access = (array) $this->decodedToken->resource_access;
+            
+            if (array_key_exists($resource, $token_resource_access)) {
+                $resource_access = (array) $token_resource_access[$resource];
+                $resource_roles = $resource_access['roles'];
+                
+                if (array_intersect($roles, $resource_roles)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return array_intersect($roles, $this->roles());
+        }
     }
 }
