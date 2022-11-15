@@ -7,26 +7,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable
 {
     /**
-     * Attributes we retrieve from Profile
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'sub',
-        'preferred_username',
-        'given_name',
-        'family_name',
-        'client_roles',
-        'picture',
-        // Unud
-        'unud_identifier_id',
-        'unud_sso_id',
-        'unud_user_type_id',
-    ];
-
-    /**
      * Constructor
      *
      * @param array $profile Keycloak user info
@@ -34,9 +14,7 @@ class User extends Authenticatable
     public function __construct(array $profile = [])
     {
         foreach ($profile as $key => $value) {
-            if (in_array($key, $this->fillable)) {
-                $this->attributes[ $key ] = $value;
-            }
+            $this->attributes[ $key ] = $value;
         }
         
         $this->id = $this->getKey();
