@@ -16,6 +16,7 @@ class SSOService
      * The Session key for token
      */
     const SSO_SESSION = '_sso_token';
+    const SSO_SESSION_IMPERSONATE = '_sso_token_impersonate';
 
     /**
      * The Session key for state
@@ -139,7 +140,11 @@ class SSOService
      */
     public function retrieveToken()
     {
-        return session()->get(self::SSO_SESSION);
+        if (session()->has(self::SSO_SESSION_IMPERSONATE)) {
+            return session()->get(self::SSO_SESSION_IMPERSONATE);
+        } else {
+            return session()->get(self::SSO_SESSION);
+        }
     }
 
     /**
@@ -149,7 +154,9 @@ class SSOService
      */
     public function saveToken($credentials)
     {
-        session()->put(self::SSO_SESSION, $credentials);
+        $decode_access_token = (new AccessToken($credentials))->parseAccessToken();
+        $session_key = isset($decode_access_token['impersonator']) ? self::SSO_SESSION_IMPERSONATE : self::SSO_SESSION;
+        session()->put($session_key, $credentials);
         session()->save();
     }
 
@@ -160,7 +167,11 @@ class SSOService
      */
     public function forgetToken()
     {
-        session()->forget(self::SSO_SESSION);
+        if (session()->has(self::SSO_SESSION_IMPERSONATE)) {
+            session()->forget(self::SSO_SESSION_IMPERSONATE);
+        } else {
+            session()->forget(self::SSO_SESSION);
+        }
         session()->save();
     }
 
