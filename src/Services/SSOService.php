@@ -464,7 +464,7 @@ class SSOService
                 'subject_token' => $token->getAccessToken(),
             ];
 
-            $response = $this->httpClient->request('POST', $url, ['headers' => $headers, 'form_params', $form_params]);
+            $response = $this->httpClient->request('POST', $url, ['headers' => $headers, 'form_params' => $form_params]);
 
             if ($response->getStatusCode() !== 200) {
                 throw new Exception('User not allowed to impersonate');
