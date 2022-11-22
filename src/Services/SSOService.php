@@ -73,6 +73,13 @@ class SSOService
     protected $state;
 
     /**
+     * Redirect Url
+     * 
+     * @var string
+     */
+    protected $redirectUrl;
+
+    /**
      * The HTTP Client
      *
      * @var ClientInterface
@@ -94,6 +101,7 @@ class SSOService
         $this->clientId = Config::get('sso.client_id');
         $this->clientSecret = Config::get('sso.client_secret');
         $this->callbackUrl = route(Config::get('sso.web.routes.callback', 'sso.web.callback'));
+        $this->redirectUrl = Config::get('sso.web.redirect_url', '/');
         $this->state = generate_random_state();
         $this->httpClient = $client;
     }
@@ -133,6 +141,11 @@ class SSOService
         return $this->state;
     }
 
+    public function getRedirectUrl()
+    {
+        return $this->redirectUrl;
+    }
+
     /**
      * Retrieve Token from Session
      *
@@ -147,6 +160,16 @@ class SSOService
         }
     }
 
+    public function retrieveRegularToken()
+    {
+        return session()->get(self::SSO_SESSION);
+    }
+
+    public function retrieveImpersonateToken()
+    {
+        return session()->get(self::SSO_SESSION_IMPERSONATE);
+    }
+
     /**
      * Save Token to Session
      *
@@ -154,9 +177,19 @@ class SSOService
      */
     public function saveToken($credentials)
     {
-        $decode_access_token = (new AccessToken($credentials))->parseAccessToken();
-        $session_key = isset($decode_access_token['impersonator']) ? self::SSO_SESSION_IMPERSONATE : self::SSO_SESSION;
-        session()->put($session_key, $credentials);
+        $decoded_access_token = (new AccessToken($credentials))->parseAccessToken();
+        if (isset($decoded_access_token['impersonator'])) {
+            session()->put(self::SSO_SESSION_IMPERSONATE, $credentials);
+        } else {
+            $previous_credentials = $this->retrieveRegularToken();
+            // Forget impersonate token session
+            // Just in case if impersonate user session revoked even session are not expired
+            // Example: impersonate user session revoked from Keycloak Administration console.
+            if (!is_null($previous_credentials)) {
+                $this->forgetImpersonateToken();
+            }
+            session()->put(self::SSO_SESSION, $credentials);
+        }
         session()->save();
     }
 
@@ -172,6 +205,16 @@ class SSOService
         } else {
             session()->forget(self::SSO_SESSION);
         }
+    }
+
+    /**
+     * Remove Impersonate Token from Session
+     *
+     * @return void
+     */
+    public function forgetImpersonateToken()
+    {
+        session()->forget(self::SSO_SESSION_IMPERSONATE);
         session()->save();
     }
 
@@ -234,7 +277,28 @@ class SSOService
      *
      * @return string
      */
-    public function getLogoutUrl($id_token = null)
+    public function getLogoutUrl()
+    {
+        $token = $this->retrieveToken();
+
+        $decoded_access_token = (new AccessToken($token))->parseAccessToken();
+        
+        if (isset($decoded_access_token['impersonator'])) {
+            $this->invalidateRefreshToken($token['refresh_token']);
+            $this->forgetImpersonateToken();
+            return $this->getRedirectUrl();
+        } else {
+            $this->forgetToken();
+            return $this->logout($token['id_token']);
+        }
+    }
+
+    /**
+     * Logout user based on id_token
+     * 
+     * @return string
+     */
+    public function logout($id_token = null)
     {
         $url = (new OpenIDConfig)->get('end_session_endpoint');
 
@@ -431,7 +495,7 @@ class SSOService
     }
 
     /**
-     * Get access token of impersonate user.
+     * Get credentials (access_token, refresh_token, id_token) of impersonate user.
      * 
      * Notes: 
      * 1. Enable feature Token Exchange, Fine-Grained Admin Permissions, and Account Management REST API in Keycloak.
@@ -446,26 +510,29 @@ class SSOService
         
         try {
             $credentials = $this->refreshTokenIfNeeded($credentials);
-
-            // Validate JWT Token
-            $token = new AccessToken($credentials);
-
+            
             $url = (new OpenIDConfig)->get('token_endpoint');
             
             $headers = [
                 'Content-Type' => 'application/x-www-form-urlencoded',
             ];
-
+            
             $form_params = [
                 'client_id' => $this->getClientId(),
                 'grant_type' => 'urn:ietf:params:oauth:grant-type:token-exchange',
                 'requested_token_type' => 'urn:ietf:params:oauth:token-type:refresh_token',
                 'requested_subject' => $username,
-                'subject_token' => $token->getAccessToken(),
+                'subject_token' => (new AccessToken($credentials))->getAccessToken(),
+                // Set scope value to openid to get id_token.
+                'scope' => 'openid',
             ];
 
+            if (!empty($this->getClientSecret())) {
+                $form_params['client_secret'] = $this->getClientSecret();
+            }
+            
             $response = $this->httpClient->request('POST', $url, ['headers' => $headers, 'form_params' => $form_params]);
-
+            
             if ($response->getStatusCode() !== 200) {
                 throw new Exception('User not allowed to impersonate');
             }
@@ -476,6 +543,14 @@ class SSOService
             log_exception($e);
         } catch (Exception $e) {
             Log::error('[Keycloak Service] ' . print_r($e->getMessage(), true));
+        }
+
+        // Revoke previous impersonate user session if $token is not empty
+        if (!empty($token)) {
+            $impersonate_user_token = $this->retrieveImpersonateToken();
+            if (!empty($impersonate_user_token)) {
+                $this->invalidateRefreshToken($impersonate_user_token['refresh_token']);
+            }
         }
 
         return $token;
