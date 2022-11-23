@@ -78,6 +78,8 @@ return [
 
         'append_decoded_token' => false,
 
-        'allowed_resources' => null
+        'allowed_resources' => null,
+        
+        'leeway' => 0
     ]
 ];
