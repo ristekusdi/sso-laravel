@@ -121,19 +121,6 @@ class TokenGuard implements Guard
 
         $this->validateResources();
 
-        // Add roles attribute
-        $resource_access = (array)$credentials['resource_access'];
-        
-        $roles = (array) $resource_access[config('sso.client_id')];
-        
-        if (!empty($roles)) {
-            $roles_array = ['client_roles' => $roles['roles']];
-        } else {
-            $roles_array = ['client_roles' => []];
-        }
-
-        $credentials = array_merge($credentials, $roles_array);
-
         if ($this->config['token']['load_user_from_database']) {
             $methodOnProvider = $this->config['token']['user_provider_custom_retrieve_method'] ?? null;
             if ($methodOnProvider) {
@@ -172,7 +159,7 @@ class TokenGuard implements Guard
     private function validateResources()
     {
         $token_resource_access = array_keys((array)($this->decodedToken->resource_access ?? []));
-        $allowed_resources = explode(',', $this->config['client_id']);
+        $allowed_resources = explode(',', $this->config['token']['allowed_resources']);
         if (count(array_intersect($token_resource_access, $allowed_resources)) == 0) {
             throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid `resource_access` allowed by API. Allowed resources by API: " . $this->config['allowed_resources'], 403);
         }
