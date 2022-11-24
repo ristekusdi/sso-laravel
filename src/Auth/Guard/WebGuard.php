@@ -145,6 +145,11 @@ class WebGuard implements Guard
             return false;
         }
 
+        // Get client roles and merge to user info
+        $token = new AccessToken($credentials);
+        $roles = $token->parseAccessToken()['resource_access'][$this->getClientId()];
+        $user = array_merge($user, ['client_roles' => $roles['roles']]);
+
         // Provide User
         $user = $this->provider->retrieveByCredentials($user);
         $this->setUser($user);
