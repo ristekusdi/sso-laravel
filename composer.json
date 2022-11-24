@@ -29,8 +29,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "RistekUSDI\\SSO\\Laravel\\WebGuardServiceProvider",
-                "RistekUSDI\\SSO\\Laravel\\TokenGuardServiceProvider"
+                "RistekUSDI\\SSO\\Laravel\\WebGuardServiceProvider"
             ],
             "aliases": {
                 "IMISSUWeb": "RistekUSDI\\SSO\\Laravel\\Facades\\IMISSUWeb"
