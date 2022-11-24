@@ -66,20 +66,5 @@ return [
             'callback' => 'sso.web.callback',
             'logout' => 'sso.web.logout',
         ],
-    ],
-    'token' => [
-        'load_user_from_database' => false,
-
-        'user_provider_custom_retrieve_method' => null,
-
-        'user_provider_credential' => 'username',
-
-        'token_principal_attribute' => 'preferred_username',
-
-        'append_decoded_token' => false,
-
-        'allowed_resources' => null,
-        
-        'leeway' => 0
     ]
 ];
