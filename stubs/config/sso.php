@@ -2,46 +2,44 @@
 
 return [
     /**
-     * SSO Admin URL
+     * Keycloak Admin URL
      *
      * Generally https://your-admin-server.com
      */
-    'admin_url' => env('SSO_ADMIN_URL', ''),
+    'admin_url' => env('KEYCLOAK_ADMIN_URL', ''),
 
     /**
-     * SSO URL
+     * Keycloak URL
      *
      * Generally https://your-server.com
      */
-    'base_url' => env('SSO_BASE_URL', ''),
+    'base_url' => env('KEYCLOAK_BASE_URL', ''),
 
     /**
-     * SSO Realm
+     * Keycloak Realm
      *
      * Default is master
      */
-    'realm' => env('SSO_REALM', 'master'),
+    'realm' => env('KEYCLOAK_REALM', 'master'),
 
     /**
-     * The SSO Server realm public key (string).
+     * The Keycloak Server realm public key (string).
      *
-     * @see SSO >> Realm Settings >> Keys >> RS256 >> Public Key
+     * @see Keycloak >> Realm Settings >> Keys >> RS256 >> Public Key
      */
-    'realm_public_key' => env('SSO_REALM_PUBLIC_KEY', null),
+    'realm_public_key' => env('KEYCLOAK_REALM_PUBLIC_KEY', null),
 
     /**
-     * SSO Client ID
+     * Keycloak Client ID
      *
-     * @see SSO >> Clients >> Installation
      */
-    'client_id' => env('SSO_CLIENT_ID', null),
+    'client_id' => env('KEYCLOAK_CLIENT_ID', null),
 
     /**
      * SSO Client Secret
      *
-     * @see SSO >> Clients >> Installation
      */
-    'client_secret' => env('SSO_CLIENT_SECRET', null),
+    'client_secret' => env('KEYCLOAK_CLIENT_SECRET', null),
 
     /**
     * GuzzleHttp Client options
