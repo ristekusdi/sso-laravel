@@ -496,10 +496,10 @@ class SSOService
      * 1. Enable feature Token Exchange, Fine-Grained Admin Permissions, and Account Management REST API in Keycloak.
      * 2. Register user(s) as impersonator in impersonate scope user permissions.
      * 
-     * @param credentials (access token of impersonator), username
+     * @param username, credentials (access token of impersonator)
      * @return array
      */
-    public function impersonateRequest($credentials = array(), $username)
+    public function impersonateRequest($username, $credentials = array())
     {
         $token = [];
         
