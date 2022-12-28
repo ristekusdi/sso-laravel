@@ -19,7 +19,12 @@ class Authenticate {
             return $next($request);
         }
 
-		return redirect()->route(config('sso.web.routes.login', 'sso.web.login'));
+		if (! $request->expectsJson()) {
+			return redirect()->route(config('sso.web.routes.login', 'sso.web.login'));
+		} else {
+			// Unauthenticated
+			return abort('401');
+		}
 	}
 
 }
