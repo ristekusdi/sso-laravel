@@ -289,7 +289,8 @@ class SSOService
             return $this->getRedirectUrl();
         } else {
             $this->forgetToken();
-            return $this->logout($token['id_token']);
+            $id_token = isset($token['id_token']) ? $token['id_token'] : null;
+            return $this->logout($id_token);
         }
     }
 
