@@ -18,8 +18,7 @@ class Permission {
 		// Make sure that we receive array with value is not empty.
         $permissions = array_unique(array_filter(explode('|', ($permissions[0] ?? ''))));
 		if (! auth('imissu-web')->user()->hasPermission($permissions)) {
-            $permissions_str = implode(', ', $permissions);
-            abort(403, "Pengguna dengan ijin {$permissions_str} yang diijinkan mengakses sumber ini!");
+            abort(403, "Anda tidak diijinkan mengakses sumber ini!");
         }
 
         return $next($request);

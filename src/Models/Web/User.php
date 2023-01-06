@@ -37,7 +37,7 @@ class User extends UserModel
         if (!empty($permissions)) {
             return (array_intersect((array) $this->getAttribute('role_active_permissions'), (array) $permissions)) ? true : false;
         } else {
-            return true;
+            return false;
         }
     }
 }
