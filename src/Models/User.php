@@ -27,6 +27,12 @@ class User extends Authenticatable
      */
     public function getKey()
     {
+        /**
+         * Note
+         * 
+         * Set unud_sso_id as primary key if user is Unud user.
+         * Set sub (Keycloak id) as primary key if user is not Unud user.
+         */
         return isset($this->unud_sso_id) ? $this->unud_sso_id : $this->sub;
     }
 
