@@ -24,7 +24,7 @@ class User extends UserModel
         if (!empty($roles)) {
             return (in_array($this->getAttribute('role_active'), (array) $roles)) ? true : false;
         } else {
-            return true;
+            return false;
         }
     }
 
