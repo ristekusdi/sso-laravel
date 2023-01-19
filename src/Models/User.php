@@ -47,7 +47,7 @@ class User extends Authenticatable
      */
     public function getAuthIdentifier()
     {
-        return isset($this->unud_sso_id) ? $this->unud_sso_id : $this->sub;
+        return $this->id;
     }
 
     /**
