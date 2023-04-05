@@ -468,7 +468,7 @@ class SSOService
      * @param  array $credentials
      * @return array
      */
-    protected function refreshTokenIfNeeded($credentials)
+    public function refreshTokenIfNeeded($credentials)
     {
         if (! is_array($credentials) || empty($credentials['access_token']) || empty($credentials['refresh_token'])) {
             return $credentials;
