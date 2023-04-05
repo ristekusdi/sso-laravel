@@ -9,7 +9,10 @@ use Illuminate\Support\Facades\Facade;
  * @method static getLogoutUrl()
  * @method static getAccessToken(string $code)
  * @method static getUserProfile(array $credentials)
+ * @method static saveToken(array $credentials)
  * @method static forgetToken()
+ * @method static refreshTokenIfNeeded(array $credentials)
+ * @method static impersonateRequest($username, array $credentials)
  */
 class IMISSUWeb extends Facade
 {
