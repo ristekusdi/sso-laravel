@@ -346,6 +346,7 @@ class SSOService
             }
         } catch (GuzzleException $e) {
             log_exception($e);
+            throw new Exception($e->getMessage(), $e->getCode());
         }
 
         return $token;
@@ -386,6 +387,7 @@ class SSOService
             }
         } catch (GuzzleException $e) {
             log_exception($e);
+            throw new Exception($e->getMessage(), $e->getCode());
         }
 
         return $token;
@@ -414,6 +416,7 @@ class SSOService
             return $response->getStatusCode() === 204;
         } catch (GuzzleException $e) {
             log_exception($e);
+            throw new Exception($e->getMessage(), $e->getCode());
         }
 
         return false;
@@ -455,6 +458,7 @@ class SSOService
             }
         } catch (GuzzleException $e) {
             log_exception($e);
+            throw new Exception($e->getMessage(), $e->getCode());
         } catch (Exception $e) {
             Log::error('[Keycloak Service] ' . print_r($e->getMessage(), true));
         }
@@ -537,6 +541,7 @@ class SSOService
             $token = json_decode($response_body, true);
         } catch (GuzzleException $e) {
             log_exception($e);
+            throw new Exception($e->getMessage(), $e->getCode());
         } catch (Exception $e) {
             Log::error('[Keycloak Service] ' . print_r($e->getMessage(), true));
         }

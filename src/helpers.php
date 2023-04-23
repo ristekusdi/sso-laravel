@@ -33,6 +33,7 @@ if (!function_exists('log_exception')) {
         $error = [
             'request' => method_exists($e, 'getRequest') ? $e->getRequest() : '',
             'response' => $e->getResponse()->getBody()->getContents(),
+            'code' => $e->getCode(),
         ];
 
         Log::error('[Keycloak Service] ' . print_r($error, true));
