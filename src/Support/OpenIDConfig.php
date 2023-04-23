@@ -2,6 +2,7 @@
 
 namespace RistekUSDI\SSO\Laravel\Support;
 
+use Exception;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Arr;
@@ -81,13 +82,13 @@ class OpenIDConfig
 
             return $configuration;
         } catch (\GuzzleHttp\Exception\RequestException $e) {
-            echo \GuzzleHttp\Psr7\Message::toString($e->getRequest());
+            throw new Exception(\GuzzleHttp\Psr7\Message::toString($e->getRequest()), $e->getCode());
             if ($e->hasResponse()) {
-                echo \GuzzleHttp\Psr7\Message::toString($e->getResponse());
+                throw new Exception(\GuzzleHttp\Psr7\Message::toString($e->getResponse()), $e->getCode()) ;
             }
         } catch (\GuzzleHttp\Exception\ClientException $e) {
-            echo \GuzzleHttp\Psr7\Message::toString($e->getRequest());
-            echo \GuzzleHttp\Psr7\Message::toString($e->getResponse());
+            throw new Exception(\GuzzleHttp\Psr7\Message::toString($e->getRequest()), $e->getCode());
+            throw new Exception(\GuzzleHttp\Psr7\Message::toString($e->getResponse()), $e->getCode()) ;
         }
     }
 
