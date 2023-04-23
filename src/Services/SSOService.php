@@ -74,7 +74,7 @@ class SSOService
 
     /**
      * Redirect Url
-     * 
+     *
      * @var string
      */
     protected $redirectUrl;
@@ -282,7 +282,7 @@ class SSOService
         $token = $this->retrieveToken();
 
         $decoded_access_token = (new AccessToken($token))->parseAccessToken();
-        
+
         if (isset($decoded_access_token['impersonator'])) {
             $this->invalidateRefreshToken($token['refresh_token']);
             $this->forgetImpersonateToken();
@@ -296,7 +296,7 @@ class SSOService
 
     /**
      * Logout user based on id_token
-     * 
+     *
      * @return string
      */
     public function logout($id_token = null)
@@ -336,7 +336,6 @@ class SSOService
         }
 
         $token = [];
-
         try {
             $response = $this->httpClient->request('POST', $url, ['form_params' => $params]);
 
@@ -346,7 +345,6 @@ class SSOService
             }
         } catch (GuzzleException $e) {
             log_exception($e);
-            throw new Exception($e->getMessage(), $e->getCode());
         }
 
         return $token;
@@ -387,7 +385,6 @@ class SSOService
             }
         } catch (GuzzleException $e) {
             log_exception($e);
-            throw new Exception($e->getMessage(), $e->getCode());
         }
 
         return $token;
@@ -416,7 +413,6 @@ class SSOService
             return $response->getStatusCode() === 204;
         } catch (GuzzleException $e) {
             log_exception($e);
-            throw new Exception($e->getMessage(), $e->getCode());
         }
 
         return false;
@@ -451,14 +447,13 @@ class SSOService
 
             $user = $response->getBody()->getContents();
             $user = json_decode($user, true);
-            
+
             // Validate retrieved user is owner of token
             if (! $token->validateSub($user['sub'] ?? '')) {
                 throw new Exception("This user is not the owner of token.", 401);
             }
         } catch (GuzzleException $e) {
             log_exception($e);
-            throw new Exception($e->getMessage(), $e->getCode());
         } catch (Exception $e) {
             Log::error('[Keycloak Service] ' . print_r($e->getMessage(), true));
         }
@@ -496,27 +491,27 @@ class SSOService
 
     /**
      * Get credentials (access_token, refresh_token, id_token) of impersonate user.
-     * 
-     * Notes: 
+     *
+     * Notes:
      * 1. Enable feature Token Exchange, Fine-Grained Admin Permissions, and Account Management REST API in Keycloak.
      * 2. Register user(s) as impersonator in impersonate scope user permissions.
-     * 
+     *
      * @param username, credentials (access token of impersonator)
      * @return array
      */
     public function impersonateRequest($username, $credentials = array())
     {
         $token = [];
-        
+
         try {
             $credentials = $this->refreshTokenIfNeeded($credentials);
-            
+
             $url = (new OpenIDConfig)->get('token_endpoint');
-            
+
             $headers = [
                 'Content-Type' => 'application/x-www-form-urlencoded',
             ];
-            
+
             $form_params = [
                 'client_id' => $this->getClientId(),
                 'grant_type' => 'urn:ietf:params:oauth:grant-type:token-exchange',
@@ -530,9 +525,9 @@ class SSOService
             if (!empty($this->getClientSecret())) {
                 $form_params['client_secret'] = $this->getClientSecret();
             }
-            
+
             $response = $this->httpClient->request('POST', $url, ['headers' => $headers, 'form_params' => $form_params]);
-            
+
             if ($response->getStatusCode() !== 200) {
                 throw new Exception('User not allowed to impersonate');
             }
@@ -541,7 +536,6 @@ class SSOService
             $token = json_decode($response_body, true);
         } catch (GuzzleException $e) {
             log_exception($e);
-            throw new Exception($e->getMessage(), $e->getCode());
         } catch (Exception $e) {
             Log::error('[Keycloak Service] ' . print_r($e->getMessage(), true));
         }
