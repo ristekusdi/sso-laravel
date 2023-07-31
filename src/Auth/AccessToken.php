@@ -105,7 +105,7 @@ class AccessToken
     {
         $token = $this->parseIdToken();
         if (empty($token)) {
-            throw new Exception('ID Token is invalid.');
+            throw new Exception('ID Token is invalid.', 401);
         }
 
         $default = array(
@@ -119,26 +119,26 @@ class AccessToken
 
         // Validate expiration
         if (time() >= (int) $token['exp']) {
-            throw new Exception('ID Token already expired.');
+            throw new Exception('ID Token has expired.', 401);
         }
 
         // Validate issuer
         if (empty($claims['iss']) || $claims['iss'] !== $token['iss']) {
-            throw new Exception('Access Token has a wrong issuer: must contain issuer from OpenId.');
+            throw new Exception('Access Token has a wrong issuer: must contain issuer from OpenId.', 422);
         }
 
         // Validate audience
         $audience = (array) $token['aud'];
         if (empty($claims['aud']) || ! in_array($claims['aud'], $audience, true)) {
-            throw new Exception('Access Token has a wrong audience: must contain clientId.');
+            throw new Exception('Access Token has a wrong audience: must contain clientId.', 422);
         }
 
         if (count($audience) > 1 && empty($token['azp'])) {
-            throw new Exception('Access Token has a wrong audience: must contain azp claim.');
+            throw new Exception('Access Token has a wrong audience: must contain azp claim.', 422);
         }
 
         if (! empty($token['azp']) && $claims['aud'] !== $token['azp']) {
-            throw new Exception('Access Token has a wrong audience: has azp but is not the clientId.');
+            throw new Exception('Access Token has a wrong audience: has azp but is not the clientId.', 422);
         }
     }
 
