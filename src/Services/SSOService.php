@@ -442,7 +442,7 @@ class SSOService
             $response = $this->httpClient->request('GET', $url, ['headers' => $headers]);
 
             if ($response->getStatusCode() !== 200) {
-                throw new Exception('Was not able to get userinfo (not 200)');
+                throw new Exception('Was not able to get userinfo (not 200)', 404);
             }
 
             $user = $response->getBody()->getContents();
@@ -529,7 +529,7 @@ class SSOService
             $response = $this->httpClient->request('POST', $url, ['headers' => $headers, 'form_params' => $form_params]);
 
             if ($response->getStatusCode() !== 200) {
-                throw new Exception('User not allowed to impersonate');
+                throw new Exception('User not allowed to impersonate', 401);
             }
 
             $response_body = $response->getBody()->getContents();

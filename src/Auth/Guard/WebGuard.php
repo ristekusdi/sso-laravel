@@ -96,12 +96,12 @@ class WebGuard implements Guard
     public function validate(array $credentials = [])
     {
         if (empty($credentials['access_token']) || empty($credentials['id_token'])) {
-            throw new \Exception('Credentials must have access_token and id_token!');
+            throw new \Exception('Credentials must have access_token and id_token!', 422);
         }
 
         $token = new AccessToken($credentials);
         if (empty($token->getAccessToken())) {
-            throw new \Exception('Access Token is invalid.');
+            throw new \Exception('Access Token is invalid.', 401);
         }
 
         $access_token = $token->parseAccessToken();
