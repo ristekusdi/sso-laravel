@@ -419,7 +419,7 @@ class SSOService
     }
 
     /**
-     * Get access token from Code
+     * Get user profile from $credentials
      * @param  array $credentials
      * @return array
      */
@@ -432,21 +432,7 @@ class SSOService
             // Validate JWT Token
             $token = new AccessToken($credentials);
 
-            // Get userinfo
-            $url = (new OpenIDConfig)->get('userinfo_endpoint');
-            $headers = [
-                'Authorization' => 'Bearer ' . $token->getAccessToken(),
-                'Accept' => 'application/json',
-            ];
-
-            $response = $this->httpClient->request('GET', $url, ['headers' => $headers]);
-
-            if ($response->getStatusCode() !== 200) {
-                throw new Exception('Was not able to get userinfo (not 200)', 404);
-            }
-
-            $user = $response->getBody()->getContents();
-            $user = json_decode($user, true);
+            $user = $token->parseAccessToken();
 
             // Validate retrieved user is owner of token
             if (! $token->validateSub($user['sub'] ?? '')) {

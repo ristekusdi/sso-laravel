@@ -146,8 +146,7 @@ class WebGuard implements Guard
         }
 
         // Get client roles and merge to user info
-        $token = new AccessToken($credentials);
-        $roles = $token->parseAccessToken()['resource_access'][config('sso.client_id')];
+        $roles = $user['resource_access'][config('sso.client_id')];
         $user = array_merge($user, ['client_roles' => $roles['roles']]);
 
         // Provide User
