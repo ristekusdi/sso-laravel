@@ -15,6 +15,11 @@ class AuthController extends Controller
      */
     public function login()
     {
+        $user = auth('imissu-web')->user();
+        if ($user !== null && $user instanceof \RistekUSDI\SSO\Laravel\Models\Web\User) {
+            return redirect()->intended(config('sso.web.redirect_url', '/'));
+        }
+        
         $url = IMISSUWeb::getLoginUrl();
         IMISSUWeb::saveState();
 
