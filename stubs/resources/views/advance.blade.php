@@ -8,22 +8,28 @@
     <title>Demo SSO Laravel - Advance</title>
 </head>
 <body>
-    <h1>Hello</h1>
-    <p>We can do it together. :)</p>
+    <h1>SSO Web Demo Advance</h1>
     <a href="{{ route('sso.web.logout') }}">Log out</a>
-    <p>Berikut daftar peran yang dimiliki oleh {{ auth('imissu-web')->user()->name }}</p>
+    <p>List of client roles belongs to {{ auth('imissu-web')->user()->name }}</p>
     <ul>
         @foreach (auth('imissu-web')->user()->client_roles as $role)
             <li>{{ $role }}</li>
         @endforeach
     </ul>
-    <p>Peran aktif: {{ auth('imissu-web')->user()->role_active }}</p>
-    <p>Daftar permission: </p>
+    <p>Active role / current role: {{ auth('imissu-web')->user()->role->name ?? '??' }}</p>
+    <p>Permissions:</p>
+    @php
+        $permissions = auth('imissu-web')->user()->role->permissions ?? [];
+    @endphp
+    @if (!empty($permissions))
     <ul>
-        @foreach (auth('imissu-web')->user()->role_active_permissions as $perm)
+        @foreach ($permissions as $perm)
             <li>{{ $perm }}</li>
         @endforeach
     </ul>
+    @else
+        <p><strong>No permissions available</strong></p>
+    @endif
     @if (auth('imissu-web')->user()->hasPermission('manage-settings'))
     <p>This user has permission manage-settings</p>
     @else
@@ -36,19 +42,19 @@
     <p>This user doesn't have role Developer</p>
     @endif
     <form action="">
-        <select name="roles" id="roles-combo">
-            <option value="0">Daftar Peran</option>
-            @foreach (auth('imissu-web')->user()->client_roles as $role)
-                <option value="{{ $role }}" {{ (auth('imissu-web')->user()->role_active == $role) ? 'selected' : '' }}>{{ $role }}</option>
+        <select name="roles" id="roles">
+            <option value="0">Roles</option>
+            @foreach (auth('imissu-web')->user()->roles as $role)
+                <option value="{{ json_encode($role) }}" {{ (auth('imissu-web')->user()->role->name == $role->name) ? 'selected' : '' }}>{{ $role->name }}</option>
             @endforeach
         </select>
         <input type="hidden" name="current_url" value="{{ url()->current() }}">
     </form>
-    <p>Atribut yang bisa di akses sebagai berikut</p>
+    <p>Available attributes:</p>
     <table width="100%" style="border: 1px solid black;">
         <thead>
-            <th style="border: 1px solid black;">Atribut</th>
-            <th style="border: 1px solid black;">Nilai atribut</th>
+            <th style="border: 1px solid black;">Attribute Key</th>
+            <th style="border: 1px solid black;">Attribute Value</th>
         </thead>
         <tbody>
             @foreach (auth('imissu-web')->user()->getAttributes() as $key => $value)
@@ -56,7 +62,13 @@
                 <td style="border: 1px solid black;">{{ $key }}</td>
                 <td style="border: 1px solid black;">
                     @if (is_array($value))
-                        {{ collect($value)->implode(', ') }}
+                        @if (in_array($key, ['roles', 'realm_access', 'resource_access']))
+                            {{ json_encode($value) }}
+                        @else
+                            {{ collect($value)->implode(', ') }}
+                        @endif
+                    @elseif (is_object($value))
+                        {{ json_encode($value) }}
                     @else
                         {{ $value }}
                     @endif
