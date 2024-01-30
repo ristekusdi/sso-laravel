@@ -8,20 +8,19 @@
     <title>Demo SSO Laravel - Basic</title>
 </head>
 <body>
-    <h1>Hello</h1>
-    <p>We can do it together. :)</p>
+    <h1>SSO Web Demo Basic</h1>
     <a href="{{ route('sso.web.logout') }}">Log out</a>
-    <p>Berikut daftar peran yang dimiliki oleh {{ auth('imissu-web')->user()->name }}</p>
+    <p>List of client roles belongs to {{ auth('imissu-web')->user()->name }}</p>
     <ul>
         @foreach (auth('imissu-web')->user()->client_roles as $role)
             <li>{{ $role }}</li>
         @endforeach
     </ul>
-    <p>Atribut yang bisa di akses sebagai berikut</p>
+    <p><strong>Available attributes</strong></p>
     <table width="100%" style="border: 1px solid black;">
         <thead>
-            <th style="border: 1px solid black;">Atribut</th>
-            <th style="border: 1px solid black;">Nilai atribut</th>
+            <th style="border: 1px solid black;">Attribute Key</th>
+            <th style="border: 1px solid black;">Attribute Value</th>
         </thead>
         <tbody>
             @foreach (auth('imissu-web')->user()->getAttributes() as $key => $value)
@@ -29,7 +28,11 @@
                 <td style="border: 1px solid black;">{{ $key }}</td>
                 <td style="border: 1px solid black;">
                     @if (is_array($value))
-                        {{ collect($value)->implode(', ') }}
+                        @if (in_array($key, ['realm_access', 'resource_access']))
+                            {{ json_encode($value) }}
+                        @else
+                            {{ collect($value)->implode(', ') }}
+                        @endif
                     @else
                         {{ $value }}
                     @endif
