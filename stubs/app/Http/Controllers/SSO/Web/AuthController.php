@@ -34,6 +34,11 @@ class AuthController extends Controller
     public function logout()
     {
         $url = IMISSUWeb::getLogoutUrl();
+        // NOTE: Forget token to prevent misuse
+        IMISSUWeb::forgetToken();
+        // NOTE: flush session after getLogoutUrl
+        // Otherwise, id_token will be deleted.
+        session()->flush();
         return redirect($url);
     }
 
