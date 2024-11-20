@@ -82,4 +82,17 @@ class UserProvider implements \Illuminate\Contracts\Auth\UserProvider
     {
         throw new \BadMethodCallException('Unexpected method [validateCredentials] call');
     }
+
+    /**
+     * Rehash the user's password if required and supported.
+     *
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param  array  $credentials
+     * @param  bool  $force
+     * @return void
+     */
+    public function rehashPasswordIfRequired(Authenticatable $user, array $credentials, bool $force = false)
+    {
+        throw new \BadMethodCallException('Unexpected method [rehashPasswordIfRequired] call');
+    }
 }
