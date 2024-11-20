@@ -79,17 +79,11 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__.'/../stubs/routes/web-session.php' => base_path('routes/web-session.php'),
         ], 'sso-laravel-web-session');
 
-        // SSO web route V1
+        // SSO web route
         $this->publishes([
             // Routes
-            __DIR__.'/../stubs/routes/v1/web.php' => base_path('routes/sso-web.php'),
-        ], 'sso-laravel-web-route-v1');
-
-        // SSO web route V2
-        $this->publishes([
-            // Routes
-            __DIR__.'/../stubs/routes/v2/web.php' => base_path('routes/sso-web.php'),
-        ], 'sso-laravel-web-route-v2');
+            __DIR__.'/../stubs/routes/sso-web.php' => base_path('routes/sso-web.php'),
+        ], 'sso-laravel-web-route');
 
         // Web User Provider
         Auth::provider('imissu-web', function($app, array $config) {
@@ -125,18 +119,8 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
             \RistekUSDI\SSO\Laravel\Middleware\Web\Role::class
         );
 
-        // Middleware IMISSU Web Role (backward compatibility)
-        $this->app['router']->aliasMiddleware('imissu-web-role', 
-            \RistekUSDI\SSO\Laravel\Middleware\Web\Role::class
-        );
-
         // Middleware IMISSU Web Permission
         $this->app['router']->aliasMiddleware('imissu-web.permission', 
-            \RistekUSDI\SSO\Laravel\Middleware\Web\Permission::class
-        );
-
-        // Middleware IMISSU Web Permission (backward compatibility)
-        $this->app['router']->aliasMiddleware('imissu-web-permission', 
             \RistekUSDI\SSO\Laravel\Middleware\Web\Permission::class
         );
 
