@@ -46,9 +46,11 @@
     <form action="">
         <select name="roles" id="roles">
             <option value="0">Roles</option>
-            @foreach (auth('imissu-web')->user()->roles as $role)
-            <option value="{{ json_encode($role) }}" {{ (auth('imissu-web')->user()->role->name == $role->name) ? 'selected' : '' }}>{{ $role->name }}</option>
-            @endforeach
+            @if (auth('imissu-web')->user()->roles)
+                @foreach (auth('imissu-web')->user()->roles as $role)
+                    <option value="{{ json_encode($role) }}" {{ (auth('imissu-web')->user()->role->name == $role->name) ? 'selected' : '' }}>{{ $role->name }}</option>
+                @endforeach
+            @endif
         </select>
         <input type="hidden" name="home_url" value="{{ url()->current() }}">
     </form>
