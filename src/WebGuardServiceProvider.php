@@ -2,12 +2,10 @@
 
 namespace RistekUSDI\SSO\Laravel;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\ClientInterface;
 use Illuminate\Support\Facades\Auth;
 use RistekUSDI\SSO\Laravel\Services\SSOService;
 use RistekUSDI\SSO\Laravel\Auth\Guard\WebGuard;
-use RistekUSDI\SSO\Laravel\Auth\WebUserProvider;
+use RistekUSDI\SSO\PHP\Auth\WebUserProvider;
 
 class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -123,10 +121,5 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app['router']->aliasMiddleware('imissu-web.permission', 
             \RistekUSDI\SSO\Laravel\Middleware\Web\Permission::class
         );
-
-        // Bind for client data
-        $this->app->when(SSOService::class)->needs(ClientInterface::class)->give(function() {
-            return new Client(config('sso.guzzle_options', []));
-        });
     }
 }

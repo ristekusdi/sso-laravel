@@ -3,7 +3,7 @@
 namespace RistekUSDI\SSO\Laravel\Services;
 
 use Illuminate\Support\Facades\Log;
-use RistekUSDI\SSO\Laravel\Auth\AccessToken;
+use RistekUSDI\SSO\PHP\Auth\AccessToken;
 
 trait SSOServiceTrait
 {
