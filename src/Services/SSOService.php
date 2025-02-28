@@ -4,23 +4,20 @@ namespace RistekUSDI\SSO\Laravel\Services;
 
 use Exception;
 use GuzzleHttp\ClientInterface;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Config;
-use RistekUSDI\SSO\Laravel\Auth\AccessToken;
+use RistekUSDI\SSO\PHP\Auth\AccessToken;
 use RistekUSDI\SSO\Laravel\Support\OpenIDConfig;
 
 class SSOService
 {
-    /**
-     * The Session key for token
-     */
-    const SSO_SESSION = '_sso_token';
-    const SSO_SESSION_IMPERSONATE = '_sso_token_impersonate';
-
-    /**
-     * The Session key for state
-     */
-    const SSO_SESSION_STATE = '_sso_state';
+    use SSOServiceTrait {
+        saveToken as private traitSaveToken;
+        retrieveToken as private traitRetrieveToken;
+        forgetToken as private traitForgetToken;
+        validateState as private traitValidateState;
+        saveState as private traitSaveState;
+        forgetState as private traitForgetState;
+    }
 
     /**
      * Keycloak URL
@@ -145,107 +142,34 @@ class SSOService
         return $this->redirectUrl;
     }
 
-    /**
-     * Retrieve Token from Session
-     *
-     * @return array|null
-     */
-    public function retrieveToken()
-    {
-        if (session()->has(self::SSO_SESSION_IMPERSONATE)) {
-            return session()->get(self::SSO_SESSION_IMPERSONATE);
-        } else {
-            return session()->get(self::SSO_SESSION);
-        }
-    }
-
-    public function retrieveRegularToken()
-    {
-        return session()->get(self::SSO_SESSION);
-    }
-
-    public function retrieveImpersonateToken()
-    {
-        return session()->get(self::SSO_SESSION_IMPERSONATE);
-    }
-
-    /**
-     * Save Token to Session
-     *
-     * @return void
-     */
     public function saveToken($credentials)
     {
-        $decoded_access_token = (new AccessToken($credentials))->parseAccessToken();
-        if (isset($decoded_access_token['impersonator'])) {
-            session()->put(self::SSO_SESSION_IMPERSONATE, $credentials);
-        } else {
-            $previous_credentials = $this->retrieveRegularToken();
-            // Forget impersonate token session
-            // Just in case if impersonate user session revoked even session are not expired
-            // Example: impersonate user session revoked from Keycloak Administration console.
-            if (!is_null($previous_credentials)) {
-                $this->forgetImpersonateToken();
-            }
-            session()->put(self::SSO_SESSION, $credentials);
-        }
-        session()->save();
+        return $this->traitSaveToken($credentials);
     }
 
-    /**
-     * Remove Token from Session
-     *
-     * @return void
-     */
+    public function retrieveToken()
+    {
+        return $this->traitRetrieveToken();
+    }
+
     public function forgetToken()
     {
-        if (session()->has(self::SSO_SESSION_IMPERSONATE)) {
-            $this->forgetImpersonateToken();
-        } else {
-            session()->forget(self::SSO_SESSION);
-        }
+        return $this->traitForgetToken();
     }
 
-    /**
-     * Remove Impersonate Token from Session
-     *
-     * @return void
-     */
-    public function forgetImpersonateToken()
-    {
-        session()->forget(self::SSO_SESSION_IMPERSONATE);
-    }
-
-    /**
-     * Validate State from Session
-     *
-     * @return void
-     */
     public function validateState($state)
     {
-        $challenge = session()->get(self::SSO_SESSION_STATE);
-        return (! empty($state) && ! empty($challenge) && $challenge === $state);
+        return $this->traitValidateState($state);
     }
 
-    /**
-     * Save State to Session
-     *
-     * @return void
-     */
     public function saveState()
     {
-        session()->put(self::SSO_SESSION_STATE, $this->state);
-        session()->save();
+        return $this->traitSaveState();
     }
 
-    /**
-     * Remove State from Session
-     *
-     * @return void
-     */
-    public function forgetState()
+    public function fotgetState()
     {
-        session()->forget(self::SSO_SESSION_STATE);
+        return $this->traitForgetState();
     }
 
     /**
@@ -330,7 +254,7 @@ class SSOService
                 $token = json_decode($token, true);
             }
         } catch (\Throwable $th) {
-            Log::error("SSO Service error: {$th->getMessage()}");
+            $this->logError($th->getMessage());
         }
 
         return $token;
@@ -370,7 +294,7 @@ class SSOService
                 $token = json_decode($token, true);
             }
         } catch (\Throwable $th) {
-            Log::error("SSO Service error: {$th->getMessage()}");
+            $this->logError($th->getMessage());
         }
 
         return $token;
@@ -397,7 +321,7 @@ class SSOService
         try {
             $this->httpClient->request('POST', $url, ['form_params' => $params]);
         } catch (\Throwable $th) {
-            Log::error("SSO Service error: {$th->getMessage()}");
+            $this->logError($th->getMessage());
         }
     }
 
@@ -422,7 +346,7 @@ class SSOService
                 throw new Exception("This user is not the owner of token.", 401);
             }
         } catch (\Throwable $th) {
-            Log::error("SSO Service error: {$th->getMessage()}");
+            $this->logError($th->getMessage());
         }
 
         return $user;
@@ -502,7 +426,7 @@ class SSOService
             $response_body = $response->getBody()->getContents();
             $token = json_decode($response_body, true);
         } catch (\Throwable $th) {
-            Log::error("SSO Service error: {$th->getMessage()}");
+            $this->logError($th->getMessage());
         }
 
         // Revoke previous impersonate user session if $token is not empty

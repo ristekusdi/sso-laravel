@@ -5,9 +5,9 @@ namespace RistekUSDI\SSO\Laravel;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use Illuminate\Support\Facades\Auth;
-use RistekUSDI\SSO\Laravel\Auth\UserProvider;
 use RistekUSDI\SSO\Laravel\Services\SSOService;
 use RistekUSDI\SSO\Laravel\Auth\Guard\WebGuard;
+use RistekUSDI\SSO\Laravel\Auth\WebUserProvider;
 
 class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -87,7 +87,7 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
 
         // Web User Provider
         Auth::provider('imissu-web', function($app, array $config) {
-            return new UserProvider($config['model']);
+            return new WebUserProvider($config['model']);
         });
     }
 
