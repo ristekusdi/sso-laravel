@@ -3,8 +3,9 @@
 namespace RistekUSDI\SSO\Laravel\Auth;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\UserProvider;
 
-class UserProvider implements \Illuminate\Contracts\Auth\UserProvider
+class WebUserProvider implements UserProvider
 {
     /**
      * The user model.

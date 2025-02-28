@@ -3,6 +3,8 @@
 namespace RistekUSDI\SSO\Laravel\Auth;
 
 use Exception;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class AccessToken
 {
@@ -73,6 +75,19 @@ class AccessToken
     }
 
     /**
+     * Get expired date of RefreshToken in timestamp
+     * 
+     * @return int
+     */
+    public function getRefreshTokenExpiresAt()
+    {
+        $exp = $this->parseRefreshToken();
+        $exp = $exp['exp'] ?? '';
+
+        return (int) $exp;
+    }
+
+    /**
      * Get IdToken
      *
      * @return string
@@ -119,7 +134,7 @@ class AccessToken
 
         // Validate expiration
         if (time() >= (int) $token['exp']) {
-            throw new Exception('ID Token has expired.', 401);
+            throw new Exception('ID Token already expired.', 401);
         }
 
         // Validate issuer
@@ -156,6 +171,41 @@ class AccessToken
     }
 
     /**
+     * Validate token signature with a provided public key.
+     * @param string $publicKeyString The RSA256 public key as a string (PEM format)
+     * @return bool Whether the token signature is valid
+     * @throws Exception If validation fails
+     */
+    public function validateSignatureWithKey($publicKeyString)
+    {
+        if (empty($this->getAccessToken())) {
+            throw new Exception('Access token is not set.', 401);
+        }
+        
+        try {
+            // Get token parts
+            $token_parts = explode('.', $this->getAccessToken());
+            if (count($token_parts) !== 3) {
+                throw new Exception('Invalid token format.', 401);
+            }
+
+            // Decode header to get the algorithm
+            $header = json_decode($this->base64UrlDecode($token_parts[0]), true);
+            $alg = $header['alg'] ?? 'RS256';
+            
+            // Create a key object for JWT verification
+            $key = new Key($this->formatRawKeyToPEM($publicKeyString), $alg);
+
+            // Verify the token
+            JWT::decode($this->getAccessToken(), $key);
+
+            return true;
+        } catch (\Throwable $th) {
+            throw new Exception('Token validation failed: '. $th->getMessage(), 401);
+        }
+    }
+
+    /**
      * Parse the Access Token
      *
      * @return array
@@ -163,6 +213,16 @@ class AccessToken
     public function parseAccessToken()
     {
         return $this->parseToken($this->accessToken);
+    }
+
+    /**
+     * Parse the Refresh Token
+     *
+     * @return array
+     */
+    public function parseRefreshToken()
+    {
+        return $this->parseToken($this->refreshToken);
     }
 
     /**
@@ -204,5 +264,22 @@ class AccessToken
     protected function base64UrlDecode($data)
     {
         return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
+    }
+
+    /**
+     * Format a raw public key string into proper PEM format
+     * 
+     * @param string $rawKey The raw public key string (without PEM headers/footers)
+     * @return string The properly formatted PEM public key
+     */
+    protected function formatRawKeyToPEM($rawKey)
+    {
+        // Remove any whitespace or line breaks
+        $rawKey = preg_replace('/\s+/', '', $rawKey);
+    
+        // Add PEM headers and format with proper line breaks (64 characters per line)
+        return "-----BEGIN PUBLIC KEY-----\n" . 
+            chunk_split($rawKey, 64, "\n") .
+            "-----END PUBLIC KEY-----";
     }
 }

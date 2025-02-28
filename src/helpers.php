@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Log;
-use GuzzleHttp\Exception\GuzzleException;
-
 /**
     * Return a random state parameter for authorization
     *
@@ -12,31 +9,6 @@ if (!function_exists('generate_random_state')) {
     function generate_random_state()
     {
         return bin2hex(random_bytes(16));
-    }
-}
-
-/**
-    * Log a GuzzleException
-    *
-    * @param  GuzzleException $e
-    * @return void
-*/
-if (!function_exists('log_exception')) {
-    function log_exception(GuzzleException $e)
-    {
-        // Guzzle 7
-        if (! method_exists($e, 'getResponse') || empty($e->getResponse())) {
-            Log::error('[Keycloak Service] ' . $e->getMessage());
-            return;
-        }
-
-        $error = [
-            'request' => method_exists($e, 'getRequest') ? $e->getRequest() : '',
-            'response' => $e->getResponse()->getBody()->getContents(),
-            'code' => $e->getCode(),
-        ];
-
-        Log::error('[Keycloak Service] ' . print_r($error, true));
     }
 }
 
