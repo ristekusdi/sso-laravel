@@ -106,6 +106,17 @@ class WebGuard implements Guard
             throw new \Exception('Credentials must have access_token and id_token!', 422);
         }
 
+        // Validate token signature
+        if (empty(config('sso.realm_public_key'))) {
+            throw new \Exception('Cannot validate token signature.');
+        }
+
+        try {
+            (new AccessToken($credentials))->validateSignatureWithKey(config('sso.realm_public_key'));
+        } catch (\Throwable $th) {
+            throw new \Exception($th->getMessage(), $th->getCode());
+        }
+
         $token = new AccessToken($credentials);
         if (empty($token->getAccessToken())) {
             throw new \Exception('Access Token is invalid.', 401);
@@ -131,23 +142,46 @@ class WebGuard implements Guard
     /**
      * Try to authenticate the user
      *
-     * @return \Illuminate\Contracts\Auth\Authenticatable|boolean
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     public function authenticate()
     {
         // Get Credentials
         $credentials = IMISSUWeb::retrieveToken();
         if (empty($credentials)) {
-            return false;
+            return null;
         }
 
-        $user = IMISSUWeb::getUserProfile($credentials);
-        if (empty($user)) {
+        $token = new AccessToken($credentials);
+        $user = $token->parseAccessToken();
+        
+        if ($token->hasExpired()) {
+            // NOTE: User needs to log in again in case refresh token has expired.
+            if (time() >= $token->getRefreshTokenExpiresAt()) {
+                return null;
+            }
             IMISSUWeb::forgetToken();
-            return false;
+            $credentials = IMISSUWeb::refreshAccessToken($credentials);
+            IMISSUWeb::saveToken($credentials);
+            $token = new AccessToken($credentials);
+            $user = $token->parseAccessToken();
         }
 
-        // Get client roles and merge to user info
+        // We validate token signature here after new token is generated.
+        // We do this because the token stored in PHP session, the token may expired early before validate and we cannot take advantage of refresh token case.
+        if (empty(config('sso.realm_public_key'))) {
+            error_log('Cannot validate token signature.');
+            return null;
+        }
+
+        try {
+            (new AccessToken($credentials))->validateSignatureWithKey(config('sso.realm_public_key'));
+        } catch (\Throwable $th) {
+            error_log($th->getMessage());
+            return null;
+        }
+
+        // Get client roles
         $roles = $user['resource_access'][config('sso.client_id')];
         $user = array_merge($user, ['client_roles' => $roles['roles']]);
 
