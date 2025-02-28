@@ -5,7 +5,7 @@ namespace RistekUSDI\SSO\Laravel\Services;
 use Exception;
 use GuzzleHttp\ClientInterface;
 use Illuminate\Support\Facades\Config;
-use RistekUSDI\SSO\PHP\Auth\AccessToken;
+use RistekUSDI\SSO\Laravel\Auth\AccessToken;
 use RistekUSDI\SSO\Laravel\Support\OpenIDConfig;
 
 class SSOService

@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Support\Facades\Log;
 use RistekUSDI\SSO\Laravel\Auth\AccessToken;
 use RistekUSDI\SSO\Laravel\Facades\IMISSUWeb;
 
@@ -170,14 +171,14 @@ class WebGuard implements Guard
         // We validate token signature here after new token is generated.
         // We do this because the token stored in PHP session, the token may expired early before validate and we cannot take advantage of refresh token case.
         if (empty(config('sso.realm_public_key'))) {
-            error_log('Cannot validate token signature.');
+            Log::error('Cannot validate token signature.');
             return null;
         }
 
         try {
             (new AccessToken($credentials))->validateSignatureWithKey(config('sso.realm_public_key'));
         } catch (\Throwable $th) {
-            error_log($th->getMessage());
+            Log::error($th->getMessage());
             return null;
         }
 
