@@ -73,6 +73,13 @@ class WebGuard implements Guard
         return $this;
     }
 
+    public function hasUser()
+    {
+        if (!is_null($this->user()) && $this->user() instanceof \RistekUSDI\SSO\Laravel\Models\Web\User) {
+            return true;
+        }
+    }
+
     /**
      * Get the ID for the currently authenticated user.
      *
@@ -119,11 +126,6 @@ class WebGuard implements Guard
         IMISSUWeb::saveToken($credentials);
 
         return $this->authenticate();
-    }
-
-    public function hasUser()
-    {
-        // ...
     }
 
     /**

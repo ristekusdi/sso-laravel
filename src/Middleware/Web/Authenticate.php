@@ -14,10 +14,9 @@ class Authenticate {
 	 */
 	public function handle($request, Closure $next)
 	{
-		$user = auth()->guard('imissu-web')->user();
-        if (!is_null($user) && $user instanceof \RistekUSDI\SSO\Laravel\Models\Web\User) {
-            return $next($request);
-        }
+        if (auth()->guard('imissu-web')->hasUser()) {
+			return $next($request);
+		}
 
 		if (! $request->expectsJson()) {
 			return redirect()->route(config('sso.web.routes.login', 'sso.web.login'));
