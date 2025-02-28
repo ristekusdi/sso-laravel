@@ -4,7 +4,6 @@ namespace RistekUSDI\SSO\Laravel\Services;
 
 use Exception;
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Config;
 use RistekUSDI\SSO\Laravel\Auth\AccessToken;
@@ -330,8 +329,8 @@ class SSOService
                 $token = $response->getBody()->getContents();
                 $token = json_decode($token, true);
             }
-        } catch (GuzzleException $e) {
-            log_exception($e);
+        } catch (\Throwable $th) {
+            Log::error("SSO Service error: {$th->getMessage()}");
         }
 
         return $token;
@@ -370,8 +369,8 @@ class SSOService
                 $token = $response->getBody()->getContents();
                 $token = json_decode($token, true);
             }
-        } catch (GuzzleException $e) {
-            log_exception($e);
+        } catch (\Throwable $th) {
+            Log::error("SSO Service error: {$th->getMessage()}");
         }
 
         return $token;
@@ -397,8 +396,8 @@ class SSOService
 
         try {
             $this->httpClient->request('POST', $url, ['form_params' => $params]);
-        } catch (GuzzleException $e) {
-            log_exception($e);
+        } catch (\Throwable $th) {
+            Log::error("SSO Service error: {$th->getMessage()}");
         }
     }
 
@@ -422,10 +421,8 @@ class SSOService
             if (! $token->validateSub($user['sub'] ?? '')) {
                 throw new Exception("This user is not the owner of token.", 401);
             }
-        } catch (GuzzleException $e) {
-            log_exception($e);
-        } catch (Exception $e) {
-            Log::error('[Keycloak Service] ' . print_r($e->getMessage(), true));
+        } catch (\Throwable $th) {
+            Log::error("SSO Service error: {$th->getMessage()}");
         }
 
         return $user;
@@ -504,10 +501,8 @@ class SSOService
 
             $response_body = $response->getBody()->getContents();
             $token = json_decode($response_body, true);
-        } catch (GuzzleException $e) {
-            log_exception($e);
-        } catch (Exception $e) {
-            Log::error('[Keycloak Service] ' . print_r($e->getMessage(), true));
+        } catch (\Throwable $th) {
+            Log::error("SSO Service error: {$th->getMessage()}");
         }
 
         // Revoke previous impersonate user session if $token is not empty
