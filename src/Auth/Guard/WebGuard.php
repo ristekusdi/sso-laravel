@@ -17,15 +17,16 @@ class WebGuard implements Guard
      */
     protected $user;
 
+    protected ?UserProvider $provider = null;
+
     /**
      * Constructor.
      *
      * @param Request $request
      */
-    public function __construct(UserProvider $provider, Request $request)
+    public function __construct(UserProvider $provider)
     {
         $this->provider = $provider;
-        $this->request = $request;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace RistekUSDI\SSO\Laravel;
 
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use RistekUSDI\SSO\Laravel\Services\SSOService;
 use RistekUSDI\SSO\Laravel\Auth\Guard\WebGuard;
@@ -97,9 +98,9 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
     public function register()
     {
         // SSO Web Guard
-        Auth::extend('imissu-web', function ($app, $name, array $config) {
+        Auth::extend('imissu-web', function (Application $app, string $name, array $config) {
             $provider = Auth::createUserProvider($config['provider']);
-            return new WebGuard($provider, $app->request);
+            return new WebGuard($provider);
         });
 
         // Facades
