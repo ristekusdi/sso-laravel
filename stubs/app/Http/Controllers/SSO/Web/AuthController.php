@@ -64,7 +64,7 @@ class AuthController extends Controller
         if (empty($state) || ! IMISSUWeb::validateState($state)) {
             IMISSUWeb::forgetState();
 
-            abort(401, 'Invalid state');
+            abort(422, 'Invalid state');
         }
 
         // Change code for token
