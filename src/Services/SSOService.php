@@ -3,9 +3,11 @@
 namespace RistekUSDI\SSO\Laravel\Services;
 
 use Illuminate\Support\Facades\Config;
-use RistekUSDI\SSO\PHP\Services\SSOService as PhpSsoService;
+use Illuminate\Support\Facades\URL;
+use RistekUSDI\SSO\Laravel\Support\OpenIDConfig;
+use RistekUSDI\SSO\PHP\Services\SSOService as BaseSSOService;
 
-class SSOService extends PhpSsoService
+class SSOService extends BaseSSOService
 {
     use SSOServiceTrait {
         saveToken as private traitSaveToken;
@@ -16,69 +18,15 @@ class SSOService extends PhpSsoService
         forgetState as private traitForgetState;
     }
 
-    /**
-     * Keycloak URL
-     *
-     * @var string
-     */
-    protected $baseUrl;
 
-    /**
-     * Keycloak Realm
-     *
-     * @var string
-     */
-    protected $realm;
-
-    /**
-     * Keycloak Client ID
-     *
-     * @var string
-     */
-    protected $clientId;
-
-    /**
-     * Keycloak Client Secret
-     *
-     * @var string
-     */
-    protected $clientSecret;
-
-    /**
-     * Keycloak OpenId Configuration
-     *
-     * @var array
-     */
-    protected $openid;
-
-    /**
-     * CallbackUrl
-     *
-     * @var array
-     */
-    protected $callbackUrl;
-
-    /**
-     * The state for authorization request
-     *
-     * @var string
-     */
-    protected $state;
-
-    /**
-     * Redirect Url
-     *
-     * @var string
-     */
-    protected $redirectUrl;
-    
     public function __construct()
     {
         $this->baseUrl = trim(Config::get('sso.base_url'), '/');
         $this->realm = Config::get('sso.realm');
         $this->clientId = Config::get('sso.client_id');
         $this->clientSecret = Config::get('sso.client_secret');
-        $this->callbackUrl = route(Config::get('sso.web.routes.callback', 'sso.web.callback'));
+        $this->openid = (new OpenIDConfig);
+        $this->callbackUrl = URL::route(Config::get('sso.web.routes.callback', 'sso.web.callback'));
         $this->redirectUrl = Config::get('sso.web.redirect_url', '/');
         $this->state = generate_random_state();
     }
@@ -108,7 +56,7 @@ class SSOService extends PhpSsoService
         return $this->traitSaveState();
     }
 
-    public function fotgetState()
+    public function forgetState()
     {
         return $this->traitForgetState();
     }

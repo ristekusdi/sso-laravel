@@ -47,6 +47,13 @@ return [
     * @link http://docs.guzzlephp.org/en/stable/request-options.html
     */
     'guzzle_options' => [],
+
+    /**
+     * Cache OpenID configuration
+     * 
+     * Default is true to prevent next request round trip.
+     */
+    'cache_openid' => true,
     
     'web' => [
         /**
