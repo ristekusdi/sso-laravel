@@ -5,6 +5,15 @@ namespace RistekUSDI\SSO\Laravel\Support;
 use Illuminate\Support\Facades\Cache;
 
 trait OpenIDConfigTrait {
+
+    public function hasCache($key)
+    {
+        if (!Cache::has($key)) {
+            return false;
+        }
+
+        return true;
+    }
     
     public function getCache($key, $default = null)
     {
