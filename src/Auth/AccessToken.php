@@ -197,6 +197,7 @@ class AccessToken
             $key = new Key($this->formatRawKeyToPEM($publicKeyString), $alg);
 
             // Verify the token
+            JWT::$leeway = 30; // Allow 30 seconds clock skew
             JWT::decode($this->getAccessToken(), $key);
 
             return true;
