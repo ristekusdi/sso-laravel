@@ -7,8 +7,8 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Log;
-use RistekUSDI\SSO\Laravel\Auth\AccessToken;
 use RistekUSDI\SSO\Laravel\Facades\IMISSUWeb;
+use RistekUSDI\SSO\PHP\Auth\AccessToken;
 
 class WebGuard implements Guard
 {
