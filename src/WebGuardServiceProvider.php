@@ -2,7 +2,6 @@
 
 namespace RistekUSDI\SSO\Laravel;
 
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use RistekUSDI\SSO\Laravel\Services\SSOService;
 use RistekUSDI\SSO\Laravel\Auth\Guard\WebGuard;
@@ -23,66 +22,24 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
         }
 
         // Default
+        $this->publishes($this->getDefaultStubs(), 'sso-laravel');
+
+        // Demo
         $this->publishes([
-            // Controllers
-            __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/AuthController.php' => app_path('Http/Controllers/SSO/Web/AuthController.php'),
-
-            // Models
-            __DIR__.'/../stubs/app/Models/SSO/Web/User.php' => app_path('Models/SSO/Web/User.php'),
-
-            // Config
-            __DIR__ . '/../stubs/config/sso.php' => config_path('sso.php'),
-        ], 'sso-laravel-web');
-
-        // Basic demo
-        $this->publishes([
-            // Controllers
-            __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/AuthController.php' => app_path('Http/Controllers/SSO/Web/AuthController.php'),
-            __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/DemoController.php' => app_path('Http/Controllers/SSO/Web/DemoController.php'),
-
-            // Models
-            __DIR__.'/../stubs/app/Models/SSO/Web/User.php' => app_path('Models/SSO/Web/User.php'),
-
-            // Routes
-            __DIR__.'/../stubs/routes/sso-web-demo.php' => base_path('routes/sso-web-demo.php'),
-
-            // Config
-            __DIR__ . '/../stubs/config/sso.php' => config_path('sso.php'),
-
-            // Views
+            ...$this->getDefaultStubs(), 
+            
             __DIR__.'/../stubs/resources/views/demo.blade.php' => resource_path('views/sso-web/demo.blade.php'),
-            __DIR__.'/../stubs/resources/views/basic.blade.php' => resource_path('views/sso-web/basic.blade.php'),
-        ], 'sso-laravel-web-demo-basic');
+            __DIR__.'/../stubs/routes/sso-web-demo.php' => base_path('routes/sso-web-demo.php'),
+        ], 'sso-laravel.demo');
 
-        // Advance demo
-        $this->publishes([
-            // View
-            __DIR__.'/../stubs/resources/views/advance.blade.php' => resource_path('views/sso-web/advance.blade.php'),
-        ], 'sso-laravel-web-demo-advance');
+        // Config
+        $this->publishes($this->getConfigStubs(), 'sso-laravel.config');
 
-        $this->publishes([
-            // Config
-            __DIR__ . '/../stubs/config/sso.php' => config_path('sso.php'),
-        ], 'sso-laravel-web-config');
+        // Routes
+        $this->publishes($this->getRouteStubs(), 'sso-laravel.route');
 
-        $this->publishes([
-            // Controllers
-            __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/SessionController.php' => app_path('Http/Controllers/SSO/Web/SessionController.php'),
-
-            // Session facade, provider, and service
-            __DIR__.'/../stubs/app/Facades/WebSession.php' => app_path('Facades/WebSession.php'),
-            __DIR__.'/../stubs/app/Providers/WebSessionProvider.php' => app_path('Providers/WebSessionProvider.php'),
-            __DIR__.'/../stubs/app/Services/WebSession.php' => app_path('Services/WebSession.php'),
-
-            // Routes
-            __DIR__.'/../stubs/routes/web-session.php' => base_path('routes/web-session.php'),
-        ], 'sso-laravel-web-session');
-
-        // SSO web route
-        $this->publishes([
-            // Routes
-            __DIR__.'/../stubs/routes/sso-web.php' => base_path('routes/sso-web.php'),
-        ], 'sso-laravel-web-route');
+        // WebSession
+        $this->publishes($this->getWebSessionStubs(), 'sso-laravel.web-session');
 
         // Web User Provider
         Auth::provider('imissu-web', function($app, array $config) {
@@ -98,9 +55,9 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
     public function register()
     {
         // SSO Web Guard
-        Auth::extend('imissu-web', function (Application $app, string $name, array $config) {
+        Auth::extend('imissu-web', function ($app, $name, array $config) {
             $provider = Auth::createUserProvider($config['provider']);
-            return new WebGuard($provider);
+            return new WebGuard($provider, $app->request);
         });
 
         // Facades
@@ -122,5 +79,72 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app['router']->aliasMiddleware('imissu-web.permission', 
             \RistekUSDI\SSO\Laravel\Middleware\Web\Permission::class
         );
+    }
+
+    private function getDefaultStubs()
+    {
+        return [
+            // Controllers
+            ...$this->getControllerStubs(),
+
+            // Models
+            ...$this->getModelStubs(),
+
+            // Config
+            ...$this->getConfigStubs(),
+
+            // Routes
+            ...$this->getRouteStubs(),
+            
+            // WebSession
+            ...$this->getWebSessionStubs(),
+        ];
+    }
+
+    private function getControllerStubs()
+    {
+        return [
+            __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/AuthController.php' => app_path('Http/Controllers/SSO/Web/AuthController.php'),
+        ];
+    }
+
+    private function getModelStubs()
+    {
+        return [ 
+            __DIR__.'/../stubs/app/Models/SSO/Web/User.php' => app_path('Models/SSO/Web/User.php'),
+        ];
+    }
+
+    private function getConfigStubs()
+    {
+        return [
+            __DIR__ . '/../stubs/config/sso.php' => config_path('sso.php'),
+        ];
+    }
+
+    private function getRouteStubs()
+    {
+        return [
+            __DIR__.'/../stubs/routes/sso-web.php' => base_path('routes/sso-web.php'),
+        ];
+    }
+
+    private function getWebSessionStubs()
+    {
+        return [
+            // Controllers
+            __DIR__.'/../stubs/app/Http/Controllers/SSO/Web/SessionController.php' => app_path('Http/Controllers/SSO/Web/SessionController.php'),
+
+            // Middleware
+            __DIR__.'/../stubs/app/Http/Middleware/InitWebSession.php' => app_path('Http/Middleware/InitWebSession.php'),
+
+            // Session facade, provider, and service
+            __DIR__.'/../stubs/app/Facades/WebSession.php' => app_path('Facades/WebSession.php'),
+            __DIR__.'/../stubs/app/Providers/WebSessionProvider.php' => app_path('Providers/WebSessionProvider.php'),
+            __DIR__.'/../stubs/app/Services/WebSession.php' => app_path('Services/WebSession.php'),
+
+            // Routes
+            __DIR__.'/../stubs/routes/web-session.php' => base_path('routes/web-session.php'),
+        ];
     }
 }
