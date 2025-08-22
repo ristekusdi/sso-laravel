@@ -28,7 +28,7 @@ class WebGuardServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->publishes([
             ...$this->getDefaultStubs(), 
             
-            __DIR__.'/../stubs/resources/views/demo.blade.php' => resource_path('views/sso-web/demo.blade.php'),
+            __DIR__.'/../stubs/resources/views/sso-web/demo.blade.php' => resource_path('views/sso-web/demo.blade.php'),
             __DIR__.'/../stubs/routes/sso-web-demo.php' => base_path('routes/sso-web-demo.php'),
         ], 'sso-laravel.demo');
 
