@@ -2,40 +2,12 @@
 
 namespace RistekUSDI\SSO\Laravel\Support;
 
-use Exception;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Arr;
+use RistekUSDI\SSO\PHP\Support\OpenIDConfig as BaseOpenIDConfig;
 
-class OpenIDConfig
+class OpenIDConfig extends BaseOpenIDConfig
 {
-    /**
-     * Keycloak URL
-     *
-     * @var string
-     */
-    protected $baseUrl;
-
-    /**
-     * Keycloak Realm
-     *
-     * @var string
-     */
-    protected $realm;
-
-    /**
-     * Keycloak OpenId Configuration
-     *
-     * @var array
-     */
-    protected $openid;
-
-    /**
-     * Keycloak OpenId Cache Configuration
-     *
-     * @var array
-     */
-    protected $cacheOpenid;
+    use OpenIDConfigTrait;
 
     public function __construct()
     {
@@ -50,54 +22,5 @@ class OpenIDConfig
         if (is_null($this->cacheOpenid)) {
             $this->cacheOpenid = Config::get('sso.cache_openid', false);
         }
-    }
-
-    protected function config()
-    {
-        $cacheKey = 'sso_web_guard_openid-' . $this->realm . '-' . md5($this->baseUrl);
-
-        // From cache?
-        if ($this->cacheOpenid) {
-            $configuration = Cache::get($cacheKey, []);
-
-            if (! empty($configuration)) {
-                return $configuration;
-            }
-        }
-
-        // Request if cache empty or not using
-        $url = $this->baseUrl . '/realms/' . $this->realm;
-        $url = $url . '/.well-known/openid-configuration';
-
-        $configuration = [];
-
-        try {
-            $response = (new \GuzzleHttp\Client())->request('GET', $url);
-            $configuration = json_decode($response->getBody()->getContents(), true);
-            
-            // Save cache
-            if ($this->cacheOpenid) {
-                Cache::put($cacheKey, $configuration);
-            }
-
-            return $configuration;
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
-            throw new Exception(\GuzzleHttp\Psr7\Message::toString($e->getRequest()), $e->getCode());
-            if ($e->hasResponse()) {
-                throw new Exception(\GuzzleHttp\Psr7\Message::toString($e->getResponse()), $e->getCode()) ;
-            }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            throw new Exception(\GuzzleHttp\Psr7\Message::toString($e->getRequest()), $e->getCode());
-            throw new Exception(\GuzzleHttp\Psr7\Message::toString($e->getResponse()), $e->getCode()) ;
-        }
-    }
-
-    public function get($name)
-    {
-        if (! $this->openid) {
-            $this->openid = $this->config();
-        }
-
-        return Arr::get($this->openid, $name);
     }
 }
